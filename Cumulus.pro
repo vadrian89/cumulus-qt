@@ -19,3 +19,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     Utilities.h
 
+DISTFILES += \
+    README.md
+
