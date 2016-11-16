@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>data/fonts/climacons-webfont.eot</file>
+        <file>data/fonts/climacons-webfont.svg</file>
+        <file>data/fonts/climacons-webfont.ttf</file>
+        <file>data/fonts/climacons-webfont.woff</file>
+        <file>data/fonts/Climacons.ttf</file>
+        <file>data/fonts/Ubuntu-C.ttf</file>
+        <file>data/fonts/ubuntu.woff</file>
+        <file>data/scripts/jquery.min.js</file>
+        <file>data/scripts/owmApi.js</file>
+        <file>data/scripts/ui-script.js</file>
+        <file>data/scripts/weather-script.js</file>
+        <file>data/scripts/weatherUtilities.js</file>
+        <file>data/scripts/yahooApi.js</file>
+        <file>data/app.html</file>
+        <file>data/back.svg</file>
+        <file>data/cumulus.svg</file>
+        <file>data/settings.svg</file>
+        <file>data/style.css</file>
+        <file>data/sync.svg</file>
+        <file>data/tick.svg</file>
+    </qresource>
+</RCC>
