@@ -1,3 +1,8 @@
+# Update
+
+Having some issues with deployment, working on a way to make it available accross distros using Qt's installer framework.
+Afterwards will continue updating the application.
+
 # Cumulus
 
 Ported to Qt/Qml!
