@@ -1,6 +1,28 @@
-import QtQuick 2.6
+/*
+* Copyright (C) 2016 Adrian Verban <verbanady@gmail.com>
+* Maintainers: Adrian Verban, Archisman Panigrahi, Daryl Bennett
+* Derived from Typhoon by Archisman Panigrahi which is based on Stormcloud by Jono Cooper <jonocooper.com>
+* Thanks to all the contributors.
+* Using the Ubuntu Condensed font.
+* Thanks to Adam Whitcroft <adamwhitcroft.com> for Climacons!
+* This file is part of Cumulus.
+#
+* Cumulus is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+#
+* Cumulus is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+#
+* You should have received a copy of the GNU General Public License
+* along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
+*/
+import QtQuick 2.0
 import QtQuick.Window 2.2
-import QtWebEngine 1.2
+import QtWebEngine 1.1
 import QtQml 2.2
 
 Window {
@@ -25,13 +47,9 @@ Window {
             window.visible = true
         }
 
-        onWindowCloseRequested: window.close()
         onJavaScriptConsoleMessage: {
             console.log("Cumulus javascript log: " + message)
-            if (message == "minimize") {
-                window.visibility = Window.Minimized
-            }
-            else if(message.substring(0,3) == "url") {
+            if(message.substring(0,3) == "url") {
                 Qt.openUrlExternally(message.substring(3,message.length))
             }
         }
@@ -51,6 +69,12 @@ Window {
             }
             else if (title.substring(0,1) == "t") {
                 util.setLauncherCount(title.substring(1,title.length))
+            }
+            else if (title == "close") {
+                window.close()
+            }
+            else if (title == "minimize") {
+                window.visibility = Window.Minimized
             }
         }
     }

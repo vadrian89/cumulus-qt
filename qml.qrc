@@ -21,5 +21,6 @@
         <file>data/style.css</file>
         <file>data/sync.svg</file>
         <file>data/tick.svg</file>
+        <file>qt/etc/qt.conf</file>
     </qresource>
 </RCC>

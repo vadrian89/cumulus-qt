@@ -1,6 +1,8 @@
 # Cumulus
 
 Ported to Qt/Qml!
+This is the first step, the app will make a full transition to Qt/Qml because in it's current state
+the installation size is to big.
 
 Simple weather application, powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/)
 
@@ -13,6 +15,6 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 - [Adam Whitcroft](https://twitter.com/AdamWhitcroft) for [Climacons](http://adamwhitcroft.com/climacons/).
 
 # TODO
-- Improve Code & Performance
+- Complete port to Qt
 - Hide Launcher option
 - Custom Color
