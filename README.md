@@ -1,11 +1,12 @@
 # Update
 
-This is the first step, the app will make a full transition to Qt/Qml because in it's current state
-the installation size is to big.
+Glad to say that the online installer is almost finished and it should hit the release this weekend depending on how much free time I have.
 
 # Cumulus
 
 Ported to Qt/Qml!   
+This is the first step, the app will make a full transition to Qt/Qml because in it's current state
+the installation size is to big.
 
 Simple weather application, powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/)
 
