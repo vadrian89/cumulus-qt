@@ -1,11 +1,8 @@
-# Update
+# Info
 
-This is the first step, the app will make a full transition to Qt/Qml because in it's current state
-the installation size is to big.
+This branch is kept with the purpose of keeping the original code.
 
 # Cumulus
-
-Ported to Qt/Qml!   
 
 Simple weather application, powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/)
 
