@@ -25,8 +25,11 @@
 #include <QtWebEngine>
 #include <QSettings>
 #include <QQmlContext>
+#include <QThread>
 
 #include "Utilities.h"
+#include "ThreadWorker.h"
+
 int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationName("Visoft");
     QCoreApplication::setApplicationName("Cumulus");
@@ -34,10 +37,18 @@ int main(int argc, char *argv[]) {
     QtWebEngine::initialize();
 
     Utilities utilities;
+    QThread thread;
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("util", &utilities);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    ThreadWorker *threadWorker = new ThreadWorker();
+    threadWorker->moveToThread(&thread);
+    QObject::connect(&thread, SIGNAL(finished()), threadWorker, SLOT(deleteLater()));
+    QObject::connect(threadWorker, SIGNAL(updateSearchFinished()), &thread, SLOT(quit()));
+    thread.start();
+    threadWorker->updaterTimerStart();
 
     return app.exec();
 }

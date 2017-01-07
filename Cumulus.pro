@@ -25,7 +25,8 @@ QT += qml quick webengine dbus
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    Utilities.cpp
+    Utilities.cpp \
+    ThreadWorker.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,7 +41,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 HEADERS += \
-    Utilities.h
+    Utilities.h \
+    ThreadWorker.h
 
 DISTFILES += \
     README.md
