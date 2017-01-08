@@ -70,6 +70,8 @@ void Utilities::toggleLauncherCount(QString string) {
 }
 
 void Utilities::setLauncherCount(int temperature) {
+    if (temperature < 0)
+        temperature = 0;
     QDBusMessage signal = QDBusMessage::createSignal("/", "com.canonical.Unity.LauncherEntry", "Update");
     signal << "application://cumulus.desktop";
     QVariantMap property;

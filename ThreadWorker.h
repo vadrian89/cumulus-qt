@@ -8,7 +8,7 @@
 class ThreadWorker : public QObject {
     Q_OBJECT
 public:
-    explicit ThreadWorker(QObject *parent = 0);
+    explicit ThreadWorker(QObject *parent = 0);    
 public slots:
     void updaterTimerStart();
 private slots:
