@@ -22,7 +22,6 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 # Known Issues
 - Yahoo weather is a mess at the moment and works less then it should, that's why I am working on adding another API
 - Counter is working only for Unity(naturally since the original application was intended for Ubuntu with Unity)
-- Counter is showing strange numbers when temperature is lower then 0(due to counter starting at 0)
 - No hide from launcher option yet  
 - Due to application being an webapp, the webengine dependencies are quite a few and some libraries have biger size than desired and installed the application currently uses almost 200mb
 - Gradient selections for background is a bit of a mess
