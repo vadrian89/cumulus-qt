@@ -1,6 +1,7 @@
 # Update
 
-Glad to say that the online installer is almost finished and it should hit the release this weekend depending on how much free time I have.
+[Online installer for x64 bit Linux distributions](https://github.com/vadrian89/cumulus-qt/releases/tag/2.0.1a) is live.  
+Online installer for x32 bit Linux distributions TBA. 
 
 # Cumulus
 
@@ -18,7 +19,16 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 - [Archisman Panigrahi](https://github.com/apandada1)
 - [Adam Whitcroft](https://twitter.com/AdamWhitcroft) for [Climacons](http://adamwhitcroft.com/climacons/).
 
+# Known Issues
+- Yahoo weather is a mess at the moment and works less then it should, that's why I am working on adding another API
+- Counter is working only for Unity(naturally since the original application was intended for Ubuntu with Unity)
+- Counter is showing strange numbers when temperature is lower then 0(due to counter starting at 0)
+- No hide from launcher option yet  
+- Due to application being an webapp, the webengine dependencies are quite a few and some libraries have biger size than desired and installed the application currently uses almost 200mb
+- Gradient selections for background is a bit of a mess
+
 # TODO
 - Complete port to Qt
 - Hide Launcher option
 - Custom Color
+- Add another API
