@@ -20,9 +20,9 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.0
+import QtQuick 2.5
 import QtQuick.Window 2.2
-import QtWebEngine 1.1
+import QtWebEngine 1.2
 import QtQml 2.2
 
 Window {
