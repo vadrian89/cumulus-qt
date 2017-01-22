@@ -390,7 +390,7 @@ p, span, div {
     outline: none;
 }
 
-#locationModal .launcher {
+#locationModal .launcher, #locationModal .launcher-to-tray {
     margin: 0;
     padding: 10px 0;
     width: 90%;

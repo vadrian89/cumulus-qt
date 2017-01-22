@@ -27,9 +27,10 @@
 #include <QSettings>
 #include <QPoint>
 #include <QSize>
+#include <QProcess>
 
 class Utilities : public QObject{
-    Q_OBJECT
+    Q_OBJECT    
 public:
     explicit Utilities(QObject *parent = 0);
     Q_INVOKABLE void saveWindowLocation(QPoint position);
@@ -38,6 +39,9 @@ public:
     Q_INVOKABLE QSize loadWindowSize();
     Q_INVOKABLE void toggleLauncherCount(QString string);
     Q_INVOKABLE void setLauncherCount(int temperature);
+    Q_INVOKABLE void saveApplicationVisibility(const QString &visiblity);
+    Q_INVOKABLE bool applicationVisiblity();
+    Q_INVOKABLE QString launcherCountVisibility();
 };
 
 #endif // UTILITIES_H

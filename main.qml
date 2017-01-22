@@ -22,8 +22,9 @@
 */
 import QtQuick 2.5
 import QtQuick.Window 2.2
-import QtWebEngine 1.2
 import QtQml 2.2
+
+import ownTypes.TrayController 0.1
 
 Window {
     id: window
@@ -36,47 +37,23 @@ Window {
     maximumWidth: windowSize.width
     x: windowLocation.x
     y: windowLocation.y
-    visible: false
+    visible: util.applicationVisiblity()
 
-    WebEngineView {
-        property string systemLanguage: Qt.locale().name.substring(0,2)
+    Loader {
+        id: viewLoader
         anchors.fill: parent
-        url: "data/app.html?lang=" + systemLanguage
+        source: "AppView.qml"
+    }
 
-        Component.onCompleted: {
-            window.visible = true
-        }
-
-        onJavaScriptConsoleMessage: {
-            console.log("Cumulus javascript log: " + message)
-            if(message.substring(0,3) == "url") {
-                Qt.openUrlExternally(message.substring(3,message.length))
-            }
-        }
-        onTitleChanged: {
-            console.log("Cumulus title changed: " + title)
-            if (title == "disabledrag") {
-                appMouseArea.visible = false
-            }
-            else if (title == "enabledrag") {
-                appMouseArea.visible = true
-            }
-            else if (title.substring(0,1) == "o") {
-                window.opacity = Number(title.substring(1,5))
-            }
-            else if (title == "enable_launcher" || title == "disable_launcher") {
-                util.toggleLauncherCount(title)
-            }
-            else if (title.substring(0,1) == "t") {
-                util.setLauncherCount(title.substring(1,title.length))
-            }
-            else if (title == "close") {
-                window.close()
-            }
-            else if (title == "minimize") {
-                window.visibility = Window.Minimized
-            }
-        }
+    Connections {
+        target: viewLoader.item
+        onDisableDrag: appMouseArea.visible = false
+        onEnableDrag: appMouseArea.visible = true
+        onAppOpacityChanged: window.opacity = opacity
+        onTrayIconChanged: trayController.icon = iconText
+        onCloseApp: window.close()
+        onHideApp: window.visible = false
+        onMinimizeApp: window.visibility = Window.Minimized
     }
 
     MouseArea {
@@ -110,5 +87,22 @@ Window {
 
     onWidthChanged: {
         util.saveWindowSize(Qt.size(width, height))
+    }
+
+    TrayController {
+        id: trayController
+        startUp: true
+
+        onCloseApp: {
+            Qt.quit()
+        }
+
+        onShowGui: {
+            if(window.visible == false) {
+                viewLoader.setSource("")
+                viewLoader.setSource("AppView.qml")
+            }
+            window.visible = true
+        }
     }
 }

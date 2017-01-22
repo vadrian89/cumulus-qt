@@ -22,5 +22,7 @@
         <file>data/sync.svg</file>
         <file>data/tick.svg</file>
         <file>qt/etc/qt.conf</file>
+        <file>data/fonts/weathericons-regular-webfont.ttf</file>
+        <file>AppView.qml</file>
     </qresource>
 </RCC>

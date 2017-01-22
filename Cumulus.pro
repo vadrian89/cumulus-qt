@@ -21,12 +21,13 @@
 
 TEMPLATE = app
 
-QT += qml quick webengine dbus
+QT += qml quick webengine dbus widgets svg
 CONFIG += c++11
 
 SOURCES += main.cpp \
     Utilities.cpp \
-    ThreadWorker.cpp
+    ThreadWorker.cpp \
+    TrayController.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,7 +43,8 @@ QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 HEADERS += \
     Utilities.h \
-    ThreadWorker.h
+    ThreadWorker.h \
+    TrayController.h
 
 DISTFILES += \
     README.md

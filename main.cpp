@@ -20,7 +20,7 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QtWebEngine>
 #include <QSettings>
@@ -29,11 +29,12 @@
 
 #include "Utilities.h"
 #include "ThreadWorker.h"
+#include "TrayController.h"
 
 int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationName("Visoft");
     QCoreApplication::setApplicationName("Cumulus");
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     QtWebEngine::initialize();
 
     Utilities utilities;
@@ -41,6 +42,7 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("util", &utilities);
+    qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 1, "TrayController");
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     ThreadWorker *threadWorker = new ThreadWorker();

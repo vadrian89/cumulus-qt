@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QFile>
+#include <QThread>
 
 ThreadWorker::ThreadWorker(QObject *parent) : QObject(parent) {
     connect(this, SIGNAL(startUpdateTimerSignal()), this, SLOT(updaterTimerStart()));
@@ -41,4 +42,18 @@ void ThreadWorker::startLookingForUpdates() {
             emit updateSearchFinished();
         }
     }
+}
+
+void ThreadWorker::createWeatherPixmap(const QString &weather) {
+//    int id = QFontDatabase::addApplicationFont(":/data/fonts/weathericons-regular-webfont.ttf");
+//    QString iconsFamily = QFontDatabase::applicationFontFamilies(id).at(0);
+//    QFont iconsFont(iconsFamily);
+    QPixmap pixmap(22,22);
+    pixmap.fill(QColor(0,0,0,0));
+    QPainter painter(&pixmap);
+    QThread::msleep(500);
+    painter.setPen(QColor(Qt::white));
+    painter.drawText(QRect(0, 0, 22, 22), Qt::AlignCenter, weather);
+    emit finishedCreatingPixmap(pixmap);
+    emit stopThread();
 }

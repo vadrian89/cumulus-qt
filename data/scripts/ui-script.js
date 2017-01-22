@@ -197,6 +197,19 @@ function init_settings() {
             document.title = "disable_launcher";
         }
     });
+
+    if (localStorage.cumulus_tray == "checked") {
+        $('#locationModal .launcher-to-tray input').attr("checked", "checked");
+        document.title = "hide_launcher";
+    }
+    $('#locationModal .launcher-to-tray input').click(function() {
+        localStorage.cumulus_tray = $('#locationModal .launcher-to-tray input').attr("checked");
+        if (localStorage.cumulus_tray == "checked") {
+            document.title = "hide_launcher";
+        } else {
+            document.title = "show_launcher";
+        }
+    });
 }
 
 function setWeather() {     
@@ -222,8 +235,7 @@ function setWeather() {
         $("#longWeatherDesc").css("display", "none");
         $(".week").css("margin-top", "30px");
     }
-    
-    document.title = "t" + weather.temperature;
+
     $('#city span').html("<a href='" + localStorage.cumulus_link + "'>" + localStorage.cumulus_location + "</a>");
     $("#code").text(weather_code(weather.code)).attr("class", "w" + weather.code);
     $("#temperature").html(weather.temperature + getTemperatureSymbol(localStorage.cumulus_measurement.toLowerCase()));
@@ -246,7 +258,8 @@ function setWeather() {
     setTimeout(function() {
         $('#decoratorBar .sync').removeClass('busy');
         $('#actualWeather').fadeIn(500);
-        $("#locationModal").fadeOut(500);
+        $("#locationModal").fadeOut(500);        
+        document.title = "t" + weather.temperature;
         }, 500);
  }
 
@@ -255,6 +268,7 @@ function init_storage() {
     localStorage.cumulus_speed = localStorage.cumulus_speed || "kph";
     localStorage.cumulus_color =  localStorage.cumulus_color || "gradient";
     localStorage.cumulus_launcher = localStorage.cumulus_launcher || "unchecked";
+    localStorage.cumulus_tray = localStorage.cumulus_tray || "unchecked";
     localStorage.api = localStorage.api || "y";
     localStorage.app_opacity = localStorage.app_opacity || "1.0";
     localStorage.weather_desc = localStorage.weather_desc || ""; 

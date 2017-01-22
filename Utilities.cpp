@@ -55,6 +55,24 @@ QSize Utilities::loadWindowSize() {
     return size;
 }
 
+void Utilities::saveApplicationVisibility(const QString &visiblity) {
+    QSettings settings;
+    settings.beginGroup("window-settings");
+    settings.setValue("close-to-tray", visiblity);
+    settings.endGroup();
+}
+
+bool Utilities::applicationVisiblity() {
+    bool result = true;
+    QSettings settings;
+    settings.beginGroup("window-settings");
+    QString string = settings.value("close-to-tray", "show_launcher").toString();
+    if (string == "hide_launcher")
+        result = false;
+    settings.endGroup();
+    return result;
+}
+
 void Utilities::toggleLauncherCount(QString string) {
     QDBusMessage signal = QDBusMessage::createSignal("/", "com.canonical.Unity.LauncherEntry", "Update");
     signal << "application://cumulus.desktop";
@@ -78,4 +96,26 @@ void Utilities::setLauncherCount(int temperature) {
     property.insert("count", qint64(temperature));
     signal << property;
     QDBusConnection::sessionBus().send(signal);
+}
+
+//Work in progress to hide the launcher count option from settings when not on Unity
+QString Utilities::launcherCountVisibility() {
+//    QProcess process;
+//    QStringList args;
+//    args << " -c " << "\"unity --version\"";
+//    process.start("/bin/sh -c \"unity --version\"");
+//    process.waitForFinished();
+//    QString string = "";
+
+//    if(process.error()) {
+//        qDebug() << "\"unity --version\" process error!";
+//        qDebug() << "Error message: " + process.errorString();
+//    }
+//    else {
+//        QByteArray data = process.readAllStandardOutput();
+//        if(data.isEmpty()) {
+//            string = "$(\".launcher\").hide()";
+//        }
+//    }
+    return "";
 }
