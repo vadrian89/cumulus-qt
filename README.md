@@ -28,6 +28,5 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 
 # TODO
 - Complete port to Qt
-- Hide Launcher option
 - Custom Color
 - Add another API
