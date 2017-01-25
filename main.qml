@@ -37,7 +37,7 @@ Window {
     maximumWidth: windowSize.width
     x: windowLocation.x
     y: windowLocation.y
-    visible: util.applicationVisiblity()
+    visible: util.applicationVisiblity() == false ? true : false
 
     Loader {
         id: viewLoader
@@ -54,6 +54,7 @@ Window {
         onCloseApp: window.close()
         onHideApp: window.visible = false
         onMinimizeApp: window.visibility = Window.Minimized
+        onChangeTrayVisibility: trayController.trayVisibility = util.applicationVisiblity()
     }
 
     MouseArea {
@@ -92,6 +93,7 @@ Window {
     TrayController {
         id: trayController
         startUp: true
+        trayVisibility: util.applicationVisiblity()
 
         onCloseApp: {
             Qt.quit()

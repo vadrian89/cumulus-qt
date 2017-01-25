@@ -12,6 +12,7 @@ WebEngineView {
     signal closeApp()
     signal hideApp()
     signal minimizeApp()
+    signal changeTrayVisibility()
 
     Component.onCompleted: {
         runJavaScript(util.launcherCountVisibility())
@@ -43,7 +44,7 @@ WebEngineView {
             root.trayIconChanged(title.substring(1,title.length))
         }
         else if (title == "close") {
-            if (util.applicationVisiblity() === true)
+            if (util.applicationVisiblity() === false)
                 root.closeApp()
             else
                 root.hideApp()
@@ -52,8 +53,9 @@ WebEngineView {
         else if (title == "minimize") {
             root.minimizeApp()
         }
-        else if (title == "show_launcher" || title == "hide_launcher") {
+        else if (title == "enable_tray" || title == "disable_tray") {
             util.saveApplicationVisibility(title)
+            root.changeTrayVisibility()
         }
     }
 }

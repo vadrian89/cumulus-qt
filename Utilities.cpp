@@ -63,12 +63,12 @@ void Utilities::saveApplicationVisibility(const QString &visiblity) {
 }
 
 bool Utilities::applicationVisiblity() {
-    bool result = true;
+    bool result = false;
     QSettings settings;
     settings.beginGroup("window-settings");
-    QString string = settings.value("close-to-tray", "show_launcher").toString();
-    if (string == "hide_launcher")
-        result = false;
+    QString string = settings.value("close-to-tray", "disable_tray").toString();
+    if (string == "enable_tray")
+        result = true;
     settings.endGroup();
     return result;
 }

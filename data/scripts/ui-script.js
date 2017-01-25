@@ -200,14 +200,14 @@ function init_settings() {
 
     if (localStorage.cumulus_tray == "checked") {
         $('#locationModal .launcher-to-tray input').attr("checked", "checked");
-        document.title = "hide_launcher";
+        document.title = "enable_tray";
     }
     $('#locationModal .launcher-to-tray input').click(function() {
         localStorage.cumulus_tray = $('#locationModal .launcher-to-tray input').attr("checked");
         if (localStorage.cumulus_tray == "checked") {
-            document.title = "hide_launcher";
+            document.title = "enable_tray";
         } else {
-            document.title = "show_launcher";
+            document.title = "disable_tray";
         }
     });
 }
@@ -269,7 +269,7 @@ function init_storage() {
     localStorage.cumulus_color =  localStorage.cumulus_color || "gradient";
     localStorage.cumulus_launcher = localStorage.cumulus_launcher || "unchecked";
     localStorage.cumulus_tray = localStorage.cumulus_tray || "unchecked";
-    localStorage.api = localStorage.api || "y";
+    localStorage.api = localStorage.api || "owm";
     localStorage.app_opacity = localStorage.app_opacity || "1.0";
     localStorage.weather_desc = localStorage.weather_desc || ""; 
 }

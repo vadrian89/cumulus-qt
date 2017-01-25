@@ -9,7 +9,7 @@ QString TrayController::icon() const {
 }
 
 void TrayController::setIcon(const QString &icon) {
-    if (m_icon != icon) {
+    if (m_icon != icon && icon.trimmed().size() > 0) {
         setTrayIcon(icon);
         emit iconChanged();
     }
@@ -28,14 +28,32 @@ void TrayController::setStartUp(const bool &startUp) {
     }
 }
 
+bool TrayController::trayVisibility() const {
+    return m_trayVisibility;
+}
+
+void TrayController::setTrayVisibility(const bool &trayVisibility) {
+    if (m_trayVisibility != trayVisibility) {
+        if (trayVisibility == true) {
+            enableTray();
+        }
+        else {
+            disableTray();
+        }
+        emit trayVisibilityChanged();
+    }
+}
+
 void TrayController::setTrayIcon(const QString &weather) {
-    worker = new ThreadWorker();
-    thread = new QThread(this);
-    connect(worker, SIGNAL(finishedCreatingPixmap(QPixmap)), this, SLOT(setTrayIcon(QPixmap)));
-    connect(thread, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    worker->moveToThread(thread);
-    thread->start();
-    worker->createWeatherPixmap(weather + "°");
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        worker = new ThreadWorker();
+        thread = new QThread(this);
+        connect(worker, SIGNAL(finishedCreatingPixmap(QPixmap)), this, SLOT(setTrayIcon(QPixmap)));
+        connect(thread, SIGNAL(finished()), worker, SLOT(deleteLater()));
+        worker->moveToThread(thread);
+        thread->start();
+        worker->createWeatherPixmap(weather + "°");
+    }
 }
 
 void TrayController::setTrayIcon(const QPixmap &pixmap) {
@@ -47,19 +65,28 @@ void TrayController::setTrayIcon(const QPixmap &pixmap) {
 void TrayController::initialiseTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         QIcon firstIcon(":/data/cumulus.svg");
-//        qDebug() << QApplication::applicationDirPath() + "/cumulus.svg";
-//        qDebug() << "exista " << QFile::exists(":/data/cumulus.svg");
         trayIcon = new QSystemTrayIcon();
         trayIcon->setIcon(firstIcon);
         QMenu *trayMenu = new QMenu();
-        QAction *showAction = new QAction("Show", this);
+        QAction *showAction = new QAction("Show", trayMenu);
         connect(showAction, SIGNAL(triggered(bool)), this, SLOT(emitShowGui()));
-        QAction *closeAction = new QAction("Close", this);
+        QAction *closeAction = new QAction("Close", trayMenu);
         connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(emitCloseApp()));
         trayMenu->addAction(showAction);
         trayMenu->addAction(closeAction);
         trayIcon->setContextMenu(trayMenu);
+    }
+}
+
+void TrayController::enableTray() {
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
         trayIcon->show();
+    }
+}
+
+void TrayController::disableTray() {
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        trayIcon->hide();
     }
 }
 
