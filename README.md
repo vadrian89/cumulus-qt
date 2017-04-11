@@ -24,26 +24,26 @@ Features:
 
 # For multiple instances:
 
-1. make a new shell script with the following content updated for Cumulus installation path
-#!/bin/bash
-<path-to-cumulus-executable> <whatever-you-want>
+1. make a new shell script with the following content updated for Cumulus installation path  
+#!/bin/bash  
+\<path-to-cumulus-executable> \<whatever-you-want>  
 
 Example: /home/user/Cumulus/Cumulus NewInstance
 
-2. make the shell script executable
-Is as easy right-click script -> Properties -> Permisions -> check as executable
+2. make the shell script executable  
+Is as easy right-click script -> Properties -> Permisions -> check as executable  
 
-<Optional>
-3. if you want it to start on login
+\<Optional>  
+3. if you want it to start on login  
 
-Add the following content to your <home-directory>/.profile file:
-if [ -f <path-to-shell-script> ]; then
-  <path-to-shell-script>
-fi
-Example:
-if [ -f /home/script.sh ]; then
-  /home/script.sh
-fi
+Add the following content to your \<home-directory>/.profile file:  
+if [ -f \<path-to-shell-script> ]; then  
+  \<path-to-shell-script>  
+fi  
+Example:  
+if [ -f /home/script.sh ]; then  
+  /home/script.sh  
+fi  
 This will check if the script exists, so in case you accidentally delete you will not be getting errors on login.
 
 # Major Thanks
