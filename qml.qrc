@@ -46,13 +46,12 @@
         <file>icons/Oxygen/32x32/storm-night.png</file>
         <file>icons/Oxygen/32x32/storm.png</file>
         <file>icons/Oxygen/128x128/few-clouds-day.png</file>
-        <file>ForecastItem.qml</file>
+        <file>ForecastDelegate.qml</file>
         <file>fonts/Ubuntu-C.ttf</file>
         <file>icons/icon.png</file>
         <file>SettingsWindow.qml</file>
         <file>SelectionButton.qml</file>
         <file>CustomBorder.qml</file>
-        <file>SettingsOptionTitle.qml</file>
         <file>MenuButton.qml</file>
         <file>main.qml</file>
         <file>ApplicationBar.qml</file>
@@ -73,5 +72,8 @@
         <file>icons/api.png</file>
         <file>icons/credits.png</file>
         <file>qt/etc/qt.conf</file>
+        <file>CreditsView.qml</file>
+        <file>CreditsListDelegate.qml</file>
+        <file>LinkedText.qml</file>
     </qresource>
 </RCC>

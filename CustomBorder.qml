@@ -23,18 +23,13 @@ import QtQuick 1.1
 
 Rectangle {
     property bool commonBorder : true
-
     property int lBorderwidth : 1
     property int rBorderwidth : 1
     property int tBorderwidth : 1
     property int bBorderwidth : 1
-
     property int commonBorderWidth : 1
-
-    z : -1
-
     property string borderColor : "white"
-
+    z : -1
     color: borderColor
 
     anchors {

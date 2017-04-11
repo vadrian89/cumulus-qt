@@ -33,6 +33,7 @@ WeatherType::WeatherType(QObject *parent) : QObject(parent){
     mapOwmIcons();
     mapNightIcons();
     loadData();
+    m_weatherApi = Util::getWeatherApi();
 }
 
 void WeatherType::getWeatherData(){
@@ -174,7 +175,7 @@ void WeatherType::loadData() {
     setTempMin(-1);
     setTempUnit(Util::temperatureUnitSymbol());
     setSpeedUnit(Util::speedUnitSymbol());
-    setLocationLink("www.google.ro");
+    setLocationLink("");
 }
 
 void WeatherType::loadData(QSqlQuery &query) {
@@ -674,6 +675,7 @@ QString WeatherType::weatherApi() const {
     return m_weatherApi;
 }
 
+#include <QDebug>
 void WeatherType::setWeatherApi(const QString &weatherApi) {
     if (m_weatherApi != weatherApi && clearLocationCode()) {
         m_weatherApi = weatherApi;

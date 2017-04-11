@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     CppFiles/ThreadWorker.cpp \
     CppFiles/WeatherType.cpp \
     CppFiles/AbstractWeatherController.cpp \
-    CppFiles/TrayController.cpp
+    CppFiles/TrayController.cpp \
+    CppFiles/CreditsAuthor.cpp
 
 RESOURCES += qml.qrc
 
@@ -36,7 +37,8 @@ HEADERS += \
     CppFiles/ThreadWorker.h \
     CppFiles/WeatherType.h \
     CppFiles/AbstractWeatherController.h \
-    CppFiles/TrayController.h
+    CppFiles/TrayController.h \
+    CppFiles/CreditsAuthor.h
 
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 

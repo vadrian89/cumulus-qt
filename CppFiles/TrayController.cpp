@@ -20,8 +20,6 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "TrayController.h"
-#include "ThreadWorker.h"
-
 TrayController::TrayController(QObject *parent) : QObject(parent) {
 }
 
@@ -53,7 +51,7 @@ bool TrayController::trayVisibility() const {
     return m_trayVisibility;
 }
 
-void TrayController::setTrayVisibility(const bool &trayVisibility) {
+void TrayController::setTrayVisibility(const bool &trayVisibility) {    
     if (m_trayVisibility != trayVisibility) {
         if (trayVisibility == true) {
             enableTray();
@@ -61,6 +59,7 @@ void TrayController::setTrayVisibility(const bool &trayVisibility) {
         else {
             disableTray();
         }
+        m_trayVisibility = trayVisibility;
         emit trayVisibilityChanged();
     }
 }
@@ -85,7 +84,7 @@ void TrayController::setTrayIcon(const QImage &image) {
 
 void TrayController::initialiseTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
-        QIcon firstIcon(":/icons/icon.png");
+        QIcon firstIcon(qApp->applicationDirPath() +"/cumulus.svg");
         trayIcon = new QSystemTrayIcon();
         trayIcon->setIcon(firstIcon);
         QMenu *trayMenu = new QMenu();

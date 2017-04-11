@@ -36,9 +36,11 @@
 
 void registerQmlType();
 
+#include <QDebug>
 int main(int argc, char *argv[]) {
+    QString applicationName = argc > 1 ? argv[1] : "Cumulus";
     QCoreApplication::setOrganizationName("Visoft");
-    QCoreApplication::setApplicationName("SWeather");
+    QCoreApplication::setApplicationName(applicationName);
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     Util util;    

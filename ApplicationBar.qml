@@ -106,7 +106,7 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onHoveredChanged: {
-                            if ( containsMouse == true ) {
+                            if (containsMouse == true) {
                                 parent.opacity = 1.0
                                 parent.color = "#33000000"
                             }
@@ -154,7 +154,7 @@ Item {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onHoveredChanged: {
-                        if ( containsMouse == true ) {
+                        if (containsMouse == true) {
                             parent.opacity = 1.0
                         }
                         else {

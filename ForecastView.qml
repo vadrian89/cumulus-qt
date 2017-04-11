@@ -42,7 +42,7 @@ Item {
         clip: true
         spacing: 0
         snapMode: ListView.SnapToItem
-        delegate: ForecastItem {
+        delegate: ForecastDelegate {
             height: forecastList.height
             width: delegateWidth
             stringFont: fontFamily

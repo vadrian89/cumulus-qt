@@ -31,6 +31,7 @@
 #include <QPainter>
 #include <QFont>
 #include <QApplication>
+#include <QSysInfo>
 
 class Util : public QObject {
     Q_OBJECT    
@@ -84,6 +85,7 @@ public:
     Q_INVOKABLE static QString getLogoImage(const QString &text, const QString &color);
     Q_INVOKABLE static QString getLogoImage();
     Q_INVOKABLE static bool trayVisibility();
+    Q_INVOKABLE static QList<QObject*> creditsList();
 };
 
 #endif // UTIL_H

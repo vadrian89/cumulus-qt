@@ -20,7 +20,7 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Util.h"
-#include <QSysInfo>
+#include "CreditsAuthor.h"
 
 Util::Util(QObject *parent) : QObject(parent){}
 
@@ -379,7 +379,7 @@ int Util::roundToInt(const double &unit) {
 
 QString Util::getLogoImage(const QString &text, const QString &color) {
     QImage image(268, 58, QImage::Format_ARGB32_Premultiplied);
-    QString imageUrl = "owm-built-logo.png";
+    QString imageUrl = "file://" + qApp->applicationDirPath() + "/owm-built-logo.png";
     QFont font;
     font.setPixelSize(24);
     image.fill(Qt::transparent);
@@ -397,7 +397,7 @@ QString Util::getLogoImage() {
     }
     else {
         getLogoImage("Provided by:\nOpenWeatherMap", textColor());
-        return "file://" + qApp->applicationDirPath() + "/" + getLogoImage("Provided by:\nOpenWeatherMap", textColor());
+        return getLogoImage("Provided by:\nOpenWeatherMap", textColor());
     }
 }
 
@@ -407,4 +407,51 @@ bool Util::trayVisibility() {
     bool visible = settings.value("tray", false).toBool();
     settings.endGroup();
     return visible;
+}
+
+QList<QObject*> Util::creditsList() {
+    QList<QObject*> list;
+    CreditsAuthor *vectorsMarket = new CreditsAuthor();
+    vectorsMarket->setAuthor("Vectors Market");
+    vectorsMarket->setAuthorUrl("http://www.flaticon.com/authors/vectors-market");
+    vectorsMarket->setLicense("CC 3.0 BY");
+    vectorsMarket->setIcon("map.svg");
+    CreditsAuthor *madebyoliver1 = new CreditsAuthor();
+    madebyoliver1->setAuthor("Madebyoliver");
+    madebyoliver1->setAuthorUrl("http://www.flaticon.com/authors/madebyoliver");
+    madebyoliver1->setLicense("CC 3.0 BY");
+    madebyoliver1->setIcon("settings-white.svg");
+    CreditsAuthor *madebyoliver2 = new CreditsAuthor();
+    madebyoliver2->setAuthor("Madebyoliver");
+    madebyoliver2->setAuthorUrl("http://www.flaticon.com/authors/madebyoliver");
+    madebyoliver2->setLicense("CC 3.0 BY");
+    madebyoliver2->setIcon("speed-icon.png");
+    CreditsAuthor *pixelBuddha = new CreditsAuthor();
+    pixelBuddha->setAuthor("Pixel Buddha");
+    pixelBuddha->setAuthorUrl("http://www.flaticon.com/authors/pixel-buddha");
+    pixelBuddha->setLicense("CC 3.0 BY");
+    pixelBuddha->setIcon("temperature-icon.png");
+    CreditsAuthor *baianat = new CreditsAuthor();
+    baianat->setAuthor("Baianat");
+    baianat->setAuthorUrl("http://www.flaticon.com/authors/baianat");
+    baianat->setLicense("CC 3.0 BY");
+    baianat->setIcon("palette.png");
+    CreditsAuthor *popcornsArts = new CreditsAuthor();
+    popcornsArts->setAuthor("Popcorns Arts");
+    popcornsArts->setAuthorUrl("http://www.flaticon.com/authors/popcorns-arts");
+    popcornsArts->setLicense("CC 3.0 BY");
+    popcornsArts->setIcon("api.png");
+    CreditsAuthor *freepik = new CreditsAuthor();
+    freepik->setAuthor("Freepik");
+    freepik->setAuthorUrl("http://www.freepik.com");
+    freepik->setLicense("CC 3.0 BY");
+    freepik->setIcon("credits.png");
+    list.append(vectorsMarket);
+    list.append(madebyoliver1);
+    list.append(madebyoliver2);
+    list.append(pixelBuddha);
+    list.append(baianat);
+    list.append(popcornsArts);
+    list.append(freepik);
+    return list;
 }

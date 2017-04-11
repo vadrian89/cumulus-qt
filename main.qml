@@ -23,6 +23,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.0
+import QtQuick.Dialogs 1.2
 
 import ownTypes.settingsController 0.5
 import ownTypes.TrayController 0.1
@@ -43,7 +44,7 @@ ApplicationWindow {
     y: mainWindowLocation.y
     title: qsTr("Cumulus")
     color: "transparent"
-    flags: Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
+    flags: Qt.FramelessWindowHint
 
     FontLoader {
         id: ubuntuCondensed
@@ -81,14 +82,10 @@ ApplicationWindow {
             height: 30
             textColor: applicationSettingsController.textColor
             iconsFont: weatherIcons.name
-            onMenuButtonClicked: {
-                settingsView.visible = true
-            }
+            onMenuButtonClicked: settingsViewDialog.visible = true
             onCloseButtonClicked: mainWindow.close()
             onMinimizeButtonClicked: mainWindow.visibility = Window.Minimized
-            onRefreshButtonClicked: {
-                weatherView.updateWeather()
-            }
+            onRefreshButtonClicked: weatherView.updateWeather()
             moveControlAlias.acceptedButtons: Qt.LeftButton
             property point clickPos
             moveControlAlias.onPressed: {
@@ -118,97 +115,115 @@ ApplicationWindow {
                 mainWindow.minimumHeight = winMinHeight
                 mainWindow.minimumWidth = winMinWidth
             }
-            animationAlias.onStopped: {
-                weatherView.loadingEnded = true
-            }
-            animationAlias.onStarted: {
-                weatherView.loadingEnded = false
-            }
+            animationAlias.onStopped: weatherView.loadingEnded = true
+            animationAlias.onStarted: weatherView.loadingEnded = false
         }
 
-        Flickable {
-            id: bodyView
+        StackView {
+            id: appView
+            width: parent.width
+            height: parent.height - applicationBar.height
+            initialItem: bodyView
             anchors.top: applicationBar.bottom
-            width: appBody.width
-            height: appBody.height - applicationBar.height
-            contentHeight: height
-            contentWidth: width
-            interactive: false
-            contentX: 0
+            Flickable {
+                id: bodyView
+                contentHeight: height
+                contentWidth: width
+                interactive: false
+                contentX: 0
 
-            WeatherWindow {
-                id: weatherView
-                width: bodyView.width
-                height: bodyView.height
-                textColor: applicationSettingsController.textColor
-                textFontFamily: ubuntuCondensed.name
-                iconsFont: weatherIcons.name                
-                speedUnit: settingsView.speedUnit
-                visible: false
-                widthBreakPoint: mainWindow.widthBreakPoint
-                Keys.onBackPressed: {
-                    Qt.quit()
-                }
-                onNoLocationDetected: {
-                    visible = false
-                    settingsView.visible = true
-                    settingsView.searchLocationAlias.visible = true
-                    applicationBar.menuButtonAlias.visible = false
-                    applicationBar.refreshButtonAlias.visible = false
-                }
-                onFinishedWeatherUpdate: {
-                    visible = true
-                    applicationBar.menuButtonAlias.visible = true
-                    applicationBar.refreshButtonAlias.visible = true
-                }
-                onUpdateWeather: {
-                    if (applicationBar.animationAlias.running == false) {
-                        applicationBar.animationAlias.start()
-                        applicationBar.animationAlias.loops = RotationAnimation.Infinite
+                WeatherWindow {
+                    id: weatherView
+                    width: bodyView.width
+                    height: bodyView.height
+                    textColor: applicationSettingsController.textColor
+                    textFontFamily: ubuntuCondensed.name
+                    iconsFont: weatherIcons.name
+                    speedUnit: settingsView.speedUnit
+                    widthBreakPoint: mainWindow.widthBreakPoint
+                    visible: false
+                    onNoLocationDetected: {
+                        settingsViewDialog.visible = true
+                        settingsView.searchLocationAlias.visible = true
+                        applicationBar.menuButtonAlias.visible = false
+                        applicationBar.refreshButtonAlias.visible = false
+                    }
+                    onFinishedWeatherUpdate: {
+                        visible = true
+                        applicationBar.menuButtonAlias.visible = true
+                        applicationBar.refreshButtonAlias.visible = true
+                    }
+                    onUpdateWeather: {
+                        if (applicationBar.animationAlias.running == false) {
+                            applicationBar.animationAlias.start()
+                            applicationBar.animationAlias.loops = RotationAnimation.Infinite
+                        }
+                    }
+                    onDataDownloadFinished: {
+                        applicationBar.animationAlias.stop()
+                        timer.interval = 3600000
                     }
                 }
-                onDataDownloadFinished: {
-                    applicationBar.animationAlias.stop()
-                    timer.interval = 3600000
+            }
+
+
+        }
+    }
+    Component.onCompleted: weatherView.updateWeather()
+
+    Dialog {
+        id: settingsViewDialog
+        width: 300
+        height: 500
+        visible: false
+        modality: Qt.ApplicationModal
+        contentItem: SettingsWindow {
+            id: settingsView
+            anchors.fill: parent
+            visible: true
+            onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
+            onLocationChanged: {
+                weatherView.updateWeather()
+                settingsViewDialog.visible = false
+            }
+            onTextColorChanged: applicationSettingsController.textColor = textColor
+            onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
+            onTemperatureUnitChanged: {
+                if (settingsViewDialog.visible == true) {
+                    weatherView.changeTempUnit(settingsView.temperatureUnit)
                 }
             }
-        }
-        Timer {
-            id: timer
-            interval: 3600000
-            running: true
-            repeat: true
-            onTriggered: weatherView.updateWeather()
+            onSpeedUnitChanged: {
+                if (settingsViewDialog.visible == true) {
+                    weatherView.changeSpeedUnit(settingsView.speedUnit)
+                }
+            }
+            onApiChanged: {
+                if (settingsViewDialog.visible == true) {
+                    weatherView.weatherApi = api
+                }
+            }
+            onShowCredits: creditsViewDialog.visible = true
+            Keys.onEscapePressed: settingsViewDialog.visible = false
         }
     }
 
-    SettingsWindow {
-        id: settingsView
-        width: mainWindow.width >= 300 ? mainWindow.width : 300
-        height: mainWindow.height >= 500 ? mainWindow.height : 500
-        onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
-        onLocationChanged: {
-            weatherView.updateWeather()
-            visible = false
+    Dialog {
+        id: creditsViewDialog
+        width: settingsView.width
+        height: settingsView.height
+        visible: false
+        modality: Qt.ApplicationModal
+        contentItem: CreditsView {
+            id: creditsView
+            anchors.fill: parent
+            visible: true
+            textColor: applicationSettingsController.textColor
+            backgroundColor: applicationSettingsController.applicationBackground
+            Keys.onEscapePressed: creditsViewDialog.visible = false
         }
-        onTextColorChanged: applicationSettingsController.textColor = textColor
-        onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
-        onTemperatureUnitChanged: {
-            if (visible == true) {
-                weatherView.changeTempUnit(settingsView.temperatureUnit)
-            }
-        }
-        onSpeedUnitChanged: {
-            if (visible == true) {
-                weatherView.changeSpeedUnit(settingsView.speedUnit)
-            }
-        }
-        onApiChanged: {
-            if (visible == true) {
-                weatherView.weatherApi = api
-            }
-        }        
     }
+
     TrayController {
         id: trayController
         startUp: true        
@@ -216,5 +231,13 @@ ApplicationWindow {
         icon: weatherView.tempValue
         onCloseApp: Qt.quit()
         onShowGui: mainWindow.visible = true
+    }
+
+    Timer {
+        id: timer
+        interval: 3600000
+        running: true
+        repeat: true
+        onTriggered: weatherView.updateWeather()
     }
 }

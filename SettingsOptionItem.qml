@@ -50,8 +50,6 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 anchors.leftMargin: (parent.width - (parent.width * 80 / 100)) / 2
                 anchors.left: parent.left
-//                sourceSize.width: optionIcon.width
-//                sourceSize.height: height
             }
             Text {
                 id: optionText

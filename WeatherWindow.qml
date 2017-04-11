@@ -34,7 +34,7 @@ Item {
     property string textFontFamily
     property string textColor    
     property string speedUnit: util.getWindSpeedUnit()    
-    property string weatherApi: util.getWeatherApi()
+    property alias weatherApi: weatherController.weatherApi
     property int widthBreakPoint: 170
     property int locationHeight: Math.round(root.height * 10 / 100)
     property int weatherInfoHeight: Math.round(root.height * 50 / 100)
@@ -50,8 +50,6 @@ Item {
     signal dataDownloadFinished()
     signal changeTempUnit(string unit)
     signal changeSpeedUnit(string unit)
-
-
 
     Text {
         id: locationText
@@ -270,7 +268,6 @@ Item {
 
     Weather {
         id: weatherController
-        weatherApi: root.weatherApi
         onNoLocationSet: root.noLocationDetected()
         onDataDownloadFinished: root.dataDownloadFinished()
         onWeatherApiChanged: updateWeather()

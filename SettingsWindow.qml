@@ -26,10 +26,9 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
-Dialog {
-    id: rootDialog
-    modality: Qt.ApplicationModal
-    visible: false    
+Item {
+    id: root
+    visible: false
     property alias searchLocationAlias: searchLocation
     property alias settingsFlickAlias: settingsFlick
     property alias trayVisible: traySwitch.checked
@@ -39,20 +38,20 @@ Dialog {
     property string temperatureUnit: util.getTemperatureUnit()
     property string api: util.getWeatherApi()
     property int settingsItemHeight: 64
-    signal opacityChanged(real opacity)
     signal locationChanged()
+    signal showCredits()
 
-    contentItem: Rectangle {
-        id: root
+    Rectangle {
+        id: settingsOptionsView
         anchors.fill: parent
-        color: rootDialog.backgroundColor.length > 7 ? "#" + rootDialog.backgroundColor.substring(3) : rootDialog.backgroundColor
+        color: root.backgroundColor.length > 7 ? "#" + root.backgroundColor.substring(3) : root.backgroundColor
 
         Flickable {
             id: settingsFlick
             contentHeight: settingsBody.childrenRect.height
-            contentWidth: rootDialog.width
-            width: rootDialog.width
-            height: rootDialog.height
+            contentWidth: root.width
+            width: root.width
+            height: root.height
 
             Rectangle {
                 id: settingsBody
@@ -66,7 +65,7 @@ Dialog {
                     optionText: "Location"
                     backgroundColor: "#ffffff"
                     anchors.top: settingsBody.top
-                    height: rootDialog.settingsItemHeight
+                    height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: "icons/map.svg"
                     onClicked: {
@@ -84,8 +83,8 @@ Dialog {
                     height: settingsBody.height - locationSearchItem.height
                     width: settingsBody.width
                     visible: false
-                    backgroundColor: rootDialog.backgroundColor
-                    textColor: rootDialog.textColor
+                    backgroundColor: root.backgroundColor
+                    textColor: root.textColor
 
                     Keys.onEscapePressed: {
                         searchLocation.visible = false
@@ -95,7 +94,7 @@ Dialog {
                     }
                     onVisibleChanged: {
                         if(searchLocation.visible == false) {
-                            parent.focus = true
+                            root.focus = true
                             tempUnitItem.anchors.top = locationSearchItem.bottom
                             locationSearchItem.bottomBorderVisibility = true
                         }
@@ -105,7 +104,7 @@ Dialog {
                         }
                     }
                     onLocationSelected: {
-                        rootDialog.locationChanged()
+                        root.locationChanged()
                         searchLocation.visible = false
                     }
                 }
@@ -115,7 +114,7 @@ Dialog {
                     optionText: "Temperature Unit"
                     backgroundColor: "#ffffff"
                     anchors.top: locationSearchItem.bottom
-                    height: rootDialog.settingsItemHeight
+                    height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: "icons/temperature-icon.png"
                     onClicked: {
@@ -138,7 +137,7 @@ Dialog {
                     anchors.leftMargin: width / 2
                     visible: false
                     model: [ "°F", "°C" ]
-//                    model: [ "°F", "°C", "°K" ]
+                    //                    model: [ "°F", "°C", "°K" ]
                     onVisibleChanged: {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom
@@ -155,13 +154,13 @@ Dialog {
                         if (visible == true) {
                             switch (currentIndex) {
                             case 0:
-                                rootDialog.temperatureUnit = "f"
+                                root.temperatureUnit = "f"
                                 break;
                             case 1:
-                                rootDialog.temperatureUnit = "c"
+                                root.temperatureUnit = "c"
                                 break;
                             default:
-                                rootDialog.temperatureUnit = "k"
+                                root.temperatureUnit = "k"
                                 break;
                             }
                         }
@@ -173,7 +172,7 @@ Dialog {
                     optionText: "Speed Unit"
                     backgroundColor: "#ffffff"
                     anchors.top: tempUnitItem.bottom
-                    height: rootDialog.settingsItemHeight
+                    height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: "icons/speed-icon.png"
                     onClicked: {
@@ -212,13 +211,13 @@ Dialog {
                         if (visible == true) {
                             switch (currentIndex) {
                             case 0:
-                                rootDialog.speedUnit = "mph"
+                                root.speedUnit = "mph"
                                 break;
                             case 1:
-                                rootDialog.speedUnit = "kph"
+                                root.speedUnit = "kph"
                                 break;
                             default:
-                                rootDialog.speedUnit = "m/s"
+                                root.speedUnit = "m/s"
                                 break;
                             }
                         }
@@ -230,7 +229,7 @@ Dialog {
                     optionText: "Colors"
                     backgroundColor: "#ffffff"
                     anchors.top: speedUnitItem.bottom
-                    height: rootDialog.settingsItemHeight
+                    height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: "icons/palette.png"
                     onClicked: {
@@ -259,8 +258,8 @@ Dialog {
                         Layout.preferredHeight: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                         text: "Background"
-                        textColor: rootDialog.textColor
-                        backgroundColor: rootDialog.backgroundColor
+                        textColor: root.textColor
+                        backgroundColor: root.backgroundColor
                         onClicked: {
                             colorDialog.purpose = "background"
                             colorDialog.showAlphaChannel = true
@@ -275,8 +274,8 @@ Dialog {
                         Layout.preferredHeight: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                         text: "Text"
-                        textColor: rootDialog.textColor
-                        backgroundColor: rootDialog.textColor
+                        textColor: root.textColor
+                        backgroundColor: root.textColor
                         onClicked: {
                             colorDialog.purpose = "text"
                             colorDialog.color = util.textColor()
@@ -302,7 +301,7 @@ Dialog {
                     optionText: "API"
                     backgroundColor: "#ffffff"
                     anchors.top: colorPalettesItem.bottom
-                    height: rootDialog.settingsItemHeight
+                    height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: "icons/api.png"
                     onClicked: {
@@ -313,7 +312,6 @@ Dialog {
                             apiSelect.visible = false
                         }
                     }
-                    bottomBorderVisibility: false
                 }
 
                 ComboBox {
@@ -329,22 +327,24 @@ Dialog {
                         if (visible == true) {
                             switch (currentIndex) {
                             case 1:
-                                rootDialog.api = "y"
+                                root.api = "y"
                                 break;
                             default:
-                                rootDialog.api = "owm"
+                                root.api = "owm"
                                 break;
                             }
                         }
                     }
                     onVisibleChanged: {
                         if(apiSelect.visible == false) {
-                            traySwitchLayout.anchors.top = apiSelectItem.bottom
-                            traySwitchLayout.anchors.topMargin = 0
+                            creditsItem.anchors.top = apiSelectItem.bottom
+                            creditsItem.anchors.topMargin = 0
+                            apiSelectItem.bottomBorderVisibility = true
                         }
                         else {
-                            traySwitchLayout.anchors.top = apiSelect.bottom
-                            traySwitchLayout.anchors.topMargin = 5
+                            creditsItem.anchors.top = apiSelect.bottom
+                            creditsItem.anchors.topMargin = 5
+                            apiSelectItem.bottomBorderVisibility = false
                         }
                     }
                 }
@@ -357,13 +357,26 @@ Dialog {
                     }
                 }
 
+                SettingsOptionItem {
+                    id: creditsItem
+                    optionText: "Credits"
+                    backgroundColor: "#ffffff"
+                    anchors.top: apiSelectItem.bottom
+                    height: root.settingsItemHeight
+                    width: settingsBody.width
+                    iconUrl: "icons/credits.png"
+                    bottomBorderVisibility: false
+                    onClicked: root.showCredits()
+                }
+
                 RowLayout {
                     id: traySwitchLayout
-                    anchors.top: apiSelectItem.bottom
+                    anchors.top: creditsItem.bottom
                     width: settingsBody.width * 80 / 100
                     height: 50
                     anchors.left: parent.left
                     anchors.leftMargin: (settingsBody.width - traySwitchLayout.width) / 2
+                    visible: util.osType() === "android" ? false : true
                     Text {
                         text: "Enable Tray"
                         Layout.fillHeight: true
@@ -372,6 +385,7 @@ Dialog {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         Layout.alignment: Qt.AlignCenter
+                        visible: util.osType() === "android" ? false : true
                     }
                     Switch {
                         id: traySwitch
@@ -379,34 +393,25 @@ Dialog {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignCenter
                         checked: util.trayVisibility()
+                        visible: util.osType() === "android" ? false : true
                     }
-                }
-
-                SettingsOptionItem {
-                    id: creditsItem
-                    optionText: "Credits"
-                    backgroundColor: "#ffffff"
-                    anchors.top: traySwitchLayout.bottom
-                    height: rootDialog.settingsItemHeight
-                    width: settingsBody.width
-                    iconUrl: "icons/credits.png"
                 }
             }
         }
-
-        ColorDialog {
-            id: colorDialog
-            title: "Please choose a color"
-            showAlphaChannel: true
-            modality: Qt.ApplicationModal
-            property string purpose
-            onCurrentColorChanged: {
-                if (purpose == "background") {
-                    rootDialog.backgroundColor = currentColor
-                }
-                else {
-                    rootDialog.textColor = currentColor
-                }
+    }
+    ColorDialog {
+        id: colorDialog
+        title: "Please choose a color"
+        showAlphaChannel: true
+        modality: Qt.ApplicationModal
+        property string purpose
+        onVisibleChanged: visible == false ? root.focus = true : root.focus = false
+        onAccepted: {
+            if (purpose == "background") {
+                root.backgroundColor = currentColor
+            }
+            else {
+                root.textColor = currentColor
             }
         }
     }
