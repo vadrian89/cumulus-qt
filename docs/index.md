@@ -32,8 +32,10 @@ This is a port to Qt/Qml of the [original cumulus](legacy_cumulus.md)
 To update properly please reinstall, otherwise update application and reinstall libraries only
 
 ## Known Issues
-- Notice for Xfce users:
-You will get an error message, this is due to a script which creates an entry into ".config/autostart/" so it will start on login, simply select ignore and the installer will finish. You will have to manually set to start on login.
+- Notice for Xfce and other desktop environments, users:
+You will get an error message, this is due to a script which creates an entry into ".config/autostart/" so it will start on login, simply select ignore and the installer will finish. You will have to manually set to start on login from the desktop. 
+- There is an issue with Cumulus main window not being able to resize, possible on heavy Gnome based desktop environments.  
+- Missing Open Weather Map emblem leaving a gap between forecast a bottom border.
 
 ## History
 Forked from [typhoon](https://github.com/apandada1/typhoon) which was
