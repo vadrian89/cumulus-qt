@@ -53,8 +53,8 @@ This will check if the script exists, so in case you accidentally delete you wil
 which sadly has discontinued support for them
 
 # Known Issues
-
-Will be updated once the new version is live
+- There is an issue with Cumulus main window not being able to resize, possible on heavy Gnome based desktop environments.  
+- Missing Open Weather Map emblem leaving a gap between forecast a bottom border.  
 
 # TODO
 - Add another API
