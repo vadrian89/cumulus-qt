@@ -22,7 +22,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
-import QtQuick.Window 2.0
+import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
 import ownTypes.settingsController 0.5
@@ -35,6 +35,8 @@ ApplicationWindow {
     property int winMinHeight: 150
     property int winMinWidth: 140
     property int widthBreakPoint: 170
+    property int minimumX: (Screen.width - Screen.desktopAvailableWidth)
+    property int minimumY: (Screen.height - Screen.desktopAvailableHeight)
     visible: util.trayVisibility() == true ? false : true
     minimumHeight: winMinHeight
     minimumWidth: winMinWidth
@@ -44,12 +46,13 @@ ApplicationWindow {
     y: mainWindowLocation.y
     title: qsTr("Cumulus")
     color: "transparent"
-    flags: Qt.FramelessWindowHint
+    flags: Qt.CustomizeWindowHint
 
     FontLoader {
         id: ubuntuCondensed
         source: "fonts/Ubuntu-C.ttf"
     }
+
     FontLoader {
         id: weatherIcons
         source: "fonts/weathericons-regular-webfont.ttf"
@@ -61,7 +64,7 @@ ApplicationWindow {
     }
 
     onClosing: {
-        util.saveWindowSize(Qt.size(width, height))
+        util.saveWindowSize(Qt.size(mainWindow.width, mainWindow.height))
         if (applicationSettingsController.trayVisibility == true) {
             visible = false
         }
@@ -102,13 +105,13 @@ ApplicationWindow {
                 mainWindow.y = mainWindow.y + delta.y
             }
             moveControlAlias.onReleased: {
-                if (mainWindow.x < 70 ) {
-                    mainWindow.x = 0
+                if (mainWindow.x <= minimumX ) {
+                    mainWindow.x = minimumX
                 }
-                if (mainWindow.y < 70 ) {
-                    mainWindow.y = 0
+                if (mainWindow.y <= minimumY ) {
+                    mainWindow.y = minimumY
                 }
-                util.saveWindowLocation(Qt.point(mainWindow.x, mainWindow.y));
+                util.saveWindowLocation(Qt.point(mainWindow.x, mainWindow.y))
                 moveControlAlias.cursorShape = Qt.ArrowCursor
                 mainWindow.maximumHeight = Screen.desktopAvailableHeight
                 mainWindow.maximumWidth = Screen.desktopAvailableWidth
@@ -119,54 +122,48 @@ ApplicationWindow {
             animationAlias.onStarted: weatherView.loadingEnded = false
         }
 
-        StackView {
-            id: appView
+        Flickable {
+            id: bodyView
+            anchors.top: applicationBar.bottom
             width: parent.width
             height: parent.height - applicationBar.height
-            initialItem: bodyView
-            anchors.top: applicationBar.bottom
-            Flickable {
-                id: bodyView
-                contentHeight: height
-                contentWidth: width
-                interactive: false
-                contentX: 0
+            contentHeight: bodyView.height
+            contentWidth: bodyView.width
+            interactive: false
+            contentX: 0
 
-                WeatherWindow {
-                    id: weatherView
-                    width: bodyView.width
-                    height: bodyView.height
-                    textColor: applicationSettingsController.textColor
-                    textFontFamily: ubuntuCondensed.name
-                    iconsFont: weatherIcons.name
-                    speedUnit: settingsView.speedUnit
-                    widthBreakPoint: mainWindow.widthBreakPoint
-                    visible: false
-                    onNoLocationDetected: {
-                        settingsViewDialog.visible = true
-                        settingsView.searchLocationAlias.visible = true
-                        applicationBar.menuButtonAlias.visible = false
-                        applicationBar.refreshButtonAlias.visible = false
-                    }
-                    onFinishedWeatherUpdate: {
-                        visible = true
-                        applicationBar.menuButtonAlias.visible = true
-                        applicationBar.refreshButtonAlias.visible = true
-                    }
-                    onUpdateWeather: {
-                        if (applicationBar.animationAlias.running == false) {
-                            applicationBar.animationAlias.start()
-                            applicationBar.animationAlias.loops = RotationAnimation.Infinite
-                        }
-                    }
-                    onDataDownloadFinished: {
-                        applicationBar.animationAlias.stop()
-                        timer.interval = 3600000
+            WeatherWindow {
+                id: weatherView
+                width: bodyView.width
+                height: bodyView.height
+                textColor: applicationSettingsController.textColor
+                textFontFamily: ubuntuCondensed.name
+                iconsFont: weatherIcons.name
+                speedUnit: settingsView.speedUnit
+                widthBreakPoint: mainWindow.widthBreakPoint
+                visible: false
+                onNoLocationDetected: {
+                    settingsViewDialog.visible = true
+                    settingsView.searchLocationAlias.visible = true
+                    applicationBar.menuButtonAlias.visible = false
+                    applicationBar.refreshButtonAlias.visible = false
+                }
+                onFinishedWeatherUpdate: {
+                    visible = true
+                    applicationBar.menuButtonAlias.visible = true
+                    applicationBar.refreshButtonAlias.visible = true
+                }
+                onUpdateWeather: {
+                    if (applicationBar.animationAlias.running == false) {
+                        applicationBar.animationAlias.start()
+                        applicationBar.animationAlias.loops = RotationAnimation.Infinite
                     }
                 }
+                onDataDownloadFinished: {
+                    applicationBar.animationAlias.stop()
+                    timer.interval = 3600000
+                }
             }
-
-
         }
     }
     Component.onCompleted: weatherView.updateWeather()

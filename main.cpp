@@ -33,12 +33,15 @@
 #include "CppFiles/SearchLocation.h"
 #include "CppFiles/TrayController.h"
 #include "CppFiles/ThreadWorker.h"
+#include "CppFiles/CustomImageProvider.h"
 
 void registerQmlType();
 
-#include <QDebug>
 int main(int argc, char *argv[]) {
-    QString applicationName = argc > 1 ? argv[1] : "Cumulus";
+    QString applicationName = "Cumulus";
+    if (argc > 2 && QString::fromLatin1(argv[2]) == "-i") {
+        applicationName = argv[3];
+    }
     QCoreApplication::setOrganizationName("Visoft");
     QCoreApplication::setApplicationName(applicationName);
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -46,6 +49,7 @@ int main(int argc, char *argv[]) {
     Util util;    
     QThread thread;
     QQmlApplicationEngine engine;
+    engine.addImageProvider(QLatin1String("customimage"), new CustomImageProvider());
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("util", &util);
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");

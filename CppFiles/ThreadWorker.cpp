@@ -68,11 +68,16 @@ void ThreadWorker::startLookingForUpdates() {
 
 void ThreadWorker::createWeatherPixmap(const QString &weather) {
     QImage image(22, 22, QImage::Format_ARGB32_Premultiplied);
+    QFont font;
+    font.setPixelSize(14);
+    font.setFamily("Arial");
+    font.setBold(true);
     image.fill(Qt::transparent);
     QPainter painter(&image);
+    painter.setFont(font);
     painter.setPen(QColor(Qt::white));
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawText(QRect(0,0, 22, 22), Qt::AlignCenter, weather);
+    painter.drawText(image.rect(), Qt::AlignCenter, weather);
     emit finishedCreatingPixmap(image);
     emit stopThread();
 }
