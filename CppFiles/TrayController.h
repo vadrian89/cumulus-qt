@@ -38,11 +38,10 @@
 class TrayController : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(bool startUp READ startUp WRITE setStartUp NOTIFY startUpChanged)
     Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
 
     QString m_icon;
-    bool m_startUp, m_trayVisibility;
+    bool m_trayVisibility;
     QSystemTrayIcon *trayIcon;
 
     void initialiseTray();
@@ -66,7 +65,6 @@ private slots:
     void setTrayIcon(const QImage &image);
 signals:
     void iconChanged();
-    void startUpChanged();
     void trayVisibilityChanged();
     void closeApp();
     void showGui();

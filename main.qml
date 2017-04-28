@@ -26,7 +26,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
 import ownTypes.settingsController 0.5
-import ownTypes.TrayController 0.1
+import ownTypes.TrayController 0.2
 
 ApplicationWindow {
     id: mainWindow
@@ -223,7 +223,6 @@ ApplicationWindow {
 
     TrayController {
         id: trayController
-        startUp: true        
         trayVisibility: applicationSettingsController.trayVisibility
         icon: weatherView.tempValue
         onCloseApp: Qt.quit()

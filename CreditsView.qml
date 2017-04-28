@@ -27,7 +27,7 @@ import QtQuick.Layouts 1.1
 Item {
     id: rootDialog
     visible: false
-    property string appVersion: "3.0.1"
+    property string appVersion: "3.0.2"
     property string textColor: util.textColor()
     property string backgroundColor: util.backgroundColor()
     property int contentWidth: rootDialog.width * 90 / 100

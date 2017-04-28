@@ -20,7 +20,12 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "TrayController.h"
+#include "Util.h"
+
+#include <QDebug>
 TrayController::TrayController(QObject *parent) : QObject(parent) {
+    trayIcon = NULL;
+    setTrayVisibility(Util::trayVisibility());
 }
 
 QString TrayController::icon() const {
@@ -29,21 +34,9 @@ QString TrayController::icon() const {
 
 void TrayController::setIcon(const QString &icon) {
     if (m_icon != icon && icon.trimmed().size() > 0) {
+        m_icon = icon;
         setTrayIcon(icon);
         emit iconChanged();
-    }
-}
-
-bool TrayController::startUp() const {
-    return m_startUp;
-}
-
-void TrayController::setStartUp(const bool &startUp) {
-    if (m_startUp != startUp) {
-        if (startUp == true) {
-            initialiseTray();
-        }
-        emit startUpChanged();
     }
 }
 
@@ -51,13 +44,16 @@ bool TrayController::trayVisibility() const {
     return m_trayVisibility;
 }
 
-void TrayController::setTrayVisibility(const bool &trayVisibility) {    
-    if (m_trayVisibility != trayVisibility) {
+void TrayController::setTrayVisibility(const bool &trayVisibility) {
+    if (m_trayVisibility != trayVisibility) {        
         if (trayVisibility == true) {
+            if (trayIcon == NULL)
+                initialiseTray();
             enableTray();
         }
         else {
-            disableTray();
+            if (trayIcon != NULL)
+                disableTray();
         }
         m_trayVisibility = trayVisibility;
         emit trayVisibilityChanged();
@@ -77,7 +73,8 @@ void TrayController::setTrayIcon(const QString &weather) {
 }
 
 void TrayController::setTrayIcon(const QImage &image) {
-    trayIcon->setIcon(QIcon(QPixmap::fromImage(image)));
+    if (trayIcon != NULL)
+        trayIcon->setIcon(QIcon(QPixmap::fromImage(image)));
     thread->quit();
     thread->wait();
 }
@@ -101,12 +98,15 @@ void TrayController::initialiseTray() {
 void TrayController::enableTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         trayIcon->show();
+        setTrayIcon(m_icon);
     }
 }
 
 void TrayController::disableTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         trayIcon->hide();
+        delete trayIcon;
+        trayIcon = NULL;
     }
 }
 
