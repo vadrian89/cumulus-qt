@@ -1,6 +1,6 @@
 # Update
-
-[Online installer for x64 bit Linux distributions](https://github.com/vadrian89/cumulus-qt/releases/tag/2.0.1a) is live.  
+[Offline installer for x64 bit Linux distributions](https://github.com/vadrian89/cumulus-qt/releases/tag/v3.0.2).  
+[Online installer for x64 bit Linux distributions](https://github.com/vadrian89/cumulus-qt/releases/tag/V3.0.2).  
 Online installer for x32 bit Linux distributions To Be Decided.
 
 To update properly please reinstall, otherwise update application and reinstall libraries only.
@@ -34,6 +34,7 @@ Example: /home/user/Cumulus/Cumulus NewInstance
 Is as easy right-click script -> Properties -> Permisions -> check as executable  
 
 \<Optional>  
+
 3. if you want it to start on login  
 
 Add the following content to your \<home-directory>/.profile file:  
