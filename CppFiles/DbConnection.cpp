@@ -20,12 +20,16 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "DbConnection.h"
+#include "Util.h"
 #include <QApplication>
-
 #include <QDebug>
+
 DbConnection::DbConnection(QObject *parent) : QObject(parent){
     QString appName = QApplication::applicationName();
-    QString databaseName = QApplication::applicationDirPath() + "/" + appName + "-local.db";
+    QString databaseName = appName + "-local.db";
+    if (Util::osType() != "android") {
+        databaseName = QApplication::applicationDirPath() + "/" + appName + "-local.db";
+    }
     db = QSqlDatabase::database();
     if (db.isValid() == false) {
         db = QSqlDatabase::addDatabase("QSQLITE");

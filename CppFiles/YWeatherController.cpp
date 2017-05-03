@@ -30,12 +30,12 @@ YWeatherController::YWeatherController(QObject *parent) : AbstractWeatherControl
 
 void YWeatherController::searchByLocation(QString &location) {
     operationData = OperationData::GetLocationId;
-    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select woeid from geo.places(1) where text='" + location + "'&format=json&env=store://datatables.org/alltableswithkeys");
+    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select woeid from geo.places(1) where text='" + location + "'&format=json");
 }
 
 void YWeatherController::searchBycode(QString &code) {
     operationData = OperationData::GetWeather;
-    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=" + code +"&format=json&env=store://datatables.org/alltableswithkeys");
+    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=" + code +"&format=json");
 }
 
 void YWeatherController::readJsonData(QJsonObject jsonObject) {

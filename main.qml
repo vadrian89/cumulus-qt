@@ -19,14 +19,12 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
+import QtQuick 2.7
+import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
 
 import ownTypes.settingsController 0.5
-import ownTypes.TrayController 0.1
+import ownTypes.TrayController 0.2
 
 ApplicationWindow {
     id: mainWindow
@@ -71,6 +69,10 @@ ApplicationWindow {
         else {
             Qt.quit()
         }
+    }
+
+    background: Rectangle {
+        color: "transparent"
     }
 
     Rectangle {
@@ -168,13 +170,13 @@ ApplicationWindow {
     }
     Component.onCompleted: weatherView.updateWeather()
 
-    Dialog {
+    ApplicationWindow {
         id: settingsViewDialog
         width: 300
         height: 500
         visible: false
-        modality: Qt.ApplicationModal
-        contentItem: SettingsWindow {
+        flags: Qt.Dialog
+        SettingsWindow {
             id: settingsView
             anchors.fill: parent
             visible: true
@@ -203,15 +205,19 @@ ApplicationWindow {
             onShowCredits: creditsViewDialog.visible = true
             Keys.onEscapePressed: settingsViewDialog.visible = false
         }
+        onVisibilityChanged: {
+            if (visible == true)
+                settingsView.forceActiveFocus()
+        }
     }
 
-    Dialog {
+    ApplicationWindow {
         id: creditsViewDialog
         width: settingsView.width
         height: settingsView.height
         visible: false
-        modality: Qt.ApplicationModal
-        contentItem: CreditsView {
+        flags: Qt.Dialog
+        CreditsView {
             id: creditsView
             anchors.fill: parent
             visible: true
@@ -219,11 +225,14 @@ ApplicationWindow {
             backgroundColor: applicationSettingsController.applicationBackground
             Keys.onEscapePressed: creditsViewDialog.visible = false
         }
+        onVisibilityChanged: {
+            if (visible == true)
+                creditsView.forceActiveFocus()
+        }
     }
 
     TrayController {
         id: trayController
-        startUp: true        
         trayVisibility: applicationSettingsController.trayVisibility
         icon: weatherView.tempValue
         onCloseApp: Qt.quit()

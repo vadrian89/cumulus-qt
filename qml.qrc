@@ -51,7 +51,6 @@
         <file>icons/icon.png</file>
         <file>SettingsWindow.qml</file>
         <file>SelectionButton.qml</file>
-        <file>CustomBorder.qml</file>
         <file>MenuButton.qml</file>
         <file>main.qml</file>
         <file>ApplicationBar.qml</file>

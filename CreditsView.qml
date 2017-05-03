@@ -19,15 +19,14 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.5
-import QtQuick.Dialogs 1.2
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
+import QtQuick 2.7
+import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 
 Item {
     id: rootDialog
     visible: false
-    property string appVersion: "3.0.1"
+    property string appVersion: "3.0.2"
     property string textColor: util.textColor()
     property string backgroundColor: util.backgroundColor()
     property int contentWidth: rootDialog.width * 90 / 100
@@ -37,20 +36,22 @@ Item {
         color: backgroundColor
         width: rootDialog.width
         height: rootDialog.height
-        ScrollView {
-            id: rootScrollView
+        Flickable {
+            id: rootView
             anchors.fill: parent
-            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-            ColumnLayout {
+            width: rootDialog.width
+            height: rootDialog.height
+            contentWidth: rootDialog.width
+            contentHeight: contentItem.height
+            Rectangle {
+                id: contentItem
+                color: "transparent"
                 width: rootDialog.width
-                spacing: 0
+                height: childrenRect.height
                 LinkedText {
                     id: versionText
-                    Layout.fillHeight: false
-                    Layout.preferredHeight: 60
-                    Layout.fillWidth: false
-                    Layout.preferredWidth: rootDialog.contentWidth
-                    Layout.alignment: Qt.AlignCenter
+                    height: 60
+                    width: rootDialog.contentWidth
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     font.bold: true
@@ -60,10 +61,11 @@ Item {
                     url: "https://vadrian89.github.io/cumulus-qt/"
                 }
                 LinkedText {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: false
-                    Layout.preferredWidth: rootDialog.contentWidth
-                    Layout.alignment: Qt.AlignCenter
+                    id: fontCreditsText
+                    anchors.top: versionText.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: (rootDialog.width - fontCreditsText.width) / 2
+                    width: rootDialog.contentWidth
                     font.pixelSize: 14
                     color: rootDialog.textColor
                     wrapMode: Text.Wrap
@@ -72,10 +74,10 @@ Item {
                 }
                 Text {
                     id: creditsText
-                    Layout.fillHeight: true
-                    Layout.fillWidth: false
-                    Layout.preferredWidth: rootDialog.contentWidth
-                    Layout.alignment: Qt.AlignCenter
+                    anchors.top: fontCreditsText.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: (rootDialog.width - creditsText.width) / 2
+                    width: rootDialog.contentWidth
                     font.pixelSize: 14
                     color: rootDialog.textColor
                     wrapMode: Text.Wrap
@@ -90,11 +92,11 @@ Item {
                 }
                 ListView {
                     id: iconCreditsList
-                    Layout.fillHeight: false
-                    Layout.preferredHeight: 200
-                    Layout.fillWidth: false
-                    Layout.preferredWidth: rootDialog.contentWidth
-                    Layout.alignment: Qt.AlignCenter
+                    anchors.top: creditsText.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: (rootDialog.width - iconCreditsList.width) / 2
+                    height: 300
+                    width: rootDialog.contentWidth
                     orientation: ListView.Vertical
                     clip: true
                     spacing: 0

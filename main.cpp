@@ -73,5 +73,5 @@ void registerQmlType() {
     qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
     qmlRegisterType<SettingsController>("ownTypes.settingsController", 0, 5, "SettingsController");
     qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
-    qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 1, "TrayController");
+    qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 2, "TrayController");
 }
