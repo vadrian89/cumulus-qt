@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.0
+import QtQuick 2.7
 
 Item {
     id: root
@@ -53,5 +53,8 @@ Item {
             forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
             forecastDesc: util.firstLetterUp(model.modelData.forecastDesc)
         }
+        onModelChanged: positionViewAtBeginning()
+        onWidthChanged: positionViewAtBeginning()
+        onHeightChanged: positionViewAtBeginning()
     }
 }

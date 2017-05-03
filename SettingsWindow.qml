@@ -19,12 +19,11 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Window 2.0
-import QtQuick.Layouts 1.1
+import QtQuick 2.7
+import QtQuick.Controls 2.1
+import QtQuick.Window 2.2
+import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.0
 
 Item {
     id: root
@@ -38,6 +37,7 @@ Item {
     property string temperatureUnit: util.getTemperatureUnit()
     property string api: util.getWeatherApi()
     property int settingsItemHeight: 64
+    property int textFontSize: 14
     signal locationChanged()
     signal showCredits()
 
@@ -52,7 +52,6 @@ Item {
             contentWidth: root.width
             width: root.width
             height: root.height
-
             Rectangle {
                 id: settingsBody
                 width: settingsFlick.width
@@ -137,7 +136,17 @@ Item {
                     anchors.leftMargin: width / 2
                     visible: false
                     model: [ "°F", "°C" ]
-                    //                    model: [ "°F", "°C", "°K" ]
+                    delegate: ItemDelegate {
+                        width: tempUnitSelect.width
+                        height: tempUnitSelect.height
+                        contentItem: Text {
+                            text: modelData
+                            font.pixelSize: root.textFontSize
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignLeft
+                        }
+                    }
+
                     onVisibleChanged: {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom
@@ -298,7 +307,7 @@ Item {
 
                 SettingsOptionItem {
                     id: apiSelectItem
-                    optionText: "API"
+                    optionText: "Provider"
                     backgroundColor: "#ffffff"
                     anchors.top: colorPalettesItem.bottom
                     height: root.settingsItemHeight
@@ -399,10 +408,11 @@ Item {
             }
         }
     }
+
     ColorDialog {
         id: colorDialog
         title: "Please choose a color"
-        showAlphaChannel: true
+        showAlphaChannel: purpose == "background" ? true : false
         modality: Qt.ApplicationModal
         property string purpose
         onVisibleChanged: visible == false ? root.focus = true : root.focus = false

@@ -19,10 +19,10 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
-import QtQuick.Window 2.0
+import QtQuick 2.7
+import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
+import QtQuick.Window 2.2
 
 import ownTypes.settingsController 0.5
 
@@ -77,93 +77,92 @@ ApplicationWindow {
             id: appView
             width: parent.width
             height: parent.height - applicationBar.height
-            initialItem: bodyView
             anchors.top: applicationBar.bottom
-            Flickable {
-                id: bodyView
-                contentHeight: height
-                contentWidth: width
-                interactive: false
-                contentX: 0
+            initialItem: bodyView
+        }
 
-                WeatherWindow {
-                    id: weatherView
-                    width: bodyView.width
-                    height: bodyView.height
-                    textColor: applicationSettingsController.textColor
-                    textFontFamily: ubuntuCondensed.name
-                    iconsFont: weatherIcons.name
-                    speedUnit: settingsView.speedUnit
-                    onNoLocationDetected: {
-                        visible = false
-                        settingsView.visible = true
-                        settingsView.searchLocationAlias.visible = true
-                        applicationBar.menuButtonAlias.visible = false
-                        applicationBar.refreshButtonAlias.visible = false
-                    }
-                    onFinishedWeatherUpdate: {
-                        visible = true
-                        applicationBar.menuButtonAlias.visible = true
-                        applicationBar.refreshButtonAlias.visible = true
-                    }
-                    onUpdateWeather: {
-                        if (applicationBar.animationAlias.running == false) {
-                            applicationBar.animationAlias.start()
-                            applicationBar.animationAlias.loops = RotationAnimation.Infinite
-                        }
-                    }
-                    onDataDownloadFinished: {
-                        applicationBar.animationAlias.stop()
-                        timer.interval = 3600000
-                    }
-                }
-            }
-
-            SettingsWindow {
-                id: settingsView
-                onLocationChanged: {
-                    weatherView.updateWeather()
-                    visible = false
-                }
-                onTextColorChanged: applicationSettingsController.textColor = textColor
-                onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
-                onTemperatureUnitChanged: {
-                    if (visible == true) {
-                        weatherView.changeTempUnit(settingsView.temperatureUnit)
-                    }
-                }
-                onSpeedUnitChanged: {
-                    if (visible == true) {
-                        weatherView.changeSpeedUnit(settingsView.speedUnit)
-                    }
-                }
-                onApiChanged: {
-                    if (visible == true) {
-                        weatherView.weatherApi = api
-                    }
-                }
-                Keys.onPressed: {
-                    if (event.key == Qt.Key_Escape || event.key == Qt.Key_Back) {
-                        appView.pop()
-                        bodyView.forceActiveFocus()
-                    }
-                }
-                onShowCredits: {
-                    appView.push(creditsView)
-                    creditsView.forceActiveFocus()
-                }
-            }
-
-            CreditsView {
-                id: creditsView
+        Flickable {
+            id: bodyView
+            contentWidth: width
+            contentHeight: height
+            interactive: false
+            contentX: 0
+            WeatherWindow {
+                id: weatherView
+                width: bodyView.width
+                height: bodyView.height
                 textColor: applicationSettingsController.textColor
-                backgroundColor: applicationSettingsController.applicationBackground
-                Keys.onPressed: {
-                    if (event.key == Qt.Key_Escape || event.key == Qt.Key_Back) {
-                        appView.pop()
-                        settingsView.forceActiveFocus()
+                textFontFamily: ubuntuCondensed.name
+                iconsFont: weatherIcons.name
+                speedUnit: settingsView.speedUnit
+                visible: false
+                onNoLocationDetected: {
+                    appView.push(settingsView)
+                    creditsView.forceActiveFocus()
+                    settingsView.searchLocationAlias.visible = true
+                    applicationBar.menuButtonAlias.visible = false
+                    applicationBar.refreshButtonAlias.visible = false
+                }
+                onFinishedWeatherUpdate: {
+                    visible = true
+                    applicationBar.menuButtonAlias.visible = true
+                    applicationBar.refreshButtonAlias.visible = true
+                }
+                onUpdateWeather: {
+                    if (applicationBar.animationAlias.running == false) {
+                        applicationBar.animationAlias.start()
+                        applicationBar.animationAlias.loops = RotationAnimation.Infinite
                     }
                 }
+                onDataDownloadFinished: {
+                    applicationBar.animationAlias.stop()
+                    timer.interval = 3600000
+                }
+            }
+            Component.onCompleted: weatherView.updateWeather()
+        }
+
+        SettingsWindow {
+            id: settingsView
+            onLocationChanged: {
+                weatherView.updateWeather()
+                appView.pop()
+                bodyView.forceActiveFocus()
+            }
+            onTextColorChanged: applicationSettingsController.textColor = textColor
+            onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
+            onTemperatureUnitChanged: {
+                if (visible == true) {
+                    weatherView.changeTempUnit(settingsView.temperatureUnit)
+                }
+            }
+            onSpeedUnitChanged: {
+                if (visible == true) {
+                    weatherView.changeSpeedUnit(settingsView.speedUnit)
+                }
+            }
+            onApiChanged: {
+                if (visible == true) {
+                    weatherView.weatherApi = api
+                }
+            }
+            onShowCredits: {
+                appView.push(creditsView)
+                creditsView.forceActiveFocus()
+            }
+            Keys.onBackPressed: {
+                appView.pop()
+                bodyView.forceActiveFocus()
+            }
+        }
+
+        CreditsView {
+            id: creditsView
+            textColor: applicationSettingsController.textColor
+            backgroundColor: applicationSettingsController.applicationBackground
+            Keys.onBackPressed: {
+                appView.pop()
+                settingsView.forceActiveFocus()
             }
         }
     }

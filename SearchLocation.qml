@@ -19,11 +19,10 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.5
-import QtQuick.Window 2.0
-import QtQuick.Controls 1.4
+import QtQuick 2.7
+import QtQuick.Window 2.2
+import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2
-import QtQuick.Controls.Styles 1.4
 
 import ownTypes.searchLocation 0.4
 
@@ -54,13 +53,10 @@ Item {
             anchors.topMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: (parent.width - width) / 2
-            style: TextFieldStyle {
-                textColor: root.textColor
-                placeholderTextColor: root.textColor
-                background: Rectangle {
-                    border.width: 0
-                    color: "transparent"
-                }
+            color: root.textColor
+            background: Rectangle {
+                border.width: 0
+                color: "transparent"
             }
 
             onTextChanged: {

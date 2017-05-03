@@ -25,7 +25,7 @@
 #include <QDebug>
 TrayController::TrayController(QObject *parent) : QObject(parent) {
     trayIcon = NULL;
-    setTrayVisibility(Util::trayVisibility());
+    m_trayVisibility = false;
 }
 
 QString TrayController::icon() const {
