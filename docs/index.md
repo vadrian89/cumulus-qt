@@ -20,9 +20,8 @@ This is a port to Qt/Qml of the [original cumulus](legacy_cumulus.md)
 - Possibility for multiple instances with different settings and locations [Read Here](multiple_inst.md)
 
 ## Install/Update
-1. Download online installer for x64 bit Linux distributions
+1. Download installer for x64 bit Linux distributions
  - [Linux amd64](https://github.com/vadrian89/cumulus-qt/releases/)
- - Linux ix86 is to be determined
 2. Mark installer executable
 `$sudo chmod +x Cumulus-online-installer-x64`
 3. Run
@@ -32,8 +31,8 @@ This is a port to Qt/Qml of the [original cumulus](legacy_cumulus.md)
 To update properly please reinstall, otherwise update application and reinstall libraries only
 
 ## Known Issues
-- Notice for Xfce and other desktop environments, users:
-You will get an error message, this is due to a script which creates an entry into ".config/autostart/" so it will start on login, simply select ignore and the installer will finish. You will have to manually set to start on login from the desktop. 
+- Notice for users:
+You might get an error message, this is due to a script which creates an entry into ".config/autostart/" so it will start on login, simply select ignore and the installer will finish. You will have to manually set to start on login from the desktop. 
 - There is an issue with Cumulus main window not being able to resize, possible on heavy Gnome based desktop environments.  
 - Missing Open Weather Map emblem leaving a gap between forecast a bottom border.
 
@@ -45,7 +44,7 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 - [Adrian Verban](https://github.com/vadrian89)
 - [Daryl Bennett](https://github.com/kd8bny)
 - [Archisman Panigrahi](https://github.com/apandada1)
-- [Adam Whitcroft](https://twitter.com/AdamWhitcroft)
+- [Adam Whitcroft](https://twitter.com/AdamWhitcroft), for his fonts used in original Typhoon/Cumulus
 - [Erik Flowers](https://github.com/erikflowers) for his [weather icons](https://github.com/erikflowers/weather-icons),
 which sadly has discontinued support for them
 
