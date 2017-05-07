@@ -37,17 +37,18 @@
 #include "ThreadWorker.h"
 class TrayController : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
-
-    QString m_icon;
+    QString m_icon, m_trayTheme;
     bool m_trayVisibility;
     QSystemTrayIcon *trayIcon;
+
+    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
+    Q_PROPERTY(QString trayTheme READ trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
 
     void initialiseTray();
     void disableTray();
     void enableTray();
-    void setTrayIcon(const QString &weather);
+    void setTrayIcon();
     QThread *thread;
     ThreadWorker *worker;
     QAction *currentWeatherAction;
@@ -59,6 +60,8 @@ public:
     void setStartUp(const bool &startUp);
     bool trayVisibility() const;
     void setTrayVisibility(const bool &trayVisibility);
+    QString trayTheme() const;
+    void setTrayTheme(const QString &trayTheme);
 private slots:
     void emitCloseApp();
     void emitShowGui();
@@ -68,6 +71,7 @@ signals:
     void trayVisibilityChanged();
     void closeApp();
     void showGui();
+    void trayThemeChanged();
 };
 
 #endif // TRAYCONTROLLER_H

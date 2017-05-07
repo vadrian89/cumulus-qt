@@ -35,155 +35,147 @@ Item {
     property alias menuButtonAlias: menuButton
     property alias refreshButtonAlias: refreshButton
     property int controlButtonsSize: 18
+    property string windowControlsPos: util.windowControlsPos()
 
     Rectangle {
         anchors.fill: parent
         color: "transparent"
-
-        RowLayout {
-            anchors.fill: parent
-            spacing: 0
-
-            Row {
-                id: windowControl
-                Layout.fillWidth: false
-                Layout.fillHeight: true
-                Layout.preferredWidth: height * 2
-                Layout.alignment: Qt.AlignLeft
-                spacing: 0
-                visible: util.osType() === "android" ? false : true
-                Rectangle {
-                    id: closeButton
-                    height: parent.height
-                    width: height
-                    color: "#11000000"
-                    opacity: 0.8
-                    Text {
-                        anchors.fill: parent
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        color: root.textColor
-                        font.pixelSize: root.controlButtonsSize
-                        font.family: Qt.MonoOnly
-                        text: "x"                        
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onHoveredChanged: {
-                            if ( containsMouse == true ) {
-                                parent.opacity = 1.0
-                                parent.color = "#33000000"
-                            }
-                            else {
-                                parent.opacity = 0.8
-                                parent.color = "#11000000"
-                            }
-                        }
-                        onClicked: {
-                            root.closeButtonClicked()
-                        }
-                    }
-                }
-                Rectangle {
-                    id: minimizeButton
-                    height: parent.height
-                    width: height
-                    color: "#11000000"
-                    opacity: 0.8
-                    Text {
-                        anchors.fill: parent
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        color: root.textColor
-                        font.pixelSize: root.controlButtonsSize
-                        font.family: Qt.MonoOnly
-                        text: "–"
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onHoveredChanged: {
-                            if (containsMouse == true) {
-                                parent.opacity = 1.0
-                                parent.color = "#33000000"
-                            }
-                            else {
-                                parent.opacity = 0.8
-                                parent.color = "#11000000"
-                            }
-                        }
-                        onClicked: {
-                            root.minimizeButtonClicked()
-                        }
-                    }
-                }
+        Rectangle {
+            id: closeButton
+            anchors.top: parent.top
+            anchors.left: windowControlsPos == "left" ? parent.left : minimizeButton.right
+            height: parent.height
+            width: height
+            color: "#11000000"
+            opacity: 0.8
+            visible: util.osType() == "android" ? false : true
+            Text {
+                anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: root.textColor
+                font.pixelSize: root.controlButtonsSize
+                font.family: Qt.MonoOnly
+                text: "x"
             }
-
             MouseArea {
-                id: moveControlBar
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                anchors.fill: parent
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-            }
-
-            Rectangle {
-                id: refreshButton
-                height: parent.height
-                width: height
-                color: "transparent"
-                opacity: 0.8
-                Layout.fillWidth: false
-                Layout.fillHeight: true
-                Layout.preferredWidth: height
-                Layout.alignment: Qt.AlignRight
-                anchors.right: menuButton.left
-                Text {
-                    anchors.fill: parent
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: parent.height * 70 / 100
-                    font.family: iconsFont
-                    text: "\uf04c"
-                    color: root.textColor                    
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onHoveredChanged: {
-                        if (containsMouse == true) {
-                            parent.opacity = 1.0
-                        }
-                        else {
-                            parent.opacity = 0.8
-                        }
+                onHoveredChanged: {
+                    if ( containsMouse == true ) {
+                        parent.opacity = 1.0
+                        parent.color = "#33000000"
                     }
-                    onClicked: {
-                        root.refreshButtonClicked()
+                    else {
+                        parent.opacity = 0.8
+                        parent.color = "#11000000"
                     }
                 }
-
-                RotationAnimation on rotation {
-                    id: refreshRotateAnim
-                    direction: RotationAnimation.Clockwise
-                    from: 0
-                    to: 360
-                    loops: RotationAnimation.Infinite
-                    alwaysRunToEnd: true
+                onClicked: {
+                    root.closeButtonClicked()
                 }
-            }          
-
-            MenuButton {
-                id: menuButton
-                Layout.fillWidth: false
-                Layout.fillHeight: true
-                Layout.preferredWidth: height
-                Layout.alignment: Qt.AlignRight
-                onClicked: root.menuButtonClicked()
             }
+        }
+
+        Rectangle {
+            id: minimizeButton
+            anchors.top: parent.top
+            anchors.left: windowControlsPos == "left" ? closeButton.right : moveControlBar.right
+            height: parent.height
+            width: height
+            color: "#11000000"
+            opacity: 0.8
+            visible: util.osType() == "android" ? false : true
+            Text {
+                anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: root.textColor
+                font.pixelSize: root.controlButtonsSize
+                font.family: Qt.MonoOnly
+                text: "–"
+            }
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onHoveredChanged: {
+                    if (containsMouse == true) {
+                        parent.opacity = 1.0
+                        parent.color = "#33000000"
+                    }
+                    else {
+                        parent.opacity = 0.8
+                        parent.color = "#11000000"
+                    }
+                }
+                onClicked: {
+                    root.minimizeButtonClicked()
+                }
+            }
+        }
+
+        MouseArea {
+            id: moveControlBar
+            anchors.top: parent.top
+            anchors.left: windowControlsPos == "left" ? minimizeButton.right : refreshButton.right
+            height: parent.height
+            width: parent.width - (parent.height * 4)
+            cursorShape: Qt.PointingHandCursor
+        }
+
+        Rectangle {
+            id: refreshButton
+            anchors.top: parent.top
+            anchors.left: windowControlsPos == "left" ? moveControlBar.right : menuButton.right
+            height: parent.height
+            width: height
+            color: "transparent"
+            opacity: 0.8
+            Text {
+                anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: parent.height * 70 / 100
+                font.family: iconsFont
+                text: "\uf04c"
+                color: root.textColor
+            }
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onHoveredChanged: {
+                    if (containsMouse == true) {
+                        parent.opacity = 1.0
+                    }
+                    else {
+                        parent.opacity = 0.8
+                    }
+                }
+                onClicked: {
+                    root.refreshButtonClicked()
+                }
+            }
+
+            RotationAnimation on rotation {
+                id: refreshRotateAnim
+                direction: RotationAnimation.Clockwise
+                from: 0
+                to: 360
+                loops: RotationAnimation.Infinite
+                alwaysRunToEnd: true
+            }
+        }
+
+        MenuButton {
+            id: menuButton
+            anchors.top: parent.top
+            anchors.left: windowControlsPos == "left" ? refreshButton.right : parent.left
+            height: parent.height
+            width: height
+            onClicked: root.menuButtonClicked()
         }
     }
 }

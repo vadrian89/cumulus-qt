@@ -31,6 +31,8 @@ Item {
     property alias searchLocationAlias: searchLocation
     property alias settingsFlickAlias: settingsFlick
     property alias trayVisible: traySwitch.checked
+    property alias trayTheme: trayColorSwitch.state
+    property alias windowControls: winControlSwitch.state
     property string backgroundColor: util.backgroundColor()
     property string textColor: util.textColor()
     property string speedUnit: util.getWindSpeedUnit()
@@ -384,24 +386,99 @@ Item {
                     width: settingsBody.width * 80 / 100
                     height: 50
                     anchors.left: parent.left
-                    anchors.leftMargin: (settingsBody.width - traySwitchLayout.width) / 2
+                    anchors.leftMargin: (settingsBody.width - trayColorSwitchLayout.width) / 2
                     visible: util.osType() === "android" ? false : true
                     Text {
-                        text: "Enable Tray"
+                        text: "Close To Tray"
                         Layout.fillHeight: true
-                        Layout.fillWidth: true
+                        Layout.fillWidth: false
+                        Layout.preferredWidth: traySwitchLayout.width / 2
                         color: textColor
-                        horizontalAlignment: Text.AlignHCenter
+                        horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignCenter
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                         visible: util.osType() === "android" ? false : true
                     }
-                    Switch {
+                    CustomSwitch {
                         id: traySwitch
+                        Layout.fillHeight: false
+                        Layout.fillWidth: false
+                        Layout.preferredHeight: 25
+                        Layout.preferredWidth: 70
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                        leftText: "Off"
+                        rightText: "On"
+                        state: util.trayVisibility() == true ? "right" : "left"
+                        visible: util.osType() === "android" ? false : true
+                    }
+                }
+
+                RowLayout {
+                    id: trayColorSwitchLayout
+                    anchors.top: traySwitchLayout.bottom
+                    width: settingsBody.width * 80 / 100
+                    height: 50
+                    anchors.left: parent.left
+                    anchors.leftMargin: (settingsBody.width - trayColorSwitchLayout.width) / 2
+                    visible: util.osType() === "android" ? false : true
+                    Text {
+                        text: "Tray Theme"
                         Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignCenter
-                        checked: util.trayVisibility()
+                        Layout.fillWidth: false
+                        Layout.preferredWidth: traySwitchLayout.width / 2
+                        color: textColor
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        visible: util.osType() === "android" ? false : true
+                    }
+                    CustomSwitch {
+                        id: trayColorSwitch
+                        Layout.fillHeight: false
+                        Layout.fillWidth: false
+                        Layout.preferredHeight: 25
+                        Layout.preferredWidth: 70
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                        leftText: "L"
+                        leftTextColor: "white"
+                        leftStateValue: "light"
+                        rightText: "D"
+                        rightTextColor: "black"
+                        rightStateValue: "dark"
+                        state: util.trayTheme()
+                        visible: util.osType() === "android" ? false : true
+                    }
+                }
+
+                RowLayout {
+                    id: winControlSwitchLayout
+                    anchors.top: trayColorSwitchLayout.bottom
+                    width: settingsBody.width * 80 / 100
+                    height: 50
+                    anchors.left: parent.left
+                    anchors.leftMargin: (settingsBody.width - winControlSwitchLayout.width) / 2
+                    visible: util.osType() === "android" ? false : true
+                    Text {
+                        text: "Window Controls"
+                        Layout.fillHeight: true
+                        Layout.fillWidth: false
+                        Layout.preferredWidth: winControlSwitchLayout.width / 2
+                        color: textColor
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        visible: util.osType() === "android" ? false : true
+                    }
+                    CustomSwitch {
+                        id: winControlSwitch
+                        Layout.fillHeight: false
+                        Layout.fillWidth: false
+                        Layout.preferredHeight: 25
+                        Layout.preferredWidth: 70
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                        leftText: "L"
+                        rightText: "R"
+                        state: util.windowControlsPos()
                         visible: util.osType() === "android" ? false : true
                     }
                 }

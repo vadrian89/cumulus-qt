@@ -23,8 +23,12 @@
 
 SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     QSettings settings;
-    settings.beginGroup("window-settings");
-    m_trayVisibility = settings.value("tray", false).toBool();
+    settings.beginGroup("app-settings");
+    m_trayVisibility = settings.value("tray", false).toBool();    
+    settings.endGroup();
+    settings.beginGroup("app-settings");
+    m_trayTheme = settings.value("trayTheme", "light").toString();
+    m_windowControlsPos = settings.value("windowControlsPos", "left").toString();
     settings.endGroup();
 }
 
@@ -79,7 +83,7 @@ void SettingsController::setApplicationOpacity(const float &applicationOpacity) 
 void SettingsController::setTrayVisibility(const bool &trayVisibility) {
     if (m_trayVisibility != trayVisibility) {
         QSettings settings;
-        settings.beginGroup("window-settings");
+        settings.beginGroup("app-settings");
         settings.setValue("tray", trayVisibility);
         settings.endGroup();
         m_trayVisibility = trayVisibility;
@@ -91,3 +95,32 @@ bool SettingsController::trayVisibility() const {
     return m_trayVisibility;
 }
 
+void SettingsController::setTrayTheme(const QString &trayTheme) {
+    if (m_trayTheme != trayTheme) {
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("trayTheme", trayTheme);
+        settings.endGroup();
+        m_trayTheme = trayTheme;
+        emit trayThemeChanged();
+    }
+}
+
+QString SettingsController::trayTheme() const {
+    return m_trayTheme;
+}
+
+void SettingsController::setWindowControlsPos(const QString &windowControlsPos) {
+    if (m_windowControlsPos != windowControlsPos) {
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("windowControlsPos", windowControlsPos);
+        settings.endGroup();
+        m_windowControlsPos = windowControlsPos;
+        emit windowControlsPosChanged();
+    }
+}
+
+QString SettingsController::windowControlsPos() const {
+    return m_windowControlsPos;
+}

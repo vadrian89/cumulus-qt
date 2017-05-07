@@ -147,14 +147,14 @@ void Util::setLocationId(const qint32 locationId) {
 
 void Util::saveWindowLocation(QPoint position) {
     QSettings settings;
-    settings.beginGroup("window-settings");
+    settings.beginGroup("app-settings");
     settings.setValue("pos", position);
     settings.endGroup();
 }
 
 QPoint Util::loadWindowLocation() {
     QSettings settings;
-    settings.beginGroup("window-settings");
+    settings.beginGroup("app-settings");
     QPoint pos = settings.value("pos", QPoint(0,0)).toPoint();
     settings.endGroup();
     return pos;
@@ -162,14 +162,14 @@ QPoint Util::loadWindowLocation() {
 
 void Util::saveWindowSize(QSize size) {
     QSettings settings;
-    settings.beginGroup("window-settings");
+    settings.beginGroup("app-settings");
     settings.setValue("size", size);
     settings.endGroup();
 }
 
 QSize Util::loadWindowSize() {
     QSettings settings;
-    settings.beginGroup("window-settings");
+    settings.beginGroup("app-settings");
     QSize size = settings.value("size", QSize(320,500)).toSize();
     settings.endGroup();
     return size;
@@ -311,7 +311,7 @@ double Util::calculatePressure(double pressure, const QString &unit) {
 }
 
 QString Util::windowButtonsBackground(bool mouseOver) {
-    if ( mouseOver == true) {
+    if (mouseOver == true) {
         return "#005c99";
     }
     else {
@@ -403,7 +403,7 @@ QString Util::getLogoImage() {
 
 bool Util::trayVisibility() {
     QSettings settings;
-    settings.beginGroup("window-settings");
+    settings.beginGroup("app-settings");
     bool visible = settings.value("tray", false).toBool();
     settings.endGroup();
     return visible;
@@ -454,4 +454,20 @@ QList<QObject*> Util::creditsList() {
     list.append(popcornsArts);
     list.append(freepik);
     return list;
+}
+
+QString Util::trayTheme() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    QString string = settings.value("trayTheme", "light").toString();
+    settings.endGroup();
+    return string;
+}
+
+QString Util::windowControlsPos() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    QString string = settings.value("windowControlsPos", "left").toString();
+    settings.endGroup();
+    return string;
 }

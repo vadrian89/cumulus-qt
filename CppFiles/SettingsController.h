@@ -28,10 +28,13 @@
 class SettingsController : public QObject {
     Q_OBJECT
     bool m_trayVisibility;
+    QString m_trayTheme, m_windowControlsPos;
     Q_PROPERTY(QString applicationBackground READ applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
     Q_PROPERTY(QString textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
     Q_PROPERTY(float applicationOpacity READ applicationOpacity WRITE setApplicationOpacity NOTIFY applicationOpacityChanged)
     Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
+    Q_PROPERTY(QString trayTheme READ trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
+    Q_PROPERTY(QString windowControlsPos READ windowControlsPos WRITE setWindowControlsPos NOTIFY windowControlsPosChanged)
 public:
     explicit SettingsController(QObject *parent = 0);
     QString applicationBackground() const;
@@ -40,13 +43,19 @@ public:
     void setTextColor(const QString &textColor);
     float applicationOpacity() const;
     void setApplicationOpacity(const float &applicationOpacity);
-    bool trayVisibility () const;
+    bool trayVisibility() const;
     void setTrayVisibility(const bool &trayVisibility);
+    QString trayTheme() const;
+    void setTrayTheme(const QString &trayTheme);
+    QString windowControlsPos() const;
+    void setWindowControlsPos(const QString &windowControlsPos);
 signals:
     void applicationBackgroundChanged();
     void textColorChanged();
     void applicationOpacityChanged();
     void trayVisibilityChanged();
+    void trayThemeChanged();
+    void windowControlsPosChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

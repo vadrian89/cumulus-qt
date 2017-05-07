@@ -23,8 +23,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 
-import ownTypes.settingsController 0.5
-import ownTypes.TrayController 0.2
+import ownTypes.settingsController 0.6
+import ownTypes.TrayController 0.3
 
 ApplicationWindow {
     id: mainWindow
@@ -87,6 +87,7 @@ ApplicationWindow {
             height: 30
             textColor: applicationSettingsController.textColor
             iconsFont: weatherIcons.name
+            windowControlsPos: applicationSettingsController.windowControlsPos
             onMenuButtonClicked: settingsViewDialog.visible = true
             onCloseButtonClicked: mainWindow.close()
             onMinimizeButtonClicked: mainWindow.visibility = Window.Minimized
@@ -108,10 +109,10 @@ ApplicationWindow {
             }
             moveControlAlias.onReleased: {
                 if (mainWindow.x <= minimumX ) {
-                    mainWindow.x = minimumX
+                    mainWindow.x = 0
                 }
                 if (mainWindow.y <= minimumY ) {
-                    mainWindow.y = minimumY
+                    mainWindow.y = 0
                 }
                 util.saveWindowLocation(Qt.point(mainWindow.x, mainWindow.y))
                 moveControlAlias.cursorShape = Qt.ArrowCursor
@@ -181,6 +182,8 @@ ApplicationWindow {
             anchors.fill: parent
             visible: true
             onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
+            onTrayThemeChanged: applicationSettingsController.trayTheme = trayTheme
+            onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls
             onLocationChanged: {
                 weatherView.updateWeather()
                 settingsViewDialog.visible = false
@@ -234,6 +237,7 @@ ApplicationWindow {
     TrayController {
         id: trayController
         trayVisibility: applicationSettingsController.trayVisibility
+        trayTheme: applicationSettingsController.trayTheme
         icon: weatherView.tempValue
         onCloseApp: Qt.quit()
         onShowGui: mainWindow.visible = true
