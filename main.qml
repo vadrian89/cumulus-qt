@@ -181,6 +181,7 @@ ApplicationWindow {
             id: settingsView
             anchors.fill: parent
             visible: true
+            iconsFont: weatherIcons.name
             onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
             onTrayThemeChanged: applicationSettingsController.trayTheme = trayTheme
             onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls

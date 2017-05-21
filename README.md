@@ -1,10 +1,9 @@
-# Update
-[Offline installer for x64 bit Linux distributions](https://github.com/vadrian89/cumulus-qt/releases/tag/v3.0.2).  
-[Online installer for x64 bit Linux distributions](https://github.com/vadrian89/cumulus-qt/releases/tag/V3.0.2).  
-Online installer for x32 bit Linux distributions To Be Decided.
+# Info
+Both offline and online installers for 64 bit Linux distributions can be found at the [releases page](https://github.com/vadrian89/cumulus-qt/releases).
+Still not decided on 32 bit.
 
-To update properly please reinstall, otherwise update application and reinstall libraries only.
-
+For any feedback you can mail me at verbanady@gmail.com, please add the following subject so I can save them into a special category: Cumulus - Feedback.
+Thanks!
 # Cumulus
 
 Full port Qt/Qml is here!

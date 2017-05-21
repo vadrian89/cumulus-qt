@@ -3,17 +3,20 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: root
-    property string railColor: "#161616"
+    property string railColor: root.checked == true ? root.checkedColor : root.uncheckedColor
     property string textColor: "#ffffff"
     property string leftTextColor: root.textColor
     property string rightTextColor: root.textColor
-    property int borderRadius: 2
-    property alias rightText: rightText.text
-    property alias leftText: leftText.text
+    property int borderRadius: 0
+    property string rightText: ""
+    property string leftText: ""
     property alias state: switchButton.state
     property bool checked: root.state == rightStateValue ? true : false
     property string leftStateValue: "left"
     property string rightStateValue: "right"
+    property string checkedColor: "#34ad32"
+    property string uncheckedColor: "#666666"
+    property string font: "Arial"
     Rectangle {
         id: switchRail
         anchors.fill: parent
@@ -22,72 +25,88 @@ Item {
         antialiasing: true
 
         Rectangle {
-            id: switchButton
+            id: switchRailBorder
             anchors.top: parent.top
-            anchors.topMargin: (switchRail.height - switchButton.height) / 2
-            height: switchRail.height
-            width: (switchRail.width / 2)
-            radius: root.borderRadius
-            antialiasing: true
-            states: [
-                State {
-                    name: root.rightStateValue
-                    PropertyChanges {
-                        target: switchButton
-                        x: (switchRail.width / 2)
-                    }
-                },
-                State {
-                    name: root.leftStateValue
-                    PropertyChanges {
-                        target: switchButton
-                        x: 0
-                    }
-                }
-            ]
-            transitions: Transition {
-                NumberAnimation {
-                    properties: "x"
-                    easing.type: Easing.InOutBack
-                }
-            }
-            RadialGradient {
-                anchors.fill: parent
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#1c437a" }
-                    GradientStop { position: 1.0; color: "#3e70b7" }
-                }
-            }
-        }
-
-        Text {
-            id: leftText
+            anchors.topMargin: 1
             anchors.left: parent.left
-            height: switchRail.height
-            width: switchRail.width / 2
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.bold: true
-            text: ""
-            color: root.leftTextColor
-        }
+            anchors.leftMargin: 1
+            width: parent.width - 2
+            height: parent.height - 2
+            border.color: "gray"
+            border.width: 1
+            color: "transparent"
+            Text {
+                id: leftText
+                anchors.left: parent.left
+                height: switchRailBorder.height
+                width: switchRailBorder.width / 2
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.bold: true
+                text: root.leftText
+                color: root.leftTextColor
+                font.family: root.font
+            }
 
-        Text {
-            id: rightText
-            anchors.right: parent.right
-            height: switchRail.height
-            width: switchRail.width / 2
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.bold: true
-            text: ""
-            color: root.rightTextColor
-        }
+            Text {
+                id: rightText
+                anchors.right: parent.right
+                height: switchRailBorder.height
+                width: switchRailBorder.width / 2
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.bold: true
+                text: root.rightText
+                color: root.rightTextColor
+                font.family: root.font
+            }
 
-        MouseArea {
-            id: mouse
-            anchors.fill: parent
-            onClicked: root.state = root.state == root.leftStateValue ? root.rightStateValue : root.leftStateValue
+            Rectangle {
+                id: switchButton
+                anchors.top: switchRailBorder.top
+                anchors.topMargin: (switchRailBorder.height - switchButton.height) / 2
+                height: switchRailBorder.height
+                width: (switchRailBorder.width / 2)
+                border.width: 1
+                border.color: "#BBBBBB"
+                states: [
+                    State {
+                        name: root.rightStateValue
+                        PropertyChanges {
+                            target: switchButton
+                            x: (switchRailBorder.width / 2)
+                        }
+                    },
+                    State {
+                        name: root.leftStateValue
+                        PropertyChanges {
+                            target: switchButton
+                            x: 0
+                        }
+                    }
+                ]
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "x"
+                        easing.type: Easing.InOutBack
+                    }
+                }
+                RadialGradient {
+                    anchors.fill: parent
+                    source: parent
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#bcbcbc" }
+                        GradientStop { position: 1.0; color: "#cccccc" }
+                    }
+                }
+            }
+
+            MouseArea {
+                id: mouse
+                anchors.fill: parent
+                onClicked: root.state = root.state == root.leftStateValue ? root.rightStateValue : root.leftStateValue
+            }
+
         }
     }
 }

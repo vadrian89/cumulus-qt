@@ -40,6 +40,7 @@ Item {
     property string api: util.getWeatherApi()
     property int settingsItemHeight: 64
     property int textFontSize: 14
+    property string iconsFont: "Arial"
     signal locationChanged()
     signal showCredits()
 
@@ -406,8 +407,6 @@ Item {
                         Layout.preferredHeight: 25
                         Layout.preferredWidth: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                        leftText: "Off"
-                        rightText: "On"
                         state: util.trayVisibility() == true ? "right" : "left"
                         visible: util.osType() === "android" ? false : true
                     }
@@ -430,7 +429,7 @@ Item {
                         horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        visible: util.osType() === "android" ? false : true
+                        visible: util.osType() === "android" ? false : true                        
                     }
                     CustomSwitch {
                         id: trayColorSwitch
@@ -439,14 +438,17 @@ Item {
                         Layout.preferredHeight: 25
                         Layout.preferredWidth: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                        leftText: "L"
-                        leftTextColor: "white"
+                        leftText: "\uf002"
+                        leftTextColor: "black"
                         leftStateValue: "light"
-                        rightText: "D"
-                        rightTextColor: "black"
+                        rightText: "\uf002"
+                        rightTextColor: "white"
                         rightStateValue: "dark"
+                        checkedColor: "gray"
+                        uncheckedColor: "gray"
                         state: util.trayTheme()
                         visible: util.osType() === "android" ? false : true
+                        font: root.iconsFont
                     }
                 }
 
@@ -476,10 +478,13 @@ Item {
                         Layout.preferredHeight: 25
                         Layout.preferredWidth: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                        leftText: "L"
-                        rightText: "R"
+                        leftText: "\uf04d"
+                        rightText: "\uf048"
+                        checkedColor: "gray"
+                        uncheckedColor: "gray"
                         state: util.windowControlsPos()
                         visible: util.osType() === "android" ? false : true
+                        font: root.iconsFont
                     }
                 }
             }

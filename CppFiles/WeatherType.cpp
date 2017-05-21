@@ -32,7 +32,7 @@ WeatherType::WeatherType(QObject *parent) : QObject(parent){
     mapYahooIcon();
     mapOwmIcons();
     mapNightIcons();
-    loadData();
+    setWeatherData();
     m_weatherApi = Util::getWeatherApi();
 }
 
@@ -53,7 +53,7 @@ void WeatherType::getWeatherData(){
         else {
             owmWeather = new OwmWeatherController();
             connect(owmWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-            connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
+            connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));            
             if (location.find("code") != location.end())
                 owmWeather->searchBycode(location.find("code").value());
             else

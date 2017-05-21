@@ -39,12 +39,12 @@ void registerQmlType();
 
 int main(int argc, char *argv[]) {
     QString applicationName = "Cumulus";
-    if (argc > 2 && QString::fromLatin1(argv[2]) == "-i") {
-        applicationName = argv[3];
+    if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
+        applicationName = argv[2];
     }
-    QCoreApplication::setOrganizationName("Visoft");
-    QCoreApplication::setApplicationName(applicationName);
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setOrganizationName("Visoft");
+    QApplication::setApplicationName(applicationName);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     Util util;    
     QThread thread;
