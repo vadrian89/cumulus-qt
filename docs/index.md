@@ -5,11 +5,12 @@ title: Cumulus
 
 # Cumulus QT
 ## About
-Cumulus is a simple, stylish, weather application, with a back end powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/)
+Cumulus is a simple weather application, with a back end powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/).  
+It is and always will be free, licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 This is a port to Qt/Qml of the [original cumulus](legacy_cumulus.md)
 
-![weather](assets/images/weather.gif) ![location](assets/images/location.png) ![settings](assets/images/settings.png)
+![weather](assets/images/weather.gif) ![location](assets/images/location.png)
 
 ## Features
 - Colors selectors for background and text with alpha channel, knock yourselves up out
@@ -28,13 +29,8 @@ This is a port to Qt/Qml of the [original cumulus](legacy_cumulus.md)
 `$./Cumulus-online-installer-x64`
 4. Enjoy!
 
-To update properly please reinstall, otherwise update application and reinstall libraries only
-
 ## Known Issues
-- Notice for users:
-You might get an error message, this is due to a script which creates an entry into ".config/autostart/" so it will start on login, simply select ignore and the installer will finish. You will have to manually set to start on login from the desktop. 
-- There is an issue with Cumulus main window not being able to resize, possible on heavy Gnome based desktop environments.  
-- Missing Open Weather Map emblem leaving a gap between forecast a bottom border.
+- The resizing is a bit haotic on Linux-based OSes, looking into it.
 
 ## History
 Forked from [typhoon](https://github.com/apandada1/typhoon) which was
