@@ -35,7 +35,7 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_applicationBackground = settings.value("applicationBackground", "#ff0099ff").toString();
     m_textColor = settings.value("textColor", "#ffffff").toString();
     m_applicationOpacity = settings.value("applicationOpacity", "1.0").toFloat();
-    m_loginStart = settings.value("loginStart", QFile::exists(QDir::homePath() + "/.config/autostart/cumulus.desktop")).toBool();
+    m_loginStart = settings.value("loginStart", loginStartCheck()).toBool();
     settings.endGroup();
 }
 
@@ -160,14 +160,14 @@ void SettingsController::loginStartLinux(const bool &loginStart) {
 }
 
 bool SettingsController::loginStartCheck() {    
-    QString appName = QApplication::applicationName();
-    QString fileName = QDir::homePath() + "/.config/autostart/cumulus.desktop";    
-    if (appName != "Cumulus") {
-        fileName = QDir::homePath() + "/.config/autostart/cumulus-" + appName + ".desktop";
-    }
     QSettings settings;
+    QString appName = settings.applicationName();
+    QString filePath = QDir::homePath() + "/.config/autostart/cumulus.desktop";
+    if (appName != "Cumulus") {
+        filePath = QDir::homePath() + "/.config/autostart/cumulus-" + appName + ".desktop";
+    }    
     settings.beginGroup("app-settings");
-    bool loginStart = settings.value("loginStart", QFile::exists(fileName)).toBool();
+    bool loginStart = settings.value("loginStart", QFile::exists(filePath)).toBool();
     settings.endGroup();
-    return  loginStart;
+    return loginStart;
 }
