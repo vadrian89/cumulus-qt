@@ -86,6 +86,8 @@ public:
     Q_INVOKABLE static QString getLogoImage();
     Q_INVOKABLE static bool trayVisibility();
     Q_INVOKABLE static QList<QObject*> creditsList();
+    Q_INVOKABLE static QString trayTheme();
+    Q_INVOKABLE static QString windowControlsPos();
 };
 
 #endif // UTIL_H

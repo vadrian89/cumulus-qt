@@ -74,5 +74,7 @@
         <file>CreditsView.qml</file>
         <file>CreditsListDelegate.qml</file>
         <file>LinkedText.qml</file>
+        <file>CustomSwitch.qml</file>
+        <file>ResizeController.qml</file>
     </qresource>
 </RCC>

@@ -24,39 +24,39 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
 Item {
-    id: rootDialog
+    id: rootItem
     visible: false
-    property string appVersion: "3.0.2"
+    property string appVersion: "3.0.3"
     property string textColor: util.textColor()
     property string backgroundColor: util.backgroundColor()
-    property int contentWidth: rootDialog.width * 90 / 100
+    property int contentWidth: rootItem.width * 90 / 100
 
     Rectangle {
         id: root
-        color: backgroundColor
-        width: rootDialog.width
-        height: rootDialog.height
+        color: rootItem.backgroundColor.length > 7 ? "#" + rootItem.backgroundColor.substring(3) : rootItem.backgroundColor
+        width: rootItem.width
+        height: rootItem.height
         Flickable {
             id: rootView
             anchors.fill: parent
-            width: rootDialog.width
-            height: rootDialog.height
-            contentWidth: rootDialog.width
+            width: rootItem.width
+            height: rootItem.height
+            contentWidth: rootItem.width
             contentHeight: contentItem.height
             Rectangle {
                 id: contentItem
                 color: "transparent"
-                width: rootDialog.width
+                width: rootItem.width
                 height: childrenRect.height
                 LinkedText {
                     id: versionText
                     height: 60
-                    width: rootDialog.contentWidth
+                    width: rootItem.contentWidth
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     font.bold: true
                     font.pixelSize: 26
-                    color: rootDialog.textColor
+                    color: rootItem.textColor
                     text: "Cumulus v" + appVersion
                     url: "https://vadrian89.github.io/cumulus-qt/"
                 }
@@ -64,10 +64,10 @@ Item {
                     id: fontCreditsText
                     anchors.top: versionText.bottom
                     anchors.left: parent.left
-                    anchors.leftMargin: (rootDialog.width - fontCreditsText.width) / 2
-                    width: rootDialog.contentWidth
+                    anchors.leftMargin: (rootItem.width - fontCreditsText.width) / 2
+                    width: rootItem.contentWidth
                     font.pixelSize: 14
-                    color: rootDialog.textColor
+                    color: rootItem.textColor
                     wrapMode: Text.Wrap
                     text: "The Weather Icons created and maintained by Erik Flowers"
                     url: "https://erikflowers.github.io/weather-icons/"
@@ -76,10 +76,10 @@ Item {
                     id: creditsText
                     anchors.top: fontCreditsText.bottom
                     anchors.left: parent.left
-                    anchors.leftMargin: (rootDialog.width - creditsText.width) / 2
-                    width: rootDialog.contentWidth
+                    anchors.leftMargin: (rootItem.width - creditsText.width) / 2
+                    width: rootItem.contentWidth
                     font.pixelSize: 14
-                    color: rootDialog.textColor
+                    color: rootItem.textColor
                     wrapMode: Text.Wrap
                     text: "Cumulus is a simple weather application based on Qt framework.<br> "
                           + "It is and always be free.<br>"
@@ -94,9 +94,9 @@ Item {
                     id: iconCreditsList
                     anchors.top: creditsText.bottom
                     anchors.left: parent.left
-                    anchors.leftMargin: (rootDialog.width - iconCreditsList.width) / 2
+                    anchors.leftMargin: (rootItem.width - iconCreditsList.width) / 2
                     height: 300
-                    width: rootDialog.contentWidth
+                    width: rootItem.contentWidth
                     orientation: ListView.Vertical
                     clip: true
                     spacing: 0
@@ -106,7 +106,7 @@ Item {
                     delegate: CreditsListDelegate {
                         height: 60
                         width: iconCreditsList.width
-                        textColor: rootDialog.textColor
+                        textColor: rootItem.textColor
                         icon: model.modelData.icon
                         author: model.modelData.author
                         authorUrl: model.modelData.authorUrl

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 - 2017 Adrian Verban <verbanady@gmail.com>
+* Copyright (C) 2017 Adrian Verban <verbanady@gmail.com>
 * Maintainers: Adrian Verban <verbanady@gmail.com>
 * Derived from Typhoon by Archisman Panigrahi which is based on Stormcloud by Jono Cooper <jonocooper.com>
 * Thanks to all the contributors.
@@ -19,35 +19,17 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef THREADWORKER_H
-#define THREADWORKER_H
+#ifndef FONTIMAGEPROVIDER_H
+#define FONTIMAGEPROVIDER_H
 
-#include <QObject>
-#include <QProcess>
-#include <QTimer>
-#include <QPixmap>
-#include <QPainter>
-#include <QFontDatabase>
-#include <QFont>
-#include <QAction>
+#include <QQuickImageProvider>
 #include <QImage>
 
-class ThreadWorker : public QObject {
-    Q_OBJECT
+class FontImageProvider : public QQuickImageProvider {
 public:
-    explicit ThreadWorker(QObject *parent = 0);    
-    void createWeatherPixmap(const QString &weather);
-    void createTrayIcon(const QString &weather, const QString &theme);
-//    void changeActionData(const QAction* action, const );
-public slots:
-    void updaterTimerStart();
-private slots:
-    void startLookingForUpdates();
-signals:
-    void startUpdateTimerSignal();
-    void updateSearchFinished();
-    void finishedCreatingPixmap(QImage image);
-    void stopThread();
+    FontImageProvider();
+//    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
+//    QImage getImageFromText(const QString &text, const int &width, const int &height);
 };
 
-#endif // THREADWORKER_H
+#endif // FONTIMAGEPROVIDER_H

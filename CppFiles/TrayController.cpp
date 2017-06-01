@@ -22,7 +22,6 @@
 #include "TrayController.h"
 #include "Util.h"
 
-#include <QDebug>
 TrayController::TrayController(QObject *parent) : QObject(parent) {
     trayIcon = NULL;
     m_trayVisibility = false;
@@ -35,7 +34,7 @@ QString TrayController::icon() const {
 void TrayController::setIcon(const QString &icon) {
     if (m_icon != icon && icon.trimmed().size() > 0) {
         m_icon = icon;
-        setTrayIcon(icon);
+        setTrayIcon();
         emit iconChanged();
     }
 }
@@ -60,7 +59,7 @@ void TrayController::setTrayVisibility(const bool &trayVisibility) {
     }
 }
 
-void TrayController::setTrayIcon(const QString &weather) {
+void TrayController::setTrayIcon() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         worker = new ThreadWorker();
         thread = new QThread(this);
@@ -68,7 +67,7 @@ void TrayController::setTrayIcon(const QString &weather) {
         connect(thread, SIGNAL(finished()), worker, SLOT(deleteLater()));
         worker->moveToThread(thread);
         thread->start();
-        worker->createWeatherPixmap(weather + "°");
+        worker->createTrayIcon(m_icon + "°", m_trayTheme);
     }
 }
 
@@ -98,7 +97,7 @@ void TrayController::initialiseTray() {
 void TrayController::enableTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         trayIcon->show();
-        setTrayIcon(m_icon);
+        setTrayIcon();
     }
 }
 
@@ -116,4 +115,16 @@ void TrayController::emitCloseApp() {
 
 void TrayController::emitShowGui() {
     emit showGui();
+}
+
+QString TrayController::trayTheme() const {
+    return m_trayTheme;
+}
+
+void TrayController::setTrayTheme(const QString &trayTheme) {
+    if (m_trayTheme != trayTheme && trayTheme.trimmed().size() > 0) {
+        m_trayTheme = trayTheme;
+        setTrayIcon();
+        emit trayThemeChanged();
+    }
 }

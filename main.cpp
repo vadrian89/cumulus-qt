@@ -39,19 +39,21 @@ void registerQmlType();
 
 int main(int argc, char *argv[]) {
     QString applicationName = "Cumulus";
-    if (argc > 2 && QString::fromLatin1(argv[2]) == "-i") {
-        applicationName = argv[3];
+    if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
+        applicationName = argv[2];
     }
-    QCoreApplication::setOrganizationName("Visoft");
-    QCoreApplication::setApplicationName(applicationName);
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setOrganizationName("Visoft");
+    QApplication::setApplicationName(applicationName);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     Util util;    
+    SettingsController settingsController;
     QThread thread;
     QQmlApplicationEngine engine;
     engine.addImageProvider(QLatin1String("customimage"), new CustomImageProvider());
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("util", &util);
+    context->setContextProperty("settingsController", &settingsController);
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     registerQmlType();
     if (Util::osType() == "android")
@@ -71,7 +73,7 @@ int main(int argc, char *argv[]) {
 
 void registerQmlType() {
     qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
-    qmlRegisterType<SettingsController>("ownTypes.settingsController", 0, 5, "SettingsController");
+    qmlRegisterType<SettingsController>("ownTypes.settingsController", 0, 7, "SettingsController");
     qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
-    qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 2, "TrayController");
+    qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
 }

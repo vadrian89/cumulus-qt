@@ -23,8 +23,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 
-import ownTypes.settingsController 0.5
-import ownTypes.TrayController 0.2
+import ownTypes.settingsController 0.7
+import ownTypes.TrayController 0.3
 
 ApplicationWindow {
     id: mainWindow
@@ -44,7 +44,7 @@ ApplicationWindow {
     y: mainWindowLocation.y
     title: qsTr("Cumulus")
     color: "transparent"
-    flags: Qt.CustomizeWindowHint
+    flags: Qt.FramelessWindowHint
 
     FontLoader {
         id: ubuntuCondensed
@@ -87,6 +87,7 @@ ApplicationWindow {
             height: 30
             textColor: applicationSettingsController.textColor
             iconsFont: weatherIcons.name
+            windowControlsPos: applicationSettingsController.windowControlsPos
             onMenuButtonClicked: settingsViewDialog.visible = true
             onCloseButtonClicked: mainWindow.close()
             onMinimizeButtonClicked: mainWindow.visibility = Window.Minimized
@@ -108,10 +109,10 @@ ApplicationWindow {
             }
             moveControlAlias.onReleased: {
                 if (mainWindow.x <= minimumX ) {
-                    mainWindow.x = minimumX
+                    mainWindow.x = 0
                 }
                 if (mainWindow.y <= minimumY ) {
-                    mainWindow.y = minimumY
+                    mainWindow.y = 0
                 }
                 util.saveWindowLocation(Qt.point(mainWindow.x, mainWindow.y))
                 moveControlAlias.cursorShape = Qt.ArrowCursor
@@ -165,6 +166,9 @@ ApplicationWindow {
                     applicationBar.animationAlias.stop()
                     timer.interval = 3600000
                 }
+                onNetworkError: {
+                    timer.interval = 60000
+                }
             }
         }
     }
@@ -180,12 +184,20 @@ ApplicationWindow {
             id: settingsView
             anchors.fill: parent
             visible: true
+            iconsFont: weatherIcons.name
             onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
+            onTrayThemeChanged: applicationSettingsController.trayTheme = trayTheme
+            onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls
+            onLoginStartChanged: applicationSettingsController.loginStart = loginStart
             onLocationChanged: {
                 weatherView.updateWeather()
                 settingsViewDialog.visible = false
             }
-            onTextColorChanged: applicationSettingsController.textColor = textColor
+            onTextColorChanged: {
+                applicationSettingsController.textColor = textColor
+                weatherView.loadLogoImage()
+            }
+
             onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
             onTemperatureUnitChanged: {
                 if (settingsViewDialog.visible == true) {
@@ -234,6 +246,7 @@ ApplicationWindow {
     TrayController {
         id: trayController
         trayVisibility: applicationSettingsController.trayVisibility
+        trayTheme: applicationSettingsController.trayTheme
         icon: weatherView.tempValue
         onCloseApp: Qt.quit()
         onShowGui: mainWindow.visible = true
@@ -245,5 +258,128 @@ ApplicationWindow {
         running: true
         repeat: true
         onTriggered: weatherView.updateWeather()
+    }
+
+    ResizeController {
+        id: bottomRController
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        width: 20
+        height: width
+        cursorShape: Qt.SizeFDiagCursor
+        onXResizeChanged: {
+            if (xResize > 0) {
+                mainWindow.width += xResize
+            }
+            else {
+                if (mainWindow.width > mainWindow.minimumWidth) {
+                    mainWindow.width += xResize
+                }
+            }
+        }
+
+        onYResizeChanged: {
+            if (yResize > 0) {
+                mainWindow.height += yResize
+            }
+            else {
+                if (mainWindow.height > mainWindow.minimumHeight) {
+                    mainWindow.height += yResize
+                }
+            }
+        }
+    }
+
+    ResizeController {
+        id: bottomController
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        width: parent.width - 40
+        height: 5
+        cursorShape: Qt.SizeVerCursor
+        onYResizeChanged: {
+            if (yResize > 0) {
+                mainWindow.height += yResize
+            }
+            else {
+                if (mainWindow.height > mainWindow.minimumHeight) {
+                    mainWindow.height += yResize
+                }
+            }
+        }
+    }
+
+    ResizeController {
+        id: rightController
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 20
+        anchors.right: parent.right
+        width: 5
+        height: parent.height - 20
+        cursorShape: Qt.SizeHorCursor
+        onXResizeChanged: {
+            if (xResize > 0) {
+                mainWindow.width += xResize
+            }
+            else {
+                if (mainWindow.width > mainWindow.minimumWidth) {
+                    mainWindow.width += xResize
+                }
+            }
+        }
+    }
+
+    ResizeController {
+        id: bottomLController
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        width: 20
+        height: width
+        cursorShape: Qt.SizeBDiagCursor
+        onXResizeChanged: {
+            if (xResize < 0) {
+                mainWindow.width -= xResize
+                mainWindow.x += xResize
+            }
+            else {
+                if (mainWindow.width > mainWindow.minimumWidth) {
+                    mainWindow.width -= xResize
+                    mainWindow.x += xResize
+                }
+            }
+        }
+        onYResizeChanged: {
+            if (yResize > 0) {
+                mainWindow.height += yResize
+            }
+            else {
+                if (mainWindow.height > mainWindow.minimumHeight) {
+                    mainWindow.height += yResize
+                }
+            }
+        }
+    }
+
+    ResizeController {
+        id: leftController
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 20
+        anchors.left: parent.left
+        width: 5
+        height: parent.height - 20
+        cursorShape: Qt.SizeHorCursor
+        onXResizeChanged: {
+            if (xResize < 0) {
+                mainWindow.width -= xResize
+                mainWindow.x += xResize
+            }
+            else {
+                if (mainWindow.width > mainWindow.minimumWidth) {
+                    mainWindow.width -= xResize
+                    mainWindow.x += xResize
+                }
+            }
+        }
     }
 }

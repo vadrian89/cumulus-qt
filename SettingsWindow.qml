@@ -31,6 +31,9 @@ Item {
     property alias searchLocationAlias: searchLocation
     property alias settingsFlickAlias: settingsFlick
     property alias trayVisible: traySwitch.checked
+    property alias trayTheme: trayColorSwitch.state
+    property alias windowControls: winControlSwitch.state
+    property alias loginStart: startUpSwitch.checked
     property string backgroundColor: util.backgroundColor()
     property string textColor: util.textColor()
     property string speedUnit: util.getWindSpeedUnit()
@@ -38,6 +41,9 @@ Item {
     property string api: util.getWeatherApi()
     property int settingsItemHeight: 64
     property int textFontSize: 14
+    property string iconsFont: "Arial"
+    property int switchHeight: 25
+    property int switchWidth: 70
     signal locationChanged()
     signal showCredits()
 
@@ -378,32 +384,74 @@ Item {
                     onClicked: root.showCredits()
                 }
 
-                RowLayout {
-                    id: traySwitchLayout
-                    anchors.top: creditsItem.bottom
-                    width: settingsBody.width * 80 / 100
+                CustomSwitch {
+                    id: traySwitch
+                    width: settingsBody.width
                     height: 50
+                    anchors.top: creditsItem.bottom
                     anchors.left: parent.left
-                    anchors.leftMargin: (settingsBody.width - traySwitchLayout.width) / 2
+                    labelColor: root.textColor
+                    switchRailWidth: root.switchWidth
+                    switchRailHeight: root.switchHeight
+                    switchLabel: qsTr("Close To Tray")
+                    state: util.trayVisibility() == true ? "right" : "left"
                     visible: util.osType() === "android" ? false : true
-                    Text {
-                        text: "Enable Tray"
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: textColor
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignCenter
-                        visible: util.osType() === "android" ? false : true
-                    }
-                    Switch {
-                        id: traySwitch
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignCenter
-                        checked: util.trayVisibility()
-                        visible: util.osType() === "android" ? false : true
-                    }
+                }
+
+                CustomSwitch {
+                    id: trayColorSwitch
+                    width: settingsBody.width
+                    height: 50
+                    anchors.top: traySwitch.bottom
+                    anchors.left: parent.left
+                    labelColor: root.textColor
+                    switchRailWidth: root.switchWidth
+                    switchRailHeight: root.switchHeight
+                    switchLabel: qsTr("Tray theme")
+                    state: util.trayTheme()
+                    visible: util.osType() === "android" ? false : true
+                    leftText: "\uf002"
+                    leftTextColor: "black"
+                    leftStateValue: "light"
+                    rightText: "\uf002"
+                    rightTextColor: "white"
+                    rightStateValue: "dark"
+                    checkedColor: "gray"
+                    uncheckedColor: "gray"
+                    font: root.iconsFont
+                }
+
+                CustomSwitch {
+                    id: winControlSwitch
+                    width: settingsBody.width
+                    height: 50
+                    anchors.top: trayColorSwitch.bottom
+                    anchors.left: parent.left
+                    labelColor: root.textColor
+                    switchRailWidth: root.switchWidth
+                    switchRailHeight: root.switchHeight
+                    switchLabel: qsTr("Window controls position")
+                    state: util.windowControlsPos()
+                    visible: util.osType() === "android" ? false : true
+                    leftText: "\uf04d"
+                    rightText: "\uf048"
+                    checkedColor: "gray"
+                    uncheckedColor: "gray"
+                    font: root.iconsFont
+                }
+
+                CustomSwitch {
+                    id: startUpSwitch
+                    width: settingsBody.width
+                    height: 50
+                    anchors.top: winControlSwitch.bottom
+                    anchors.left: parent.left
+                    labelColor: root.textColor
+                    switchRailWidth: root.switchWidth
+                    switchRailHeight: root.switchHeight
+                    switchLabel: qsTr("Start on login")
+                    state: settingsController.loginStartCheck() == true ? "right" : "left"
+                    visible: util.osType() === "android" ? false : true
                 }
             }
         }

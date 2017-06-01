@@ -33,7 +33,7 @@ Item {
     property string iconsFont
     property string textFontFamily
     property string textColor    
-    property string speedUnit: util.getWindSpeedUnit()    
+    property string speedUnit: util.getWindSpeedUnit()
     property alias weatherApi: weatherController.weatherApi
     property int widthBreakPoint: 170
     property int locationHeight: Math.round(root.height * 10 / 100)
@@ -50,12 +50,16 @@ Item {
     signal dataDownloadFinished()
     signal changeTempUnit(string unit)
     signal changeSpeedUnit(string unit)
+    signal networkError()
+    signal loadLogoImage()
+
+    onLoadLogoImage: logo.source = util.getLogoImage()
 
     Text {
         id: locationText
         width: parent.width
         height: locationHeight
-        color: textColor
+        color: root.textColor
         anchors.top: parent.top
         anchors.left: parent.left
         verticalAlignment: Text.AlignVCenter
@@ -82,7 +86,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         font.family: iconsFont
         font.pixelSize: root.height >= 170 ? 80 : 60
-        color: textColor
+        color: root.textColor
         text: weatherController.weatherIcon
     }
 
@@ -104,7 +108,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf07a"
@@ -119,7 +123,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf0b1"
@@ -135,7 +139,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf079"
@@ -150,7 +154,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf051"
@@ -165,7 +169,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf052"
@@ -180,7 +184,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf058"
@@ -195,7 +199,7 @@ Item {
             width: parent.width - 5
             height: parent.height * 8 / 100
             fontSize: weatherInfo.weatherInfoFontSize
-            fontColor: textColor
+            fontColor: root.textColor
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf044"
@@ -207,7 +211,7 @@ Item {
         id: weatherTemperatureIcon
         width: weatherIcon.width * 35 / 100
         height: weatherTempHeight
-        color: textColor
+        color: root.textColor
         anchors.top: weatherIcon.bottom
         anchors.left: parent.left
         verticalAlignment: Text.AlignVCenter
@@ -222,7 +226,7 @@ Item {
         id: weatherTemperature
         width: (weatherIcon.width * 65 / 100) - 10
         height: weatherTempHeight
-        color: textColor
+        color: root.textColor
         anchors.top: weatherIcon.bottom
         anchors.left: weatherTemperatureIcon.right
         anchors.leftMargin: 10
@@ -241,7 +245,7 @@ Item {
         anchors.top: weatherTemperature.bottom
         anchors.left: parent.left
         anchors.leftMargin: 10
-        fontColor: textColor
+        fontColor: root.textColor
         fontFamily: textFontFamily
         viewModel: weatherController.forecastList
         widthBreakPoint: root.widthBreakPoint
@@ -271,6 +275,7 @@ Item {
         onNoLocationSet: root.noLocationDetected()
         onDataDownloadFinished: root.dataDownloadFinished()
         onWeatherApiChanged: updateWeather()
+        onNetworkError: root.networkError()
         onWeatherDataChanged: {
             weatherController.getForecastData()
             root.finishedWeatherUpdate()

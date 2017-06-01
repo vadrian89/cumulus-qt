@@ -27,26 +27,37 @@
 
 class SettingsController : public QObject {
     Q_OBJECT
-    bool m_trayVisibility;
-    Q_PROPERTY(QString applicationBackground READ applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
-    Q_PROPERTY(QString textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
-    Q_PROPERTY(float applicationOpacity READ applicationOpacity WRITE setApplicationOpacity NOTIFY applicationOpacityChanged)
-    Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
+    bool m_trayVisibility, m_loginStart;
+    QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor;
+    float m_applicationOpacity;
+    Q_PROPERTY(QString applicationBackground MEMBER m_applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
+    Q_PROPERTY(QString textColor MEMBER m_textColor WRITE setTextColor NOTIFY textColorChanged)
+    Q_PROPERTY(float applicationOpacity MEMBER m_applicationOpacity WRITE setApplicationOpacity NOTIFY applicationOpacityChanged)
+    Q_PROPERTY(bool trayVisibility MEMBER m_trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
+    Q_PROPERTY(QString trayTheme MEMBER m_trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
+    Q_PROPERTY(QString windowControlsPos MEMBER m_windowControlsPos WRITE setWindowControlsPos NOTIFY windowControlsPosChanged)
+    Q_PROPERTY(bool loginStart MEMBER m_loginStart WRITE setLoginStart NOTIFY loginStartChanged)
+
+    void loginStartLinux(const bool &loginStart);
 public:
     explicit SettingsController(QObject *parent = 0);
-    QString applicationBackground() const;
     void setApplicationBackground(const QString &applicationBackground);
-    QString textColor() const;
     void setTextColor(const QString &textColor);
-    float applicationOpacity() const;
     void setApplicationOpacity(const float &applicationOpacity);
-    bool trayVisibility () const;
     void setTrayVisibility(const bool &trayVisibility);
+    void setTrayTheme(const QString &trayTheme);
+    void setWindowControlsPos(const QString &windowControlsPos);
+    void setLoginStart(const bool &loginStart);
+
+    Q_INVOKABLE static bool loginStartCheck();
 signals:
     void applicationBackgroundChanged();
     void textColorChanged();
     void applicationOpacityChanged();
     void trayVisibilityChanged();
+    void trayThemeChanged();
+    void windowControlsPosChanged();
+    void loginStartChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

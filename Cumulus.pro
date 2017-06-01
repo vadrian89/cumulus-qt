@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     CppFiles/AbstractWeatherController.cpp \
     CppFiles/TrayController.cpp \
     CppFiles/CreditsAuthor.cpp \
-    CppFiles/CustomImageProvider.cpp
+    CppFiles/CustomImageProvider.cpp \
+    CppFiles/FontImageProvider.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,7 +41,8 @@ HEADERS += \
     CppFiles/AbstractWeatherController.h \
     CppFiles/TrayController.h \
     CppFiles/CreditsAuthor.h \
-    CppFiles/CustomImageProvider.h
+    CppFiles/CustomImageProvider.h \
+    CppFiles/FontImageProvider.h
 
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 

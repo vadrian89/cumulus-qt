@@ -32,7 +32,7 @@ WeatherType::WeatherType(QObject *parent) : QObject(parent){
     mapYahooIcon();
     mapOwmIcons();
     mapNightIcons();
-    loadData();
+    setWeatherData();
     m_weatherApi = Util::getWeatherApi();
 }
 
@@ -45,6 +45,8 @@ void WeatherType::getWeatherData(){
             yweather = new YWeatherController();
             connect(yweather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
             connect(yweather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
+            connect(yweather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
+            connect(yweather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
             if (location.find("code") != location.end())
                 yweather->searchBycode(location.find("code").value());
             else
@@ -53,7 +55,9 @@ void WeatherType::getWeatherData(){
         else {
             owmWeather = new OwmWeatherController();
             connect(owmWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-            connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
+            connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));            
+            connect(owmWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
+            connect(owmWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
             if (location.find("code") != location.end())
                 owmWeather->searchBycode(location.find("code").value());
             else

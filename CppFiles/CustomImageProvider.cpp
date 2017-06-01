@@ -20,19 +20,21 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "CustomImageProvider.h"
-#include "Util.h"
+#include <QFont>
+#include <QPainter>
 
 CustomImageProvider::CustomImageProvider() : QQuickImageProvider(QQuickImageProvider::Image) {}
 
 QImage CustomImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
-    Q_UNUSED(size)
-    Q_UNUSED(requestedSize)
-    if (id == "owm-logo") {
-        return getImageFromText("Provided by:\nOpenWeatherMap", Util::textColor(), 268, 58);
-    }
-    else {
-        return getImageFromText("", Util::textColor(), 268, 58);
-    }
+    int width = 268;
+    int height = 58;
+    QStringList stringList = id.split(QRegExp("[#]"));
+    QString text = stringList.at(0) + "\n" + stringList.at(1);
+    QString color = "#" + stringList.at(2);
+    if (size)
+        *size = QSize(width, height);
+    return getImageFromText(text, color, requestedSize.width() > 0 ? requestedSize.width() : width,
+                            requestedSize.height() > 0 ? requestedSize.height() : height);
 }
 
 QImage CustomImageProvider::getImageFromText(const QString &text, const QString &color, const int &width, const int &height) {

@@ -20,6 +20,7 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ThreadWorker.h"
+#include "Util.h"
 #include <QDebug>
 #include <QCoreApplication>
 #include <QFile>
@@ -68,6 +69,7 @@ void ThreadWorker::startLookingForUpdates() {
 
 void ThreadWorker::createWeatherPixmap(const QString &weather) {
     QImage image(22, 22, QImage::Format_ARGB32_Premultiplied);
+    QString color = Util::trayTheme() == "light" ? "white" : "black";
     QFont font;
     font.setPixelSize(14);
     font.setFamily("Arial");
@@ -75,7 +77,24 @@ void ThreadWorker::createWeatherPixmap(const QString &weather) {
     image.fill(Qt::transparent);
     QPainter painter(&image);
     painter.setFont(font);
-    painter.setPen(QColor(Qt::white));
+    painter.setPen(QColor(color));
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.drawText(image.rect(), Qt::AlignCenter, weather);
+    emit finishedCreatingPixmap(image);
+    emit stopThread();
+}
+
+void ThreadWorker::createTrayIcon(const QString &weather, const QString &theme) {
+    QString color = theme == "light" ? "white" : "black";
+    QImage image(22, 22, QImage::Format_ARGB32_Premultiplied);
+    QFont font;
+    font.setPixelSize(14);
+    font.setFamily("Arial");
+    font.setBold(true);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    painter.setFont(font);
+    painter.setPen(QColor(color));
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawText(image.rect(), Qt::AlignCenter, weather);
     emit finishedCreatingPixmap(image);
