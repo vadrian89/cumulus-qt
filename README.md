@@ -4,6 +4,7 @@ Still not decided on 32 bit.
 
 For any feedback you can mail me at verbanady@gmail.com, please add the following subject so I can save them into a special category: Cumulus - Feedback.
 Thanks!
+
 # Cumulus
 
 Full port Qt/Qml is here!
@@ -46,6 +47,12 @@ if [ -f /home/script.sh ]; then
 fi  
 This will check if the script exists, so in case you accidentally delete you will not be getting errors on login.
 
+# In case you want to build it yourself:
+
+- recommended Qt version: 5.8
+- remove the following line from Cumulus.pro file: QMAKE_LFLAGS += "-Wl,-rpath,'$$ORIGIN/lib'"
+- remove the following entry from qml.qrc file: "qt/etc/qt.conf"
+
 # Major Thanks
 - [Daryl Bennett](https://github.com/kd8bny)
 - [Archisman Panigrahi](https://github.com/apandada1)
@@ -53,8 +60,10 @@ This will check if the script exists, so in case you accidentally delete you wil
 which sadly has discontinued support for them
 
 # Known Issues
-- There is an issue with Cumulus main window not being able to resize, possible on heavy Gnome based desktop environments.  
-- Missing Open Weather Map emblem leaving a gap between forecast a bottom border.  
+- The resizing is implemented, but it's a bit haotic on Linux-based OSes, looking into it and hopefully I will find a solution soon.
 
 # TODO
 - Add another API
+- Code refactoring
+- Improve application resizing
+

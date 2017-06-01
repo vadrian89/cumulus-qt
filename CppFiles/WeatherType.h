@@ -165,6 +165,7 @@ signals:
     void forecastListChanged();
     void speedUnitChanged();
     void weatherApiChanged();
+    void networkError(const QString &error);
 };
 
 #endif // WEATHER_H

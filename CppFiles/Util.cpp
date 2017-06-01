@@ -396,8 +396,7 @@ QString Util::getLogoImage() {
         return "icons/yw-logo.png";
     }
     else {
-        getLogoImage("Provided by:\nOpenWeatherMap", textColor());
-        return "image://customimage/owm-logo";
+        return "image://customimage/Provided by:#OpenWeatherMap" + textColor();
     }
 }
 

@@ -20,64 +20,56 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "SettingsController.h"
+#include <QDir>
+#include <QFile>
+#include <QDebug>
+#include <QApplication>
+#include <QSysInfo>
 
 SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     QSettings settings;
     settings.beginGroup("app-settings");
-    m_trayVisibility = settings.value("tray", false).toBool();    
-    settings.endGroup();
-    settings.beginGroup("app-settings");
+    m_trayVisibility = settings.value("tray", false).toBool();            
     m_trayTheme = settings.value("trayTheme", "light").toString();
     m_windowControlsPos = settings.value("windowControlsPos", "left").toString();
+    m_applicationBackground = settings.value("applicationBackground", "#ff0099ff").toString();
+    m_textColor = settings.value("textColor", "#ffffff").toString();
+    m_applicationOpacity = settings.value("applicationOpacity", "1.0").toFloat();
+    m_loginStart = settings.value("loginStart", QFile::exists(QDir::homePath() + "/.config/autostart/cumulus.desktop")).toBool();
     settings.endGroup();
-}
-
-QString SettingsController::applicationBackground() const {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    QString background = settings.value("applicationBackground", "#ff0099ff").toString();
-    settings.endGroup();
-    return background;
 }
 
 void SettingsController::setApplicationBackground(const QString &applicationBackground) {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    settings.setValue("applicationBackground", applicationBackground);
-    settings.endGroup();
-    emit applicationBackgroundChanged();
-}
-
-QString SettingsController::textColor() const {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    QString color = settings.value("textColor", "#ffffff").toString();
-    settings.endGroup();
-    return color;
+    if (m_applicationBackground != applicationBackground) {
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("applicationBackground", applicationBackground);
+        settings.endGroup();
+        m_applicationBackground = applicationBackground;
+        emit applicationBackgroundChanged();
+    }
 }
 
 void SettingsController::setTextColor(const QString &textColor) {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    settings.setValue("textColor", textColor);
-    settings.endGroup();
-    emit textColorChanged();
-}
-
-float SettingsController::applicationOpacity() const {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    float opacity = settings.value("applicationOpacity", "1.0").toFloat();
-    settings.endGroup();
-    return opacity;
+    if (m_textColor != textColor) {
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("textColor", textColor);
+        settings.endGroup();
+        m_textColor = textColor;
+        emit textColorChanged();
+    }
 }
 
 void SettingsController::setApplicationOpacity(const float &applicationOpacity) {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    settings.setValue("applicationOpacity", applicationOpacity);
-    settings.endGroup();
-    emit applicationOpacityChanged();
+    if (m_applicationOpacity != applicationOpacity) {
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("applicationOpacity", applicationOpacity);
+        settings.endGroup();
+        m_applicationOpacity = applicationOpacity;
+        emit applicationOpacityChanged();
+    }
 }
 
 void SettingsController::setTrayVisibility(const bool &trayVisibility) {
@@ -91,10 +83,6 @@ void SettingsController::setTrayVisibility(const bool &trayVisibility) {
     }
 }
 
-bool SettingsController::trayVisibility() const {
-    return m_trayVisibility;
-}
-
 void SettingsController::setTrayTheme(const QString &trayTheme) {
     if (m_trayTheme != trayTheme) {
         QSettings settings;
@@ -104,10 +92,6 @@ void SettingsController::setTrayTheme(const QString &trayTheme) {
         m_trayTheme = trayTheme;
         emit trayThemeChanged();
     }
-}
-
-QString SettingsController::trayTheme() const {
-    return m_trayTheme;
 }
 
 void SettingsController::setWindowControlsPos(const QString &windowControlsPos) {
@@ -121,6 +105,69 @@ void SettingsController::setWindowControlsPos(const QString &windowControlsPos) 
     }
 }
 
-QString SettingsController::windowControlsPos() const {
-    return m_windowControlsPos;
+void SettingsController::setLoginStart(const bool &loginStart) {
+    if (m_loginStart != loginStart) {
+        m_loginStart = loginStart;
+        if (QSysInfo::kernelType() == "linux" && QSysInfo::productType() != "android") {
+            loginStartLinux(m_loginStart);
+        }
+        emit loginStartChanged();
+    }
+}
+
+
+void SettingsController::loginStartLinux(const bool &loginStart) {
+    QString appName = QApplication::applicationName();
+    QString loginStartDirPath = QDir::homePath() + "/.config/autostart";
+    QString loginStartFilePath = loginStartDirPath + "/cumulus.desktop";
+    if (appName != "Cumulus") {
+        loginStartFilePath = loginStartDirPath + "/cumulus-" + appName + ".desktop";
+    }
+    QDir dir(loginStartDirPath);
+    QFile file(loginStartFilePath);
+    if (loginStart == true) {
+        if (dir.exists() == false) {
+            dir.mkpath(dir.path());
+        }
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << "SettingsController::loginStartLinux: could not open file " + file.fileName();
+            return;
+        }
+
+        QTextStream out(&file);
+        out << "[Desktop Entry]" << endl;
+        out << "Type=Application" << endl;
+        out << "Terminal=false" << endl;
+        out << "Categories=Utility;" << endl;
+        if (appName != "Cumulus") {
+            out << "Exec=" + qApp->applicationDirPath() + "/Cumulus -i " << appName << endl;
+        }
+        else {
+            out << "Exec=" + qApp->applicationDirPath() + "/Cumulus" << endl;
+        }
+        out << "Name=Cumulus" << endl;
+        out << "Icon=" + qApp->applicationDirPath() + "/cumulus.svg";
+        out.flush();
+        file.close();
+        file.setPermissions(QFileDevice::ExeOwner | QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+
+    }
+    else {
+        if (!file.remove()) {
+            qDebug() << "SettingsController::loginStartLinux: could not remove file " + file.fileName();
+        }
+    }
+}
+
+bool SettingsController::loginStartCheck() {    
+    QString appName = QApplication::applicationName();
+    QString fileName = QDir::homePath() + "/.config/autostart/cumulus.desktop";    
+    if (appName != "Cumulus") {
+        fileName = QDir::homePath() + "/.config/autostart/cumulus-" + appName + ".desktop";
+    }
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    bool loginStart = settings.value("loginStart", QFile::exists(fileName)).toBool();
+    settings.endGroup();
+    return  loginStart;
 }

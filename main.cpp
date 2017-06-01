@@ -47,11 +47,13 @@ int main(int argc, char *argv[]) {
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     Util util;    
+    SettingsController settingsController;
     QThread thread;
     QQmlApplicationEngine engine;
     engine.addImageProvider(QLatin1String("customimage"), new CustomImageProvider());
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("util", &util);
+    context->setContextProperty("settingsController", &settingsController);
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     registerQmlType();
     if (Util::osType() == "android")
@@ -71,7 +73,7 @@ int main(int argc, char *argv[]) {
 
 void registerQmlType() {
     qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
-    qmlRegisterType<SettingsController>("ownTypes.settingsController", 0, 6, "SettingsController");
+    qmlRegisterType<SettingsController>("ownTypes.settingsController", 0, 7, "SettingsController");
     qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
 }
