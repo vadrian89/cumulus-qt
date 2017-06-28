@@ -14,7 +14,16 @@ install:
 script:
   - qmake PREFIX=/usr
   - make -j$(nproc)
-  - make INSTALL_ROOT=appdir install ; find appdir/
+  - mkdir -p appdir/usr/bin
+  - mkdir -p appdir/usr/share/{applications,pixmaps}
+  - cp Cumulus appdir/usr/bin/
+  - cp cumulus.svg appdir/usr/share/pixmaps/
+  - echo "[Desktop Entry]" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Exec=cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Type=Application" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Categories=Utility;" >> appdir/usr/share/applications/cumulus.desktop
 
 after_success:
   - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" 
