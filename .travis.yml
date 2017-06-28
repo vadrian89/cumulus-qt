@@ -17,7 +17,7 @@ script:
   - mkdir -p appdir/usr/bin
   - mkdir -p appdir/usr/share/{applications,pixmaps}
   - cp Cumulus appdir/usr/bin/
-  - cp cumulus.svg appdir/usr/share/pixmaps/
+  - cp icons/icon.png appdir/usr/share/pixmaps/cumulus.png
   - echo "[Desktop Entry]" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
