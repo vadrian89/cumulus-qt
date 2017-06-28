@@ -21,7 +21,7 @@ script:
   - echo "[Desktop Entry]" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
-  - echo "Exec=cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Exec=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Type=Application" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Categories=Utility;" >> appdir/usr/share/applications/cumulus.desktop
 
