@@ -21,6 +21,9 @@
 */
 #include "Util.h"
 #include "CreditsAuthor.h"
+#include <memory>
+
+using namespace std;
 
 Util::Util(QObject *parent) : QObject(parent){}
 
@@ -410,41 +413,13 @@ bool Util::trayVisibility() {
 
 QList<QObject*> Util::creditsList() {
     QList<QObject*> list;
-    CreditsAuthor *vectorsMarket = new CreditsAuthor();
-    vectorsMarket->setAuthor("Vectors Market");
-    vectorsMarket->setAuthorUrl("http://www.flaticon.com/authors/vectors-market");
-    vectorsMarket->setLicense("CC 3.0 BY");
-    vectorsMarket->setIcon("map.svg");
-    CreditsAuthor *madebyoliver1 = new CreditsAuthor();
-    madebyoliver1->setAuthor("Madebyoliver");
-    madebyoliver1->setAuthorUrl("http://www.flaticon.com/authors/madebyoliver");
-    madebyoliver1->setLicense("CC 3.0 BY");
-    madebyoliver1->setIcon("settings-white.svg");
-    CreditsAuthor *madebyoliver2 = new CreditsAuthor();
-    madebyoliver2->setAuthor("Madebyoliver");
-    madebyoliver2->setAuthorUrl("http://www.flaticon.com/authors/madebyoliver");
-    madebyoliver2->setLicense("CC 3.0 BY");
-    madebyoliver2->setIcon("speed-icon.png");
-    CreditsAuthor *pixelBuddha = new CreditsAuthor();
-    pixelBuddha->setAuthor("Pixel Buddha");
-    pixelBuddha->setAuthorUrl("http://www.flaticon.com/authors/pixel-buddha");
-    pixelBuddha->setLicense("CC 3.0 BY");
-    pixelBuddha->setIcon("temperature-icon.png");
-    CreditsAuthor *baianat = new CreditsAuthor();
-    baianat->setAuthor("Baianat");
-    baianat->setAuthorUrl("http://www.flaticon.com/authors/baianat");
-    baianat->setLicense("CC 3.0 BY");
-    baianat->setIcon("palette.png");
-    CreditsAuthor *popcornsArts = new CreditsAuthor();
-    popcornsArts->setAuthor("Popcorns Arts");
-    popcornsArts->setAuthorUrl("http://www.flaticon.com/authors/popcorns-arts");
-    popcornsArts->setLicense("CC 3.0 BY");
-    popcornsArts->setIcon("api.png");
-    CreditsAuthor *freepik = new CreditsAuthor();
-    freepik->setAuthor("Freepik");
-    freepik->setAuthorUrl("http://www.freepik.com");
-    freepik->setLicense("CC 3.0 BY");
-    freepik->setIcon("credits.png");
+    CreditsAuthor *vectorsMarket = new CreditsAuthor(0, "Vectors Market", "http://www.flaticon.com/authors/vectors-market", "map.svg", "CC 3.0 BY");
+    CreditsAuthor *madebyoliver1 = new CreditsAuthor(0, "Madebyoliver", "http://www.flaticon.com/authors/madebyoliver", "settings-white.svg", "CC 3.0 BY");
+    CreditsAuthor *madebyoliver2 = new CreditsAuthor(0, "Madebyoliver", "http://www.flaticon.com/authors/madebyoliver", "speed-icon.png", "CC 3.0 BY");
+    CreditsAuthor *pixelBuddha = new CreditsAuthor(0, "Pixel Buddha", "http://www.flaticon.com/authors/pixel-buddha", "temperature-icon.png", "CC 3.0 BY");
+    CreditsAuthor *baianat = new CreditsAuthor(0, "Baianat", "http://www.flaticon.com/authors/baianat", "palette.png", "CC 3.0 BY");
+    CreditsAuthor *popcornsArts = new CreditsAuthor(0, "Popcorns Arts", "http://www.flaticon.com/authors/popcorns-arts", "api.png", "CC 3.0 BY");
+    CreditsAuthor *freepik = new CreditsAuthor(0, "Freepik", "http://www.freepik.com", "credits.png", "CC 3.0 BY");
     list.append(vectorsMarket);
     list.append(madebyoliver1);
     list.append(madebyoliver2);

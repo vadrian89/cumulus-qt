@@ -24,12 +24,15 @@
 
 #include <QObject>
 #include <QSettings>
+#include <QPoint>
+#include <QSize>
 
 class SettingsController : public QObject {
     Q_OBJECT
     bool m_trayVisibility, m_loginStart;
     QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor;
     float m_applicationOpacity;
+    int m_windowX, m_windowY, m_windowHeight, m_windowWidth;
     Q_PROPERTY(QString applicationBackground MEMBER m_applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
     Q_PROPERTY(QString textColor MEMBER m_textColor WRITE setTextColor NOTIFY textColorChanged)
     Q_PROPERTY(float applicationOpacity MEMBER m_applicationOpacity WRITE setApplicationOpacity NOTIFY applicationOpacityChanged)
@@ -37,10 +40,15 @@ class SettingsController : public QObject {
     Q_PROPERTY(QString trayTheme MEMBER m_trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
     Q_PROPERTY(QString windowControlsPos MEMBER m_windowControlsPos WRITE setWindowControlsPos NOTIFY windowControlsPosChanged)
     Q_PROPERTY(bool loginStart MEMBER m_loginStart WRITE setLoginStart NOTIFY loginStartChanged)
+    Q_PROPERTY(int windowX MEMBER m_windowX NOTIFY windowXChanged)
+    Q_PROPERTY(int windowY MEMBER m_windowY NOTIFY windowYChanged)
+    Q_PROPERTY(int windowHeight MEMBER m_windowHeight NOTIFY windowHeightChanged)
+    Q_PROPERTY(int windowWidth MEMBER m_windowWidth NOTIFY windowWidthChanged)
 
     void loginStartLinux(const bool &loginStart);
 public:
     explicit SettingsController(QObject *parent = 0);
+    ~SettingsController();
     void setApplicationBackground(const QString &applicationBackground);
     void setTextColor(const QString &textColor);
     void setApplicationOpacity(const float &applicationOpacity);
@@ -58,6 +66,10 @@ signals:
     void trayThemeChanged();
     void windowControlsPosChanged();
     void loginStartChanged();
+    void windowXChanged();
+    void windowYChanged();
+    void windowHeightChanged();
+    void windowWidthChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

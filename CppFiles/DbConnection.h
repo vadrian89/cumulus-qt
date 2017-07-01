@@ -30,6 +30,8 @@
 class DbConnection : public QObject {
     Q_OBJECT
     QSqlDatabase db;
+    QString databaseName(const QString &appName);
+    void moveDatabaseFile(const QString &fileName);
 public:
     explicit DbConnection(QObject *parent = 0);
     QSqlDatabase getDatabase();

@@ -48,7 +48,7 @@ Item {
                     height: 28
                     horizontalAlignment: Image.AlignHCenter
                     verticalAlignment: Image.AlignVCenter
-                    source: "qrc:/icons/" + root.icon
+                    source: "icons/" + root.icon
                 }
             }
             ColumnLayout {
