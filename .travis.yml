@@ -4,6 +4,7 @@ sudo: require
 dist: trusty
 
 before_install:
+    - echo lala
     - sudo add-apt-repository ppa:beineri/opt-qt59-trusty -y
     - sudo apt-get update -qq
     
