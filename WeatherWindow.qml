@@ -280,7 +280,7 @@ Item {
             weatherController.getForecastData()
             root.finishedWeatherUpdate()
             logo.source = util.getLogoImage()
-        }        
+        }
     }
     onUpdateWeather: {
         console.log("WeatherWindow >> update started")

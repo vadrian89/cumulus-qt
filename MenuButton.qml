@@ -44,14 +44,11 @@ Item {
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton
             onPressed: {
-                cursorShape = Qt.ClosedHandCursor
                 root.opacity = 1.0
             }
             onReleased: {
-                cursorShape = Qt.PointingHandCursor
                 root.opacity = 0.8
             }
             onClicked: {

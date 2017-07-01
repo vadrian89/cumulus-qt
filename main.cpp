@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     registerQmlType();
     if (Util::osType() == "android")
-        engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
+        engine.load(QUrl(QLatin1String("main-android.qml")));
     else
-        engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+        engine.load(QUrl(QLatin1String("main.qml")));
 
     ThreadWorker *threadWorker = new ThreadWorker();
     threadWorker->moveToThread(&thread);
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
 void registerQmlType() {
     qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
-    qmlRegisterType<SettingsController>("ownTypes.settingsController", 0, 7, "SettingsController");
+    qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
     qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
 }

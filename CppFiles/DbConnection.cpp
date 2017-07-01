@@ -22,19 +22,17 @@
 #include "DbConnection.h"
 #include "Util.h"
 #include <QApplication>
+#include <QFile>
+#include <QDir>
 #include <QDebug>
 
 DbConnection::DbConnection(QObject *parent) : QObject(parent){
     QString appName = QApplication::applicationName();
-    QString databaseName = appName + "-local.db";
-    if (Util::osType() != "android") {
-        databaseName = QApplication::applicationDirPath() + "/" + appName + "-local.db";
-    }
     db = QSqlDatabase::database();
     if (db.isValid() == false) {
         db = QSqlDatabase::addDatabase("QSQLITE");
     }
-    db.setDatabaseName(databaseName);
+    db.setDatabaseName(databaseName(appName));
 }
 
 QSqlDatabase DbConnection::getDatabase() {
@@ -129,5 +127,29 @@ bool DbConnection::databaseInit() {
     else {
         qDebug() << this->getError();
         return false;
+    }
+}
+
+QString DbConnection::databaseName(const QString &appName) {
+    QString databaseName = appName + "-local.db";
+    if (QSysInfo::kernelType() == "linux" && QSysInfo::productType() != "android") {
+        moveDatabaseFile(databaseName);
+        return QDir::homePath() + "/." + databaseName;
+    }
+    else {
+        return databaseName;
+    }
+}
+
+/*
+ * Method to move present database files into $HOME, to ensure compatibility with older versions,
+ * newer versions and Appimage packaged versions.
+ * TODO; To be removed after 2nd application update, just to be safe
+*/
+void DbConnection::moveDatabaseFile(const QString &fileName) {
+    QString oldFile = QApplication::applicationDirPath() + "/" + fileName;
+    QString newFile = QDir::homePath() + "/." + fileName;
+    if (QFile::exists(oldFile) && !QFile::exists(newFile)) {
+        QFile::copy(oldFile, newFile);
     }
 }

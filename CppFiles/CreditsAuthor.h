@@ -27,20 +27,13 @@
 class CreditsAuthor : public QObject {
     Q_OBJECT
     QString m_author, m_authorUrl, m_icon, m_license;
-    Q_PROPERTY(QString author READ author WRITE setAuthor NOTIFY authorChanged)
-    Q_PROPERTY(QString authorUrl READ authorUrl WRITE setAuthorUrl NOTIFY authorUrlChanged)
-    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QString license READ license WRITE setLicense NOTIFY licenseChanged)
+    Q_PROPERTY(QString author MEMBER m_author NOTIFY authorChanged)
+    Q_PROPERTY(QString authorUrl MEMBER m_authorUrl NOTIFY authorUrlChanged)
+    Q_PROPERTY(QString icon MEMBER m_icon NOTIFY iconChanged)
+    Q_PROPERTY(QString license MEMBER m_license NOTIFY licenseChanged)
 public:
     explicit CreditsAuthor(QObject *parent = 0);
-    void setAuthor(const QString &author);
-    QString author() const;
-    void setAuthorUrl(const QString &authorUrl);
-    QString authorUrl() const;
-    void setIcon(const QString &icon);
-    QString icon() const;
-    void setLicense(const QString &license);
-    QString license() const;
+    explicit CreditsAuthor(QObject *parent = 0, QString author = "", QString authorUrl = "", QString icon = "", QString license = "");
 signals:
     void authorChanged();
     void authorUrlChanged();

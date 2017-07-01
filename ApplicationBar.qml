@@ -61,7 +61,6 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
                 onHoveredChanged: {
                     if (containsMouse == true) {
                         parent.opacity = 1.0
@@ -99,7 +98,6 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
                 onHoveredChanged: {
                     if (containsMouse == true) {
                         parent.opacity = 1.0
@@ -122,7 +120,6 @@ Item {
             anchors.left: windowControlsPos == "left" ? minimizeButton.right : refreshButton.right
             height: parent.height
             width: parent.width - (parent.height * 4)
-            cursorShape: Qt.PointingHandCursor
         }
 
         Rectangle {
@@ -145,7 +142,6 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
                 onHoveredChanged: {
                     if (containsMouse == true) {
                         parent.opacity = 1.0

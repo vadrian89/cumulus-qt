@@ -36,6 +36,20 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_textColor = settings.value("textColor", "#ffffff").toString();
     m_applicationOpacity = settings.value("applicationOpacity", "1.0").toFloat();
     m_loginStart = settings.value("loginStart", loginStartCheck()).toBool();
+    m_windowX = settings.value("windowX", 0).toInt();
+    m_windowY = settings.value("windowY", 0).toInt();
+    m_windowHeight = settings.value("windowHeight", 0).toInt();
+    m_windowWidth = settings.value("windowWidth", 0).toInt();
+    settings.endGroup();
+}
+
+SettingsController::~SettingsController() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    settings.setValue("windowX", m_windowX);
+    settings.setValue("windowY", m_windowY);
+    settings.setValue("windowHeight", m_windowHeight);
+    settings.setValue("windowWidth", m_windowWidth);
     settings.endGroup();
 }
 

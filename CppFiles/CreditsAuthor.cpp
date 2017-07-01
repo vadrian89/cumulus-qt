@@ -23,46 +23,10 @@
 
 CreditsAuthor::CreditsAuthor(QObject *parent) : QObject(parent){}
 
-void CreditsAuthor::setAuthor(const QString &author) {
-    if (m_author != author) {
-        m_author = author;
-        emit authorChanged();
-    }
-}
-
-QString CreditsAuthor::author() const {
-    return m_author;
-}
-
-void CreditsAuthor::setAuthorUrl(const QString &authorUrl) {
-    if (m_authorUrl != authorUrl) {
-        m_authorUrl = authorUrl;
-        emit authorUrlChanged();
-    }
-}
-
-QString CreditsAuthor::authorUrl() const {
-    return m_authorUrl;
-}
-
-void CreditsAuthor::setIcon(const QString &icon) {
-    if (m_icon != icon) {
-        m_icon = icon;
-        emit iconChanged();
-    }
-}
-
-QString CreditsAuthor::icon() const {
-    return m_icon;
-}
-
-void CreditsAuthor::setLicense(const QString &license) {
-    if (m_license!= license) {
-        m_license = license;
-        emit licenseChanged();
-    }
-}
-
-QString CreditsAuthor::license() const {
-    return m_license;
+CreditsAuthor::CreditsAuthor(QObject *parent, QString author, QString authorUrl, QString icon, QString license)
+    : QObject(parent){
+    m_author = author;
+    m_authorUrl = authorUrl;
+    m_icon = icon;
+    m_license = license;
 }

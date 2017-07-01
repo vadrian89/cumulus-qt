@@ -28,9 +28,17 @@ CustomImageProvider::CustomImageProvider() : QQuickImageProvider(QQuickImageProv
 QImage CustomImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
     int width = 268;
     int height = 58;
+    QString text = "no text";
+    QString color = "#ffffff";
     QStringList stringList = id.split(QRegExp("[#]"));
-    QString text = stringList.at(0) + "\n" + stringList.at(1);
-    QString color = "#" + stringList.at(2);
+    if (stringList.size() < 3) {
+        text = stringList.at(0);
+        color = "#" + stringList.at(1);
+    }
+    else {
+        text = stringList.at(0) + "\n" + stringList.at(1);
+        color = "#" + stringList.at(2);
+    }
     if (size)
         *size = QSize(width, height);
     return getImageFromText(text, color, requestedSize.width() > 0 ? requestedSize.width() : width,
