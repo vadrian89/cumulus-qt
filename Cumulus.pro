@@ -47,25 +47,7 @@ HEADERS += \
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 DISTFILES += \
-    README.md \
-    ApplicationBar.qml \
-    ColorPalleteButton.qml \
-    CreditsListDelegate.qml \
-    CreditsView.qml \
-    CustomSwitch.qml \
-    ForecastDelegate.qml \
-    ForecastView.qml \
-    LinkedText.qml \
-    main-android.qml \
-    MenuButton.qml \
-    ResizeController.qml \
-    SearchLocation.qml \
-    SelectionButton.qml \
-    SettingsOptionItem.qml \
-    SettingsWindow.qml \
-    WeatherInfoItem.qml \
-    WeatherWindow.qml \
-    main.qml
+    README.md
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
