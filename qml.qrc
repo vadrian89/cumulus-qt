@@ -1,5 +1,23 @@
 <RCC>
     <qresource prefix="/">
         <file>qt/etc/qt.conf</file>
+        <file>ApplicationBar.qml</file>
+        <file>ColorPalleteButton.qml</file>
+        <file>CreditsListDelegate.qml</file>
+        <file>CreditsView.qml</file>
+        <file>CustomSwitch.qml</file>
+        <file>ForecastDelegate.qml</file>
+        <file>ForecastView.qml</file>
+        <file>LinkedText.qml</file>
+        <file>main.qml</file>
+        <file>main-android.qml</file>
+        <file>MenuButton.qml</file>
+        <file>ResizeController.qml</file>
+        <file>SearchLocation.qml</file>
+        <file>SelectionButton.qml</file>
+        <file>SettingsOptionItem.qml</file>
+        <file>SettingsWindow.qml</file>
+        <file>WeatherInfoItem.qml</file>
+        <file>WeatherWindow.qml</file>
     </qresource>
 </RCC>
