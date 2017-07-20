@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     registerQmlType();
     if (Util::osType() == "android")
-        engine.load(QUrl(QLatin1String("main-android.qml")));
+        engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
     else
-        engine.load(QUrl(QLatin1String("main.qml")));
+        engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     ThreadWorker *threadWorker = new ThreadWorker();
     threadWorker->moveToThread(&thread);

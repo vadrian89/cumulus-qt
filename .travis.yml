@@ -1,0 +1,37 @@
+language: cpp
+compiler: gcc
+sudo: require
+dist: trusty
+
+before_install:
+    - echo lala
+    - sudo add-apt-repository ppa:beineri/opt-qt58-trusty -y
+    - sudo apt-get update -qq
+    
+install: 
+    - sudo apt-get -y install qt58base qt58declarative qt58svg qt58quickcontrols qt58quickcontrols2 qt58graphicaleffects
+    - source /opt/qt*/bin/qt*-env.sh
+
+script:
+  - sed -i -e 's|<file>qt/etc/qt.conf</file>||g' qml.qrc # according to README
+  - qmake PREFIX=/usr
+  - make -j$(nproc)
+  - mkdir -p appdir/usr/bin
+  - mkdir -p appdir/usr/share/{applications,pixmaps}
+  - cp Cumulus appdir/usr/bin/
+  - cp icons/cumulus.svg appdir/usr/share/pixmaps/
+  - echo "[Desktop Entry]" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Exec=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Type=Application" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Categories=Utility;" >> appdir/usr/share/applications/cumulus.desktop
+
+after_success:
+  - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" 
+  - chmod a+x linuxdeployqt*.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -bundle-non-qt-libs -qmldir=.
+  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -appimage -qmldir=.
+  - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - curl --upload-file ./Cumulus*.AppImage https://transfer.sh/Cumulus-git.$(git rev-parse --short HEAD)-x86_64.AppImage
