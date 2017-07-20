@@ -4,11 +4,12 @@ sudo: require
 dist: trusty
 
 before_install:
-    - sudo add-apt-repository ppa:beineri/opt-qt59-trusty -y
+    - echo lala
+    - sudo add-apt-repository ppa:beineri/opt-qt58-trusty -y
     - sudo apt-get update -qq
     
 install: 
-    - sudo apt-get -y install qt59base qt59declarative qt59svg qt59quickcontrols qt59quickcontrols2 qt59graphicaleffects
+    - sudo apt-get -y install qt58base qt58declarative qt58svg qt58quickcontrols qt58quickcontrols2 qt58graphicaleffects
     - source /opt/qt*/bin/qt*-env.sh
 
 script:
@@ -18,11 +19,10 @@ script:
   - mkdir -p appdir/usr/bin
   - mkdir -p appdir/usr/share/{applications,pixmaps}
   - cp Cumulus appdir/usr/bin/
-  - cp *.qml appdir/usr/bin/
   - cp icons/cumulus.svg appdir/usr/share/pixmaps/
   - echo "[Desktop Entry]" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
-  - echo "Icon=cumulus.svg" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Exec=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Type=Application" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Categories=Utility;" >> appdir/usr/share/applications/cumulus.desktop
