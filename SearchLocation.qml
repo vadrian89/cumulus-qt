@@ -48,11 +48,11 @@ Item {
             maximumLength: 120
             font.pixelSize: 22
             font.family: ubuntuCondensed.name
-            width: parent.width * 90 / 100
+            width: (parent.width * 80 / 100) - loadingIcon.width
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.left: parent.left
-            anchors.leftMargin: (parent.width - width) / 2
+            anchors.leftMargin: ((parent.width * 90 / 100) - width) / 2
             color: root.textColor
             background: Rectangle {
                 border.width: 0
@@ -64,6 +64,28 @@ Item {
             }
         }
 
+        Image {
+            id: loadingIcon
+            source: "image://fontimage/\uf013" + root.textColor
+            height: searchField.height
+            width: loadingIcon.height
+            sourceSize.width: loadingIcon.width
+            sourceSize.height: loadingIcon.height
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.left: searchField.right
+            visible: false
+            RotationAnimation on rotation {
+                id: refreshRotateAnim
+                direction: RotationAnimation.Clockwise
+                from: 0
+                to: 360
+                loops: RotationAnimation.Infinite
+                alwaysRunToEnd: true
+                duration: 1000
+            }
+        }
+
         Rectangle {
             id: searchFieldBottomBorder
             anchors.top: searchField.bottom
@@ -71,7 +93,7 @@ Item {
             anchors.left: parent.left
             width: searchField.width
             height: 1
-            anchors.leftMargin: (parent.width - width) / 2
+            anchors.leftMargin: ((parent.width * 90 / 100) - width) / 2
             color: "#AAffffff"
 
         }
@@ -81,8 +103,8 @@ Item {
             anchors.top: searchFieldBottomBorder.bottom
             anchors.topMargin: 10
             anchors.left: parent.left
-            anchors.leftMargin: (parent.width - width) / 2
-            width: searchField.width
+            anchors.leftMargin: (parent.width - searchList.width) / 2
+            width: (parent.width * 80 / 100)
             height: (body.height - searchField.height - 30)
             cacheBuffer: 0
             displayMarginBeginning: 0
@@ -114,19 +136,17 @@ Item {
 
     LocationSearchController {
         id: locationSearcher
-
         onLocationResultChanged: {
             searchList.model = locationSearcher.locationResult
+            loadingIcon.visible = false
         }
-
         onErrorChanged: {
             errorDialog.text = locationSearcher.error
             errorDialog.visible = true
+            loadingIcon.visible = false
         }
-
-        onLocationChanged: {
-            root.locationSelected();
-        }
+        onSearchStarted: loadingIcon.visible = true
+        onLocationChanged: root.locationSelected();
     }
 
     MessageDialog {

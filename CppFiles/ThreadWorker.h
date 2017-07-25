@@ -35,8 +35,7 @@
 class ThreadWorker : public QObject {
     Q_OBJECT
 public:
-    explicit ThreadWorker(QObject *parent = 0);    
-    void createWeatherPixmap(const QString &weather);
+    explicit ThreadWorker(QObject *parent = 0);
     void createTrayIcon(const QString &weather, const QString &theme);
 //    void changeActionData(const QAction* action, const );
 public slots:

@@ -67,23 +67,6 @@ void ThreadWorker::startLookingForUpdates() {
     }
 }
 
-void ThreadWorker::createWeatherPixmap(const QString &weather) {
-    QImage image(22, 22, QImage::Format_ARGB32_Premultiplied);
-    QString color = Util::trayTheme() == "light" ? "white" : "black";
-    QFont font;
-    font.setPixelSize(14);
-    font.setFamily("Arial");
-    font.setBold(true);
-    image.fill(Qt::transparent);
-    QPainter painter(&image);
-    painter.setFont(font);
-    painter.setPen(QColor(color));
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawText(image.rect(), Qt::AlignCenter, weather);
-    emit finishedCreatingPixmap(image);
-    emit stopThread();
-}
-
 void ThreadWorker::createTrayIcon(const QString &weather, const QString &theme) {
     QString color = theme == "light" ? "white" : "black";
     QImage image(22, 22, QImage::Format_ARGB32_Premultiplied);

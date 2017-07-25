@@ -27,6 +27,7 @@ Item {
     visible: true
     signal clicked()
     opacity: 0.6
+    property string iconColor: "#ffffff"
 
     Rectangle {
         anchors.fill: parent
@@ -34,10 +35,9 @@ Item {
 
         Image {
             anchors.centerIn: parent
-            height: parent.height * 60 / 100
-            width: parent.width * 60 / 100
-            fillMode: Image.PreserveAspectFit
-            source: "icons/settings-white.svg"
+            height: parent.height
+            width: parent.width
+            source: "image://fontimage/\uf085" + root.iconColor
             sourceSize.width: width
             sourceSize.height: height
         }

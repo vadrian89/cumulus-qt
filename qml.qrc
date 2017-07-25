@@ -19,16 +19,15 @@
         <file>SettingsWindow.qml</file>
         <file>WeatherInfoItem.qml</file>
         <file>WeatherWindow.qml</file>
-        <file>fonts/Ubuntu-C.ttf</file>
-        <file>fonts/weathericons-regular-webfont.ttf</file>
+        <file>fonts/fontawesome.ttf</file>
         <file>icons/api.png</file>
         <file>icons/credits.png</file>
-        <file>icons/cumulus.svg</file>
         <file>icons/map.svg</file>
         <file>icons/palette.png</file>
-        <file>icons/settings-white.svg</file>
         <file>icons/speed-icon.png</file>
         <file>icons/temperature-icon.png</file>
         <file>icons/yw-logo.png</file>
+        <file>fonts/Ubuntu-C.ttf</file>
+        <file>fonts/weathericons-regular-webfont.ttf</file>
     </qresource>
 </RCC>

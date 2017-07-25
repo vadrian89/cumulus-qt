@@ -33,9 +33,9 @@
 #include "DataController.h"
 class SearchLocation : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY locationNameChanged)
-    Q_PROPERTY(QStringList locationResult READ locationResult WRITE setLocationResult NOTIFY locationResultChanged)
-    Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorChanged)
+    Q_PROPERTY(QString locationName MEMBER m_locationName WRITE setLocationName NOTIFY locationNameChanged)
+    Q_PROPERTY(QStringList locationResult MEMBER m_locationResult WRITE setLocationResult NOTIFY locationResultChanged)
+    Q_PROPERTY(QString error MEMBER m_error WRITE setError NOTIFY errorChanged)
     QString m_locationName, m_error;
     QStringList m_locationResult;
     QTimer *timer;
@@ -62,6 +62,7 @@ signals:
     void locationResultChanged();
     void errorChanged();
     void locationChanged();
+    void searchStarted();
 };
 
 #endif // SEARCHLOCATION_H
