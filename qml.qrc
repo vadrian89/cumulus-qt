@@ -22,12 +22,12 @@
         <file>fonts/fontawesome.ttf</file>
         <file>icons/api.png</file>
         <file>icons/credits.png</file>
-        <file>icons/map.svg</file>
         <file>icons/palette.png</file>
         <file>icons/speed-icon.png</file>
         <file>icons/temperature-icon.png</file>
         <file>icons/yw-logo.png</file>
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
+        <file>icons/map.png</file>
     </qresource>
 </RCC>

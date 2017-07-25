@@ -72,7 +72,7 @@ Item {
                     anchors.top: settingsBody.top
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "icons/map.svg"
+                    iconUrl: "qrc:/icons/map.png"
                     onClicked: {
                         if (searchLocation.visible == true)
                             searchLocation.visible = false
