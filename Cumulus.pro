@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     CppFiles/TrayController.cpp \
     CppFiles/CreditsAuthor.cpp \
     CppFiles/CustomImageProvider.cpp \
-    CppFiles/FontImageProvider.cpp
+    CppFiles/FontImageProvider.cpp \
+    CppFiles/WundWeatherController.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,7 +43,8 @@ HEADERS += \
     CppFiles/TrayController.h \
     CppFiles/CreditsAuthor.h \
     CppFiles/CustomImageProvider.h \
-    CppFiles/FontImageProvider.h
+    CppFiles/FontImageProvider.h \
+    CppFiles/WundWeatherController.h
 
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 

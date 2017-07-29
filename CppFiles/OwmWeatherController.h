@@ -23,6 +23,7 @@
 #define OWMWEATHERCONTROLLER_H
 
 #include "AbstractWeatherController.h"
+
 class OwmWeatherController : public AbstractWeatherController {
     Q_OBJECT
     void saveWeatherToDb(const QJsonObject jsonObject);
