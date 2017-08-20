@@ -29,5 +29,7 @@
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
         <file>icons/map.png</file>
+        <file>icons/wund-logo.png</file>
+        <file>icons/wund-logo-light.png</file>
     </qresource>
 </RCC>

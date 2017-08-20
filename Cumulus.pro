@@ -49,7 +49,19 @@ HEADERS += \
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 DISTFILES += \
-    README.md
+    README.md \
+    .travis.yml \
+    _config.yml \
+    docs/_config.yml \
+    docs/assets/images/weather.gif \
+    docs/assets/images/location.png \
+    docs/assets/images/settings.png \
+    docs/assets/images/weather.png \
+    docs/assets/images/weather_green.png \
+    docs/assets/images/weather_purp.png \
+    docs/assets/images/weather_red.png \
+    docs/index.md \
+    docs/multiple_inst.md
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj

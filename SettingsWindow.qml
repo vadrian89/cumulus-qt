@@ -337,12 +337,15 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: (parent.width - apiSelect.width) / 2
                     visible: false
-                    model: ["Open Weather Map", "Yahoo! Weather"]
+                    model: ["Open Weather Map", "Yahoo! Weather", "Weather Underground"]
                     onCurrentIndexChanged: {
                         if (visible == true) {
                             switch (currentIndex) {
                             case 1:
                                 root.api = "y"
+                                break;
+                            case 2:
+                                root.api = "wund"
                                 break;
                             default:
                                 root.api = "owm"
@@ -366,6 +369,9 @@ Item {
                 Component.onCompleted: {
                     if (util.getWeatherApi() == "y") {
                         apiSelect.currentIndex = 1
+                    }
+                    else if (util.getWeatherApi() == "wund") {
+                        apiSelect.currentIndex = 2
                     }
                     else {
                         apiSelect.currentIndex = 0

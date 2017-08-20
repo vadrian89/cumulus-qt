@@ -25,8 +25,8 @@
 #include "AbstractWeatherController.h"
 class YWeatherController : public AbstractWeatherController {
     Q_OBJECT
-    void saveWeatherToDb(const QJsonObject jsonObject);
-    void saveForecastToDb(const QJsonObject jsonObject);
+    void saveWeatherToDb(const QJsonObject &jsonObject);
+    void saveForecastToDb(const QJsonObject &jsonObject);
     void readJsonData(QJsonObject jsonObject);
 public:
     explicit YWeatherController(QObject *parent = 0);

@@ -10,14 +10,16 @@ Thanks!
 
 Full port Qt/Qml is here!
 
-Simple weather application, powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/)
+Simple weather application, powered by:
+- [Yahoo! Weather](http://weather.yahoo.com)
+- [Open Weather Map](http://openweathermap.org/)
+- [Weather Underground](https://www.wunderground.com/?apiref=697599e3b1e7adec)
 
 Forked from [typhoon](https://github.com/apandada1/typhoon) which was
 Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](https://twitter.com/consindo).
 
 Features:
 - resizable window with weather data adjusting accordingly
-- units recalculations on-the-fly without data needed to be re-downloaded
 - colors selectors for background and text with alpha channel, knock yourselves up ^^
 - tray icon, with aditional data to be added on menu :)
 - qt installer, without root installation to allow future updates fast without breaking on upgrade
@@ -35,7 +37,7 @@ Example: /home/user/Cumulus/Cumulus -i NewInstance
 
 # In case you want to build it yourself:
 
-- recommended Qt version: 5.8
+- recommended Qt version: 5.9
 - remove the following line from Cumulus.pro file: QMAKE_LFLAGS += "-Wl,-rpath,'$$ORIGIN/lib'"
 - remove the following entry from qml.qrc file: "qt/etc/qt.conf"
 

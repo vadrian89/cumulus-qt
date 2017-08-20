@@ -26,8 +26,8 @@
 
 class OwmWeatherController : public AbstractWeatherController {
     Q_OBJECT
-    void saveWeatherToDb(const QJsonObject jsonObject);
-    void saveForecastToDb(const QJsonObject jsonObject);
+    void saveWeatherToDb(const QJsonObject &jsonObject);
+    void saveForecastToDb(const QJsonObject &jsonObject);
     void readJsonData(QJsonObject jsonObject);
     void getForecast(const QString &code);
 public:

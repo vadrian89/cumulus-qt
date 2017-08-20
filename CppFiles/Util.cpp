@@ -186,16 +186,6 @@ float Util::applicationOpacity() {
     return opacity;
 }
 
-int Util::indexFromApiCode(QString apiCode) {
-    if (apiCode == "owm") {
-        return 1;
-    }
-//    else if (apiCode == "wu") { return 2; }
-    else {
-        return 0;
-    }
-}
-
 //Calculate temperature based on local selection of measurement
 double Util::calculateTemperature(const double &temperature, const QString &unit) {
     QString localUnit = getTemperatureUnit().toLower();
@@ -398,8 +388,11 @@ QString Util::getLogoImage() {
     if (getWeatherApi() == "y") {
         return "icons/yw-logo.png";
     }
+    else if (getWeatherApi() == "wund") {
+        return "icons/wund-logo-light.png";
+    }
     else {
-        return "image://customimage/Provided by:#OpenWeatherMap" + textColor();
+        return "image://customimage/Powered by:#OpenWeatherMap" + textColor();
     }
 }
 

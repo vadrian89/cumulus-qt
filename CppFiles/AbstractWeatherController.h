@@ -36,7 +36,7 @@ class AbstractWeatherController : public QObject {
 protected:
     DataController *dataController;
     DbConnection *db;
-    enum OperationData { GetLocationId, GetWeather, GetForecast };
+    enum OperationData { GetLocationId, GetWeather, GetForecast, GetAstronomy };
     int operationData;
     int locationId;
     QString temperatureUnit;
@@ -44,12 +44,12 @@ protected:
     QJsonObject weatherObject, forecastObject;
     QString locationCode, locationName;
 
-    QJsonObject nextBranch(const QJsonObject jsonObject, const QString current) const;
-    virtual void saveWeatherToDb(const QJsonObject jsonObject) = 0;
-    virtual void saveForecastToDb(const QJsonObject jsonObject) = 0;
+    QJsonObject nextBranch(const QJsonObject &jsonObject, const QString current) const;
+    virtual void saveWeatherToDb(const QJsonObject &jsonObject) = 0;
+    virtual void saveForecastToDb(const QJsonObject &jsonObject) = 0;
     bool clearWeather();
     bool clearForecastData();
-    bool saveLocation(const QString &code, const QString &location);
+    bool saveLocation(const QString &code);
 public:
     explicit AbstractWeatherController(QObject *parent = 0);
     virtual void searchByLocation(QString &location) = 0;

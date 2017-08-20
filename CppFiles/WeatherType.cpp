@@ -29,10 +29,12 @@ WeatherType::WeatherType(QObject *parent) : QObject(parent){
     yahooIcons = new QMap<int, QString>();
     owmIcons = new QMap<int, QString>();
     nightFonts = new QMap<QString, QString>();
+    wundIcons = new QMap<int, QString>();
     mapYahooIcon();
     mapOwmIcons();
+    mapWundIcons();
     mapNightIcons();
-    setWeatherData();
+    setWeatherData();    
     m_weatherApi = Util::getWeatherApi();
 }
 
@@ -51,6 +53,17 @@ void WeatherType::getWeatherData(){
                 yweather->searchBycode(location.find("code").value());
             else
                 yweather->searchByLocation(location.find("name").value());
+        }
+        else if (Util::getWeatherApi() == "wund") {
+            wundWeather = new WundWeatherController();
+            connect(wundWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
+            connect(wundWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
+            connect(wundWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
+            connect(wundWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+            if (location.find("code") != location.end())
+                wundWeather->searchBycode(location.find("code").value());
+            else
+                wundWeather->searchByLocation(location.find("name").value());
         }
         else {
             owmWeather = new OwmWeatherController();
@@ -121,7 +134,7 @@ QList<QObject*> WeatherType::getForecastData() {
             QString str = "select forec_id as forec_id, forec_date as date, forec_weather_code as weather_code, "
                           "forec_weather_description as description, forec_temp_min as temp_min, "
                           "forec_temp_max as temp_max "
-                          "from sw_tr_forecast where forec_loc_id = :loc_id limit 1, (select count(*) from sw_tr_forecast where forec_loc_id = :loc_id)";
+                          "from sw_tr_forecast where forec_loc_id = :loc_id";
             QSqlQuery query;
             query.prepare(str);
             query.bindValue(":loc_id", dbLocationId);
@@ -133,7 +146,7 @@ QList<QObject*> WeatherType::getForecastData() {
                 forecast->setForecastDesc(query.value("description").toString());
                 forecast->setTempLow(query.value("temp_min").toInt());
                 forecast->setTempHigh(query.value("temp_max").toInt());
-                forecast->setForecastDate(query.value("date").toDate().toString("ddd").toUpper());
+                forecast->setForecastDate(query.value("date").toDate().toString("ddd").toUpper().remove("."));
                 list.append(forecast);
             }
             if (query.lastError().isValid()) {
@@ -350,6 +363,12 @@ QString WeatherType::findIcon(int weatherCode) {
         else
             return yahooIcons->find(-1).value();
     }
+    else if (Util::getWeatherApi() == "wund") {
+        if (wundIcons->contains(weatherCode))
+            return wundIcons->find(weatherCode).value();
+        else
+            return wundIcons->find(-1).value();
+    }
     else {
         if (owmIcons->contains(weatherCode))
             return owmIcons->find(weatherCode).value();
@@ -484,6 +503,7 @@ void WeatherType::setLocationLink(const QString &locationLink) {
 QString WeatherType::weather() const {
     return m_weather;
 }
+
 int WeatherType::weatherCode() const {
     return m_weatherCode;
 }
@@ -491,6 +511,7 @@ int WeatherType::weatherCode() const {
 QString WeatherType::location() const {
     return m_location;
 }
+
 QString WeatherType::locationLink() const {
     return m_locationLink;
 }
@@ -543,10 +564,16 @@ void WeatherType::setLoadFinished(const bool &loadFinished) {
     if (m_loadFinished != loadFinished) {
         m_loadFinished = loadFinished;
         if (m_loadFinished == true) {
-            if(Util::getWeatherApi() == "y")
+            if(Util::getWeatherApi() == "y") {
                 yweather->saveDataToDb();
-            else
+            }
+            else if(Util::getWeatherApi() == "wund") {
+                wundWeather->saveDataToDb();
+            }
+            else {
                 owmWeather->saveDataToDb();
+            }
+
         }
         emit loadFinishedChanged();
     }
@@ -686,4 +713,28 @@ void WeatherType::setWeatherApi(const QString &weatherApi) {
         Util::setWeatherApi(weatherApi);
         emit weatherApiChanged();
     }
+}
+
+void WeatherType::mapWundIcons() {
+    wundIcons->insert(1, "\uf064");
+    wundIcons->insert(2, "\uf009");
+    wundIcons->insert(3, "\uf0b2");
+    wundIcons->insert(4, "\uf00a");
+    wundIcons->insert(5, "\uf010");
+    wundIcons->insert(6, "\uf00d");
+    wundIcons->insert(7, "\uf013");
+    wundIcons->insert(8, "\uf064");
+    wundIcons->insert(9, "\uf003");
+    wundIcons->insert(10, "\uf0b6");
+    wundIcons->insert(11, "\uf002");
+    wundIcons->insert(12, "\uf002");
+    wundIcons->insert(13, "\uf002");
+    wundIcons->insert(14, "\uf002");
+    wundIcons->insert(15, "\uf0b2");
+    wundIcons->insert(16, "\uf009");
+    wundIcons->insert(17, "\uf00a");
+    wundIcons->insert(18, "\uf00d");
+    wundIcons->insert(19, "\uf010");
+    wundIcons->insert(20, "\uf07b");
+    wundIcons->insert(-1, "\uf07b");
 }

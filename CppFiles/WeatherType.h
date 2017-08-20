@@ -32,6 +32,7 @@
 #include "YWeatherController.h"
 #include "OwmWeatherController.h"
 #include "Forecast.h"
+#include "WundWeatherController.h"
 class WeatherType : public QObject {
     Q_OBJECT
     QString m_weather;
@@ -48,7 +49,8 @@ class WeatherType : public QObject {
     int m_humidity;
     QMap<int, QString> *yahooIcons;
     QMap<int, QString> *owmIcons;
-    QMap<QString, QString> *nightFonts;
+    QMap<int, QString> *wundIcons;
+    QMap<QString, QString> *nightFonts;    
     QString m_sunrise;
     QString m_sunset;
     int m_tempMin;
@@ -85,12 +87,14 @@ class WeatherType : public QObject {
     void mapYahooIcon();
     void mapOwmIcons();
     void mapNightIcons();
+    void mapWundIcons();
     QString findIcon(int weatherCode);
     QString findNightIcon(const QString fontCode) const;
     QMap<QString,QString> searchCriteria();
     void updateForecastTemp(const QString &oldUnit);
     YWeatherController *yweather;
     OwmWeatherController *owmWeather;
+    WundWeatherController *wundWeather;
     QThread workerThread;
     bool clearLocationCode();
 public:

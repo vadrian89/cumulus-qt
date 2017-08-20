@@ -151,5 +151,6 @@ void DbConnection::moveDatabaseFile(const QString &fileName) {
     QString newFile = QDir::homePath() + "/." + fileName;
     if (QFile::exists(oldFile) && !QFile::exists(newFile)) {
         QFile::copy(oldFile, newFile);
+        qDebug() << "DbConnection::moveDatabaseFile >> removing old file " << oldFile << " to " << newFile;
     }
 }

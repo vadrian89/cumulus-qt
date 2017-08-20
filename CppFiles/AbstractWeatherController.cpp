@@ -28,26 +28,25 @@ AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(
     connect(dataController, SIGNAL(networkError()), this, SLOT(manageError()));
 }
 
-QJsonObject AbstractWeatherController::nextBranch(const QJsonObject jsonObject, const QString current) const {
+QJsonObject AbstractWeatherController::nextBranch(const QJsonObject &jsonObject, const QString current) const {
     return jsonObject.find(current).value().toObject();
 }
 
 void AbstractWeatherController::saveDataToDb() {
     if (locationCode.trimmed().size() > 0)
-        saveLocation(locationCode, locationName);
+        saveLocation(locationCode);
     saveWeatherToDb(weatherObject);
     saveForecastToDb(forecastObject);
 }
 
-bool AbstractWeatherController::saveLocation(const QString &code, const QString &location) {
+bool AbstractWeatherController::saveLocation(const QString &code) {
     if (db->startCon() == true) {
-        QString queryString = "update sw_ma_location set loc_code = :code, loc_name = :location "
+        QString queryString = "update sw_ma_location set loc_code = :code "
                               "where loc_id = :id";
         QSqlQuery query;
         query.prepare(queryString);
         query.bindValue(":code", code);
         query.bindValue(":id", locationId);
-        query.bindValue(":location", location);
         if (query.exec()) {
             return true;
         }
