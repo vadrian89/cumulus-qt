@@ -5,8 +5,10 @@ title: Cumulus
 
 # Cumulus QT
 ## About
-Cumulus is a simple weather application, with a back end powered by [Yahoo! Weather](http://weather.yahoo.com) & [Open Weather Map](http://openweathermap.org/).  
-It is and always will be free, licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+Cumulus is a simple weather application, with a back end powered by:
+- [Yahoo! Weather](http://weather.yahoo.com)
+- [Open Weather Map](http://openweathermap.org/)
+- [Weather Underground](https://www.wunderground.com/?apiref=697599e3b1e7adec)
 
 This is a port to Qt/Qml of the [original cumulus](legacy_cumulus.md)
 
@@ -43,6 +45,3 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 - [Adam Whitcroft](https://twitter.com/AdamWhitcroft), for his fonts used in original Typhoon/Cumulus
 - [Erik Flowers](https://github.com/erikflowers) for his [weather icons](https://github.com/erikflowers/weather-icons),
 which sadly has discontinued support for them
-
-## TODO
-- Add another API
