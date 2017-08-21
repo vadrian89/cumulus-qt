@@ -130,14 +130,13 @@ Item {
             width: height
             color: "transparent"
             opacity: 0.8
-            Text {
-                anchors.fill: parent
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: parent.height * 70 / 100
-                font.family: iconsFont
-                text: "\uf04c"
-                color: root.textColor
+            Image {
+                anchors.centerIn: parent
+                height: parent.height
+                width: parent.width
+                sourceSize.width: width
+                sourceSize.height: height
+                source: "image://fontimage/\uf021" + root.textColor
             }
             MouseArea {
                 anchors.fill: parent
@@ -171,6 +170,7 @@ Item {
             anchors.left: windowControlsPos == "left" ? refreshButton.right : parent.left
             height: parent.height
             width: height
+            iconColor: root.textColor
             onClicked: root.menuButtonClicked()
         }
     }

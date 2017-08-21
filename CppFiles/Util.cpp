@@ -186,16 +186,6 @@ float Util::applicationOpacity() {
     return opacity;
 }
 
-int Util::indexFromApiCode(QString apiCode) {
-    if (apiCode == "owm") {
-        return 1;
-    }
-//    else if (apiCode == "wu") { return 2; }
-    else {
-        return 0;
-    }
-}
-
 //Calculate temperature based on local selection of measurement
 double Util::calculateTemperature(const double &temperature, const QString &unit) {
     QString localUnit = getTemperatureUnit().toLower();
@@ -398,8 +388,11 @@ QString Util::getLogoImage() {
     if (getWeatherApi() == "y") {
         return "icons/yw-logo.png";
     }
+    else if (getWeatherApi() == "wund") {
+        return "icons/wund-logo-light.png";
+    }
     else {
-        return "image://customimage/Provided by:#OpenWeatherMap" + textColor();
+        return "image://customimage/Powered by:#OpenWeatherMap" + textColor();
     }
 }
 
@@ -413,15 +406,13 @@ bool Util::trayVisibility() {
 
 QList<QObject*> Util::creditsList() {
     QList<QObject*> list;
-    CreditsAuthor *vectorsMarket = new CreditsAuthor(0, "Vectors Market", "http://www.flaticon.com/authors/vectors-market", "map.svg", "CC 3.0 BY");
-    CreditsAuthor *madebyoliver1 = new CreditsAuthor(0, "Madebyoliver", "http://www.flaticon.com/authors/madebyoliver", "settings-white.svg", "CC 3.0 BY");
+    CreditsAuthor *vectorsMarket = new CreditsAuthor(0, "Vectors Market", "http://www.flaticon.com/authors/vectors-market", "map.png", "CC 3.0 BY");
     CreditsAuthor *madebyoliver2 = new CreditsAuthor(0, "Madebyoliver", "http://www.flaticon.com/authors/madebyoliver", "speed-icon.png", "CC 3.0 BY");
     CreditsAuthor *pixelBuddha = new CreditsAuthor(0, "Pixel Buddha", "http://www.flaticon.com/authors/pixel-buddha", "temperature-icon.png", "CC 3.0 BY");
     CreditsAuthor *baianat = new CreditsAuthor(0, "Baianat", "http://www.flaticon.com/authors/baianat", "palette.png", "CC 3.0 BY");
     CreditsAuthor *popcornsArts = new CreditsAuthor(0, "Popcorns Arts", "http://www.flaticon.com/authors/popcorns-arts", "api.png", "CC 3.0 BY");
     CreditsAuthor *freepik = new CreditsAuthor(0, "Freepik", "http://www.freepik.com", "credits.png", "CC 3.0 BY");
     list.append(vectorsMarket);
-    list.append(madebyoliver1);
     list.append(madebyoliver2);
     list.append(pixelBuddha);
     list.append(baianat);

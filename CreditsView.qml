@@ -26,7 +26,7 @@ import QtQuick.Layouts 1.3
 Item {
     id: rootItem
     visible: false
-    property string appVersion: "3.0.3"
+    property string appVersion: "3.1.0"
     property string textColor: util.textColor()
     property string backgroundColor: util.backgroundColor()
     property int contentWidth: rootItem.width * 90 / 100
@@ -69,12 +69,24 @@ Item {
                     font.pixelSize: 14
                     color: rootItem.textColor
                     wrapMode: Text.Wrap
-                    text: "The Weather Icons created and maintained by Erik Flowers"
+                    text: "Thanks to Erik Flowers for his weather icons fonts!"
                     url: "https://erikflowers.github.io/weather-icons/"
+                }
+                LinkedText {
+                    id: fontAwesomeCreditsText
+                    anchors.top: fontCreditsText.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: (rootItem.width - fontAwesomeCreditsText.width) / 2
+                    width: rootItem.contentWidth
+                    font.pixelSize: 14
+                    color: rootItem.textColor
+                    wrapMode: Text.Wrap
+                    text: "Thanks to Dave Gandy for Font Awesome!"
+                    url: "http://fontawesome.io/"
                 }
                 Text {
                     id: creditsText
-                    anchors.top: fontCreditsText.bottom
+                    anchors.top: fontAwesomeCreditsText.bottom
                     anchors.left: parent.left
                     anchors.leftMargin: (rootItem.width - creditsText.width) / 2
                     width: rootItem.contentWidth
@@ -87,7 +99,11 @@ Item {
                           + "Forked from Typhoon, which was based of Stormcloud.<br>"
                           + "Active developers: <ul><li>Adrian Verban verbanady@gmail.com</li></ul>"
                           + "Special thanks to: <ul><li>Daryl Bennett</li><li>Archisman Panigrahi</li></ul>"
-                          + "Weather provided by: <ul><li>Open Weather Map</li><li>Yahoo! Weather</li></ul>"
+                          + "Weather data provided by: "
+                          + "<ul><li>Open Weather Map</li>"
+                          + "<li>Yahoo! Weather</li>"
+                          + "<li>Weather Underground</li>"
+                          + "</ul>"
                           + "Icons credits:"
                 }
                 ListView {

@@ -33,6 +33,7 @@ void OwmWeatherController::searchByLocation(QString &location) {
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apiKey + "&lang=" + systemLang);
+    locationName = location;
 }
 
 void OwmWeatherController::searchBycode(QString &code) {
@@ -52,7 +53,6 @@ void OwmWeatherController::getForecast(const QString &code) {
 void OwmWeatherController::readJsonData(QJsonObject jsonObject) {
     if (operationData == OperationData::GetLocationId || operationData == OperationData::GetWeather) {
         locationCode = QString::number(jsonObject.find("id").value().toInt());
-        locationName = jsonObject.find("name").value().toString();
         weatherObject = jsonObject;
         getForecast(locationCode);
     }
@@ -62,7 +62,7 @@ void OwmWeatherController::readJsonData(QJsonObject jsonObject) {
     }
 }
 
-void OwmWeatherController::saveWeatherToDb(const QJsonObject jsonObject) {
+void OwmWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     qDebug() << "In OwmWeatherController::saveWeatherToDb";
     qint32 weatherCode = -1;
     float temperature = 0;
@@ -121,7 +121,7 @@ void OwmWeatherController::saveWeatherToDb(const QJsonObject jsonObject) {
     }
 }
 
-void OwmWeatherController::saveForecastToDb(const QJsonObject jsonObject) {
+void OwmWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
     QJsonArray forecastArray = jsonObject.find("list").value().toArray();
     qint32 weatherCode = -1;
     qint16 tempHigh = 0;

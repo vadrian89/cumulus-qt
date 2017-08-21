@@ -24,12 +24,15 @@
 
 #include <QQuickImageProvider>
 #include <QImage>
+#include <QFont>
+#include <QFontDatabase>
+#include <QPainter>
 
 class FontImageProvider : public QQuickImageProvider {
 public:
     FontImageProvider();
-//    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
-//    QImage getImageFromText(const QString &text, const int &width, const int &height);
+    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
+    QImage getImageFromText(const QString &text, const QString &color, const int &width, const int &height);
 };
 
 #endif // FONTIMAGEPROVIDER_H

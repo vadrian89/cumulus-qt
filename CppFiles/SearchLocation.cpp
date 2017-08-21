@@ -33,6 +33,7 @@ SearchLocation::SearchLocation(QObject *parent) : QObject(parent) {
 
 void SearchLocation::doSearch() {
     timer->stop();
+    emit searchStarted();
     dataController->getDataFromUrl("http://autocomplete.wunderground.com/aq?query=" + m_locationName);
 }
 
@@ -49,10 +50,6 @@ QJsonObject SearchLocation::nextBranch(const QJsonObject jsonObject, const QStri
     return jsonObject.find(current).value().toObject();
 }
 
-QString SearchLocation::locationName() const{
-    return m_locationName;
-}
-
 void SearchLocation::setLocationName(const QString &locationName) {
     if (locationName.trimmed().size() > 0 && m_locationName != locationName) {
         timer->stop();
@@ -62,19 +59,11 @@ void SearchLocation::setLocationName(const QString &locationName) {
     }
 }
 
-QStringList SearchLocation::locationResult() const{
-    return m_locationResult;
-}
-
 void SearchLocation::setLocationResult(const QStringList &locationResult) {
     if (locationResult.size() > 0 && m_locationResult != locationResult) {
         m_locationResult = locationResult;
         emit locationResultChanged();
     }
-}
-
-QString SearchLocation::error() const{
-    return m_error;
 }
 
 void SearchLocation::setError(const QString &error) {

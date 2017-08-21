@@ -34,6 +34,7 @@
 #include "CppFiles/TrayController.h"
 #include "CppFiles/ThreadWorker.h"
 #include "CppFiles/CustomImageProvider.h"
+#include "CppFiles/FontImageProvider.h"
 
 void registerQmlType();
 
@@ -51,6 +52,7 @@ int main(int argc, char *argv[]) {
     QThread thread;
     QQmlApplicationEngine engine;
     engine.addImageProvider(QLatin1String("customimage"), new CustomImageProvider());
+    engine.addImageProvider(QLatin1String("fontimage"), new FontImageProvider());
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("util", &util);
     context->setContextProperty("settingsController", &settingsController);

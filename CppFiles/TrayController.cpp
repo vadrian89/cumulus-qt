@@ -60,7 +60,7 @@ void TrayController::setTrayVisibility(const bool &trayVisibility) {
 }
 
 void TrayController::setTrayIcon() {
-    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+    if (QSystemTrayIcon::isSystemTrayAvailable() && trayIcon != NULL) {
         worker = new ThreadWorker();
         thread = new QThread(this);
         connect(worker, SIGNAL(finishedCreatingPixmap(QImage)), this, SLOT(setTrayIcon(QImage)));

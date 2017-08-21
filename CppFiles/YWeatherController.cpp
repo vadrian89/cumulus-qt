@@ -30,6 +30,7 @@ YWeatherController::YWeatherController(QObject *parent) : AbstractWeatherControl
 
 void YWeatherController::searchByLocation(QString &location) {
     operationData = OperationData::GetLocationId;
+    locationName = location;
     dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select woeid from geo.places(1) where text='" + location + "'&format=json");
 }
 
@@ -45,14 +46,13 @@ void YWeatherController::readJsonData(QJsonObject jsonObject) {
         searchBycode(locationCode);
     }
     else {
-        locationName = nextBranch(nextBranch(resultsObject, "channel"), "location").find("city").value().toString();
         weatherObject = jsonObject;
         forecastObject = nextBranch(nextBranch(resultsObject, "channel"), "item");
         emit dataDownloaded();
     }
 }
 
-void YWeatherController::saveWeatherToDb(const QJsonObject jsonObject) {
+void YWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     qDebug() << "In YWeatherController::saveWeatherToDb";
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
     qint32 weatherCode = -1;
@@ -123,7 +123,7 @@ void YWeatherController::saveWeatherToDb(const QJsonObject jsonObject) {
     }	
 }
 
-void YWeatherController::saveForecastToDb(const QJsonObject jsonObject) {
+void YWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
     QJsonArray forecastArray = jsonObject.find("forecast").value().toArray();
     qint32 weatherCode = -1;
     qint16 tempHigh = 0;

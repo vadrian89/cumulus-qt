@@ -75,7 +75,6 @@ public:
     Q_INVOKABLE static QPoint loadWindowLocation();
     Q_INVOKABLE static void saveWindowSize(QSize size);
     Q_INVOKABLE static QSize loadWindowSize();
-    Q_INVOKABLE static int indexFromApiCode(QString apiCode);
     Q_INVOKABLE static float applicationOpacity();
     Q_INVOKABLE static QString temperatureUnitSymbol();
     Q_INVOKABLE static QString speedUnitSymbol();

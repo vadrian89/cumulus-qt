@@ -1,4 +1,4 @@
-QT += qml quick sql widgets svg
+QT += qml quick sql widgets
 
 CONFIG += c++11
 
@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     CppFiles/TrayController.cpp \
     CppFiles/CreditsAuthor.cpp \
     CppFiles/CustomImageProvider.cpp \
-    CppFiles/FontImageProvider.cpp
+    CppFiles/FontImageProvider.cpp \
+    CppFiles/WundWeatherController.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,12 +43,25 @@ HEADERS += \
     CppFiles/TrayController.h \
     CppFiles/CreditsAuthor.h \
     CppFiles/CustomImageProvider.h \
-    CppFiles/FontImageProvider.h
+    CppFiles/FontImageProvider.h \
+    CppFiles/WundWeatherController.h
 
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 DISTFILES += \
-    README.md
+    README.md \
+    .travis.yml \
+    _config.yml \
+    docs/_config.yml \
+    docs/assets/images/weather.gif \
+    docs/assets/images/location.png \
+    docs/assets/images/settings.png \
+    docs/assets/images/weather.png \
+    docs/assets/images/weather_green.png \
+    docs/assets/images/weather_purp.png \
+    docs/assets/images/weather_red.png \
+    docs/index.md \
+    docs/multiple_inst.md
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
