@@ -40,15 +40,14 @@ class SettingsController : public QObject {
     Q_PROPERTY(QString trayTheme MEMBER m_trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
     Q_PROPERTY(QString windowControlsPos MEMBER m_windowControlsPos WRITE setWindowControlsPos NOTIFY windowControlsPosChanged)
     Q_PROPERTY(bool loginStart MEMBER m_loginStart WRITE setLoginStart NOTIFY loginStartChanged)
-    Q_PROPERTY(int windowX MEMBER m_windowX NOTIFY windowXChanged)
-    Q_PROPERTY(int windowY MEMBER m_windowY NOTIFY windowYChanged)
-    Q_PROPERTY(int windowHeight MEMBER m_windowHeight NOTIFY windowHeightChanged)
-    Q_PROPERTY(int windowWidth MEMBER m_windowWidth NOTIFY windowWidthChanged)
+    Q_PROPERTY(int windowX MEMBER m_windowX WRITE setWindowX NOTIFY windowXChanged)
+    Q_PROPERTY(int windowY MEMBER m_windowY WRITE setWindowY NOTIFY windowYChanged)
+    Q_PROPERTY(int windowHeight MEMBER m_windowHeight WRITE setWindowHeight NOTIFY windowHeightChanged)
+    Q_PROPERTY(int windowWidth MEMBER m_windowWidth WRITE setWindowWidth NOTIFY windowWidthChanged)
 
     void loginStartLinux(const bool &loginStart);
 public:
     explicit SettingsController(QObject *parent = 0);
-    ~SettingsController();
     void setApplicationBackground(const QString &applicationBackground);
     void setTextColor(const QString &textColor);
     void setApplicationOpacity(const float &applicationOpacity);
@@ -56,6 +55,10 @@ public:
     void setTrayTheme(const QString &trayTheme);
     void setWindowControlsPos(const QString &windowControlsPos);
     void setLoginStart(const bool &loginStart);
+    void setWindowX(const int &windowX);
+    void setWindowY(const int &windowY);
+    void setWindowHeight(const int &windowHeight);
+    void setWindowWidth(const int &windowWidth);
 
     Q_INVOKABLE static bool loginStartCheck();
 signals:

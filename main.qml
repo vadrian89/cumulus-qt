@@ -45,8 +45,6 @@ ApplicationWindow {
         color: applicationSettingsController.applicationBackground
     }
 
-    onXChanged: applicationSettingsController.windowX = mainWindow.x
-    onYChanged: applicationSettingsController.windowY = mainWindow.y
     onHeightChanged: applicationSettingsController.windowHeight = mainWindow.height
     onWidthChanged: applicationSettingsController.windowWidth = mainWindow.width
     onClosing: {
@@ -105,6 +103,8 @@ ApplicationWindow {
             mainWindow.maximumWidth = Screen.desktopAvailableWidth
             mainWindow.minimumHeight = winMinHeight
             mainWindow.minimumWidth = winMinWidth
+            applicationSettingsController.windowX = mainWindow.x
+            applicationSettingsController.windowY = mainWindow.y
         }
     }
     Component.onCompleted: weatherViewLoader.source = "WeatherWindow.qml"

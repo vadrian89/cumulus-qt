@@ -38,18 +38,8 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_loginStart = settings.value("loginStart", loginStartCheck()).toBool();
     m_windowX = settings.value("windowX", 0).toInt();
     m_windowY = settings.value("windowY", 0).toInt();
-    m_windowHeight = settings.value("windowHeight", 0).toInt();
-    m_windowWidth = settings.value("windowWidth", 0).toInt();
-    settings.endGroup();
-}
-
-SettingsController::~SettingsController() {
-    QSettings settings;
-    settings.beginGroup("app-settings");
-    settings.setValue("windowX", m_windowX);
-    settings.setValue("windowY", m_windowY);
-    settings.setValue("windowHeight", m_windowHeight);
-    settings.setValue("windowWidth", m_windowWidth);
+    m_windowHeight = settings.value("windowHeight", 500).toInt();
+    m_windowWidth = settings.value("windowWidth", 300).toInt();
     settings.endGroup();
 }
 
@@ -184,4 +174,48 @@ bool SettingsController::loginStartCheck() {
     bool loginStart = settings.value("loginStart", QFile::exists(filePath)).toBool();
     settings.endGroup();
     return loginStart;
+}
+
+void SettingsController::setWindowX(const int &windowX) {
+    if (m_windowX != windowX) {
+        m_windowX = windowX;
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("windowX", m_windowX);
+        settings.endGroup();
+        emit windowXChanged();
+    }
+}
+
+void SettingsController::setWindowY(const int &windowY) {
+    if (m_windowY != windowY) {
+        m_windowY = windowY;
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("windowY", m_windowY);
+        settings.endGroup();
+        emit windowXChanged();
+    }
+}
+
+void SettingsController::setWindowHeight(const int &windowHeight) {
+    if (m_windowHeight != windowHeight) {
+        m_windowHeight = windowHeight;
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("windowHeight", windowHeight);
+        settings.endGroup();
+        emit windowXChanged();
+    }
+}
+
+void SettingsController::setWindowWidth(const int &windowWidth) {
+    if (m_windowWidth != windowWidth) {
+        m_windowWidth = windowWidth;
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("windowWidth", windowWidth);
+        settings.endGroup();
+        emit windowXChanged();
+    }
 }
