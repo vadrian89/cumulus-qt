@@ -16,9 +16,11 @@ script:
   - qmake PREFIX=/usr
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin
+  - mkdir -p appdir/usr/bin/icons/hicolor
   - mkdir -p appdir/usr/share/{applications,pixmaps}
   - cp Cumulus appdir/usr/bin/
-  - cp icons/cumulus.svg appdir/usr/share/pixmaps/
+  - cp icons/hicolor/512x512/cumulus.png appdir/usr/share/pixmaps/
+  - cp -r icons/hicolor/* appdir/usr/bin/icons/hicolor/
   - echo "[Desktop Entry]" > appdir/usr/share/applications/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
