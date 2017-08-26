@@ -72,7 +72,7 @@ Item {
                     anchors.top: settingsBody.top
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "qrc:/icons/map.png"
+                    iconUrl: util.iconPathPrefix() + "map.png"
                     onClicked: {
                         if (searchLocation.visible == true)
                             searchLocation.visible = false
@@ -121,7 +121,7 @@ Item {
                     anchors.top: locationSearchItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "icons/temperature-icon.png"
+                    iconUrl: util.iconPathPrefix() + "temperature_icon.png"
                     onClicked: {
                         if (tempUnitSelect.visible == false) {
                             tempUnitSelect.currentIndex = tempUnitSelect.find(util.temperatureUnitSymbol().trim())
@@ -189,7 +189,7 @@ Item {
                     anchors.top: tempUnitItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "icons/speed-icon.png"
+                    iconUrl: util.iconPathPrefix() + "speed_icon.png"
                     onClicked: {
                         if (speedUnitSelect.visible == false) {
                             speedUnitSelect.currentIndex = speedUnitSelect.find(util.speedUnitSymbol().trim())
@@ -246,7 +246,7 @@ Item {
                     anchors.top: speedUnitItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "icons/palette.png"
+                    iconUrl: util.iconPathPrefix() + "palette.png"
                     onClicked: {
                         if (colorButtonsLayout.visible == false) {
                             colorButtonsLayout.visible = true
@@ -318,7 +318,7 @@ Item {
                     anchors.top: colorPalettesItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "icons/api.png"
+                    iconUrl: util.iconPathPrefix() + "api.png"
                     onClicked: {
                         if (apiSelect.visible == false) {
                             apiSelect.visible = true
@@ -385,7 +385,7 @@ Item {
                     anchors.top: apiSelectItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: "icons/credits.png"
+                    iconUrl: util.iconPathPrefix() + "credits.png"
                     bottomBorderVisibility: false
                     onClicked: root.showCredits()
                 }

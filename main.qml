@@ -37,7 +37,7 @@ ApplicationWindow {
     width: applicationSettingsController.windowWidth
     title: qsTr("Cumulus")
     color: "transparent"
-    visible: util.trayVisibility() === true ? false : true
+    visible: util.trayVisibility() == true ? false : true
     x: applicationSettingsController.windowX
     y: applicationSettingsController.windowY
     flags: Qt.FramelessWindowHint

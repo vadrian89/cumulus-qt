@@ -706,7 +706,6 @@ QString WeatherType::weatherApi() const {
     return m_weatherApi;
 }
 
-#include <QDebug>
 void WeatherType::setWeatherApi(const QString &weatherApi) {
     if (m_weatherApi != weatherApi && clearLocationCode()) {
         m_weatherApi = weatherApi;

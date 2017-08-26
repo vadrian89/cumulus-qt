@@ -61,32 +61,19 @@ public:
     Q_INVOKABLE static QString getWindSpeedUnit();
     Q_INVOKABLE static void setWindSpeedUnit(QString unit);
     Q_INVOKABLE static QString getPressureUnit();
-    Q_INVOKABLE static void setPressureUnit(QString unit);
-    Q_INVOKABLE static QString weatherIconsPath();
-    Q_INVOKABLE static QString forecastIconsPath();
-    Q_INVOKABLE static void setBackgroundColor(QString backgroundColor);
     Q_INVOKABLE static QString backgroundColor();
-    Q_INVOKABLE static void setTextColor(QString textColor);
     Q_INVOKABLE static QString textColor();
-    Q_INVOKABLE static qint32 getLocationId();
-    Q_INVOKABLE static void setLocationId(const qint32 locationId);
-    Q_INVOKABLE static QString windowButtonsBackground(bool mouseOver);
-    Q_INVOKABLE static void saveWindowLocation(QPoint position);
-    Q_INVOKABLE static QPoint loadWindowLocation();
-    Q_INVOKABLE static void saveWindowSize(QSize size);
-    Q_INVOKABLE static QSize loadWindowSize();
-    Q_INVOKABLE static float applicationOpacity();
     Q_INVOKABLE static QString temperatureUnitSymbol();
     Q_INVOKABLE static QString speedUnitSymbol();
     Q_INVOKABLE static QString pressureUnitSymbol();
     Q_INVOKABLE static QString osType();
     Q_INVOKABLE static QString firstLetterUp(const QString string);
-    Q_INVOKABLE static QString getLogoImage(const QString &text, const QString &color);
     Q_INVOKABLE static QString getLogoImage();
     Q_INVOKABLE static bool trayVisibility();
     Q_INVOKABLE static QList<QObject*> creditsList();
     Q_INVOKABLE static QString trayTheme();
     Q_INVOKABLE static QString windowControlsPos();
+    Q_INVOKABLE static QString iconPathPrefix();
 };
 
 #endif // UTIL_H

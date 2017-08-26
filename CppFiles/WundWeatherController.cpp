@@ -95,7 +95,7 @@ void WundWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     QString link = "http://www.wunderground.com/q/zmw:" + locationCode;
     double pressure = 0.0;
 
-    QJsonObject weatherData = nextBranch(jsonObject, "current_observation");
+    QJsonObject weatherData = nextBranch(jsonObject, "current_observation");    
 
     weatherCode = wundIconsCodes->find(weatherData.find("icon").value().toString()).value();
     temperature = weatherData.find("temp_c").value().toDouble();
@@ -169,7 +169,7 @@ void WundWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
                 query.bindValue(":description", description);
                 query.bindValue(":temp_max", Util::calculateTemperature(tempHigh, temperatureUnit));
                 query.bindValue(":temp_min", Util::calculateTemperature(tempLow, temperatureUnit));
-                query.bindValue(":loc_id", locationId);
+                query.bindValue(":loc_id", locationId);                
                 if (!query.exec()) {
                     qDebug() << "WundWeatherController::saveForecastToDb query error: " << query.lastError().text();
                     qDebug() << "WundWeatherController::saveForecastToDb db error: " << db->getError();
@@ -217,9 +217,13 @@ void WundWeatherController::mapWundIconsCodes() {
     wundIconsCodes->insert("-1", -1);
 }
 
-QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {
+QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {    
     QDate date = QDate::fromString(QString::number(jsonObject.find("day").value().toInt())
                                    + QString::number(jsonObject.find("month").value().toInt())
-                                   + QString::number(jsonObject.find("year").value().toInt()), "ddMyyyy");
+                                   + QString::number(jsonObject.find("year").value().toInt()), "dMyyyy");
+//    qDebug() << QString::number(jsonObject.find("day").value().toInt())
+//             << QString::number(jsonObject.find("month").value().toInt())
+//             << QString::number(jsonObject.find("year").value().toInt()) << endl;
+//    qDebug() << date << endl;
     return date;
 }
