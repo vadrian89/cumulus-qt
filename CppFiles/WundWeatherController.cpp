@@ -218,12 +218,8 @@ void WundWeatherController::mapWundIconsCodes() {
 }
 
 QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {    
-    QDate date = QDate::fromString(QString::number(jsonObject.find("day").value().toInt())
-                                   + QString::number(jsonObject.find("month").value().toInt())
-                                   + QString::number(jsonObject.find("year").value().toInt()), "dMyyyy");
-//    qDebug() << QString::number(jsonObject.find("day").value().toInt())
-//             << QString::number(jsonObject.find("month").value().toInt())
-//             << QString::number(jsonObject.find("year").value().toInt()) << endl;
-//    qDebug() << date << endl;
+    QDate date(jsonObject.find("year").value().toInt(),
+               jsonObject.find("month").value().toInt(),
+               jsonObject.find("day").value().toInt());
     return date;
 }

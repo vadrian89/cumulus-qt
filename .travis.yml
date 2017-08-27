@@ -15,16 +15,14 @@ script:
   - sed -i -e 's|<file>qt/etc/qt.conf</file>||g' qml.qrc # according to README
   - qmake PREFIX=/usr
   - make -j$(nproc)
-  - mkdir -p appdir/icons
   - mkdir -p appdir/usr/bin
   - mkdir -p appdir/usr/share/{applications,pixmaps}
   - cp Cumulus appdir/usr/bin/
-  - cp -r icons/* appdir/icons/
   - cp -r icons/* appdir/usr/share/pixmaps/
   - echo "[Desktop Entry]" > appdir/usr/share/applications/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
-  - echo "Exec=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
+  - echo "Exec=Cumulus -i Cumulus-AppImage" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Type=Application" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Categories=Utility;" >> appdir/usr/share/applications/cumulus.desktop
 

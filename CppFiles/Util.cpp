@@ -19,10 +19,9 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <QProcessEnvironment>
 #include "Util.h"
 #include "CreditsAuthor.h"
-
-using namespace std;
 
 Util::Util(QObject *parent) : QObject(parent){}
 
@@ -331,7 +330,10 @@ QString Util::windowControlsPos() {
 }
 
 QString Util::iconPathPrefix() {
+    QProcessEnvironment pEnv = QProcessEnvironment::systemEnvironment();
     QString prefix = "file:icons/hicolor/512x512/";
+    if (pEnv.contains("APPIMAGE"))
+        prefix = "file:/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";
 #endif
