@@ -329,13 +329,16 @@ QString Util::windowControlsPos() {
     return string;
 }
 
+#include <QApplication>
+#include <QDebug>
 QString Util::iconPathPrefix() {
     QProcessEnvironment pEnv = QProcessEnvironment::systemEnvironment();
     QString prefix = "file:icons/hicolor/512x512/";
     if (pEnv.contains("APPIMAGE"))
-        prefix = "file:/";
+        prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/pixmaps/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";
 #endif
+    qDebug() << "Util::iconPathPrefix: " << prefix;
     return prefix;
 }

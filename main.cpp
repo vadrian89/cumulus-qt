@@ -25,6 +25,7 @@
 #include <QQmlContext>
 #include <QtQml>
 #include <QIcon>
+#include <QProcessEnvironment>
 
 #include "CppFiles/WeatherType.h"
 #include "CppFiles/Forecast.h"
@@ -42,6 +43,9 @@ int main(int argc, char *argv[]) {
     QString applicationName = "Cumulus";
     if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
         applicationName = argv[2];
+    }
+    if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE")) {
+        applicationName = applicationName + "APPIMAGE";
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);
