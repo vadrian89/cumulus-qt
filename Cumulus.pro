@@ -1,4 +1,4 @@
-QT += qml quick sql widgets
+QT += qml quick sql widgets quickwidgets
 
 CONFIG += c++11
 
@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     CppFiles/CreditsAuthor.cpp \
     CppFiles/CustomImageProvider.cpp \
     CppFiles/FontImageProvider.cpp \
-    CppFiles/WundWeatherController.cpp
+    CppFiles/WundWeatherController.cpp \
+    CppFiles/MainWindow.cpp
 
 RESOURCES += qml.qrc
 
@@ -44,7 +45,8 @@ HEADERS += \
     CppFiles/CreditsAuthor.h \
     CppFiles/CustomImageProvider.h \
     CppFiles/FontImageProvider.h \
-    CppFiles/WundWeatherController.h
+    CppFiles/WundWeatherController.h \
+    CppFiles/MainWindow.h
 
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 

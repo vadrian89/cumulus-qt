@@ -422,7 +422,7 @@ QString WeatherType::weatherIcon() const {
 
 void WeatherType::setWeatherDescription(const QString &weatherDescription) {
     if (weatherDescription != m_weatherDescription) {
-        m_weatherDescription = weatherDescription;
+        m_weatherDescription = Util::firstLetterUp(weatherDescription);
         emit weatherDescriptionChanged();
     }
 }

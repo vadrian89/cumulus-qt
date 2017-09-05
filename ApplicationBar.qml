@@ -48,7 +48,7 @@ Item {
             width: height
             color: "#11000000"
             opacity: 0.8
-            visible: util.osType() == "android" ? false : true
+            visible: false
             Text {
                 anchors.fill: parent
                 verticalAlignment: Text.AlignVCenter
@@ -85,7 +85,7 @@ Item {
             width: height
             color: "#11000000"
             opacity: 0.8
-            visible: util.osType() == "android" ? false : true
+            visible: false
             Text {
                 anchors.fill: parent
                 verticalAlignment: Text.AlignVCenter

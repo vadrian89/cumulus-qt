@@ -12,14 +12,14 @@ install:
     - source /opt/qt*/bin/qt*-env.sh
 
 script:
-  - uname -a
   - sed -i -e 's|<file>qt/etc/qt.conf</file>||g' qml.qrc # according to README
   - qmake PREFIX=/usr
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin
-  - mkdir -p appdir/usr/share/{applications,pixmaps}
+  - mkdir -p appdir/usr/share/{applications,icons}
   - cp Cumulus appdir/usr/bin/
-  - cp icons/hicolor/512x512/* appdir/usr/share/pixmaps/
+  - cp icons/hicolor/64x64/* appdir/usr/share/icons/
+  - cp icons/* appdir/usr/share/icons/
   - echo "[Desktop Entry]" > appdir/usr/share/applications/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/usr/share/applications/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/usr/share/applications/cumulus.desktop
@@ -35,3 +35,4 @@ after_success:
   - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -appimage -qmldir=.
   - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - curl --upload-file ./Cumulus*.AppImage https://transfer.sh/Cumulus-git.$(git rev-parse --short HEAD)-x86_64.AppImage
+

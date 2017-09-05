@@ -36,7 +36,7 @@
 class Util : public QObject {
     Q_OBJECT    
 public:
-    explicit Util(QObject *parent = 0);
+    explicit Util(QObject *parent = nullptr);
     static double calculateTemperature(const double &temperature, const QString &unit);
     static double calculateWindSpeed(double speed, const QString &unit);
     static double calculatePressure(double pressure, const QString &unit);
@@ -67,13 +67,15 @@ public:
     Q_INVOKABLE static QString speedUnitSymbol();
     Q_INVOKABLE static QString pressureUnitSymbol();
     Q_INVOKABLE static QString osType();
-    Q_INVOKABLE static QString firstLetterUp(const QString string);
-    Q_INVOKABLE static QString getLogoImage();
+    Q_INVOKABLE static QString firstLetterUp(const QString &string);    
     Q_INVOKABLE static bool trayVisibility();
     Q_INVOKABLE static QList<QObject*> creditsList();
     Q_INVOKABLE static QString trayTheme();
     Q_INVOKABLE static QString windowControlsPos();
     Q_INVOKABLE static QString iconPathPrefix();
+public slots:
+    QString getLogoImage() const;
+
 };
 
 #endif // UTIL_H

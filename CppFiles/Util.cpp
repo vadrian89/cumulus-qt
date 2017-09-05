@@ -255,11 +255,14 @@ QString Util::osType() {
     return QSysInfo::productType();
 }
 
-QString Util::firstLetterUp(const QString string) {
-    QString firstLetter = string;
-    firstLetter.remove(1, string.size());
-    QString finalString = string;
-    finalString.replace(0, 1, firstLetter.toUpper());
+QString Util::firstLetterUp(const QString &string) {
+    QString finalString = "";
+    if (string != NULL && string.trimmed().size() > 0) {
+        QString firstLetter = string;
+        firstLetter.remove(1, string.size());
+        finalString = string;
+        finalString.replace(0, 1, firstLetter.toUpper());
+    }
     return finalString;
 }
 
@@ -270,7 +273,7 @@ int Util::roundToInt(const double &unit) {
         return unit - 0.5;
 }
 
-QString Util::getLogoImage() {
+QString Util::getLogoImage() const {
     QString prefix = "file:icons/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";
@@ -329,16 +332,13 @@ QString Util::windowControlsPos() {
     return string;
 }
 
-#include <QApplication>
-#include <QDebug>
 QString Util::iconPathPrefix() {
     QProcessEnvironment pEnv = QProcessEnvironment::systemEnvironment();
     QString prefix = "file:icons/hicolor/512x512/";
     if (pEnv.contains("APPIMAGE"))
-        prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/pixmaps/";
+        prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/icons/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";
 #endif
-    qDebug() << "Util::iconPathPrefix: " << prefix;
     return prefix;
 }

@@ -19,42 +19,18 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
-import QtQuick.Controls 2.1
+import QtQuick 2.9
+import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.2
 
 import ownTypes.settingsController 1.0
 import ownTypes.TrayController 0.3
 
-ApplicationWindow {
+Rectangle {
     id: mainWindow
-    property int winMinHeight: 150
-    property int winMinWidth: 140
     property int widthBreakPoint: 170
-    minimumHeight: winMinHeight
-    minimumWidth: winMinWidth
-    height: applicationSettingsController.windowHeight
-    width: applicationSettingsController.windowWidth
-    title: qsTr("Cumulus")
-    color: "transparent"
-    visible: util.trayVisibility() == true ? false : true
-    x: applicationSettingsController.windowX
-    y: applicationSettingsController.windowY
-//    flags: Qt.FramelessWindowHint
-    background: Rectangle {
-        color: applicationSettingsController.applicationBackground
-    }
-
-    onHeightChanged: applicationSettingsController.windowHeight = mainWindow.height
-    onWidthChanged: applicationSettingsController.windowWidth = mainWindow.width
-    onClosing: {
-        if (applicationSettingsController.trayVisibility == true) {
-            visible = false
-        }
-        else {
-            Qt.quit()
-        }
-    }
+    color: applicationSettingsController.applicationBackground
 
     FontLoader {
         id: ubuntuCondensed
@@ -78,34 +54,8 @@ ApplicationWindow {
         textColor: applicationSettingsController.textColor
         iconsFont: weatherIcons.name
         windowControlsPos: applicationSettingsController.windowControlsPos
-        moveControlAlias.acceptedButtons: Qt.LeftButton
-        property point clickPos
-        onCloseButtonClicked: mainWindow.close()
-        onMinimizeButtonClicked: mainWindow.visibility = Window.Minimized
         onRefreshButtonClicked: weatherViewLoader.item.updateWeather()
         onMenuButtonClicked: settingsViewDialog.visible = true
-        moveControlAlias.onPressed: {
-            clickPos = Qt.point(mouse.x,mouse.y)
-            moveControlAlias.cursorShape = Qt.ClosedHandCursor
-            mainWindow.maximumHeight = mainWindow.height
-            mainWindow.maximumWidth = mainWindow.width
-            mainWindow.minimumHeight = mainWindow.height
-            mainWindow.minimumWidth = mainWindow.width
-        }
-        moveControlAlias.onPositionChanged: {
-            var delta = Qt.point(mouse.x - clickPos.x, mouse.y - clickPos.y)
-            mainWindow.x = mainWindow.x + delta.x
-            mainWindow.y = mainWindow.y + delta.y
-        }
-        moveControlAlias.onReleased: {
-            moveControlAlias.cursorShape = Qt.ArrowCursor
-            mainWindow.maximumHeight = Screen.desktopAvailableHeight
-            mainWindow.maximumWidth = Screen.desktopAvailableWidth
-            mainWindow.minimumHeight = winMinHeight
-            mainWindow.minimumWidth = winMinWidth
-            applicationSettingsController.windowX = mainWindow.x
-            applicationSettingsController.windowY = mainWindow.y
-        }
     }
     Component.onCompleted: weatherViewLoader.source = "WeatherWindow.qml"
 
@@ -192,7 +142,7 @@ ApplicationWindow {
         trayTheme: applicationSettingsController.trayTheme
         icon: weatherViewLoader.item.tempValue
         onCloseApp: Qt.quit()
-        onShowGui: mainWindow.visible = true
+        onShowGui: applicationWindow.show()
     }
 
     Timer {
@@ -203,13 +153,13 @@ ApplicationWindow {
         onTriggered: weatherViewLoader.item.updateWeather()
     }
 
-    ApplicationWindow {
+    Dialog {
         id: settingsViewDialog
         width: 300
         height: 500
         visible: false
-        modality: Qt.WindowModal
-        SettingsWindow {
+        modality: Qt.ApplicationModal
+        contentItem: SettingsWindow {
             id: settingsView
             anchors.fill: parent
             visible: true
@@ -251,13 +201,13 @@ ApplicationWindow {
         }
     }
 
-    ApplicationWindow {
+    Dialog {
         id: creditsViewDialog
         width: settingsView.width
         height: settingsView.height
         visible: false
-        modality: Qt.WindowModal
-        CreditsView {
+        modality: Qt.ApplicationModal
+        contentItem: CreditsView {
             id: creditsView
             anchors.fill: parent
             visible: true
@@ -265,132 +215,9 @@ ApplicationWindow {
             backgroundColor: applicationSettingsController.applicationBackground
             Keys.onEscapePressed: creditsViewDialog.visible = false
         }
-        onVisibilityChanged: {
+        onVisibleChanged: {
             if (visible == true)
                 creditsView.forceActiveFocus()
-        }
-    }
-
-    ResizeController {
-        id: bottomRController
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        width: 20
-        height: width
-        cursorShape: Qt.SizeFDiagCursor
-        onXResizeChanged: {
-            if (xResize > 0) {
-                mainWindow.width += xResize
-            }
-            else {
-                if (mainWindow.width > mainWindow.minimumWidth) {
-                    mainWindow.width += xResize
-                }
-            }
-        }
-
-        onYResizeChanged: {
-            if (yResize > 0) {
-                mainWindow.height += yResize
-            }
-            else {
-                if (mainWindow.height > mainWindow.minimumHeight) {
-                    mainWindow.height += yResize
-                }
-            }
-        }
-    }
-
-    ResizeController {
-        id: bottomController
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.rightMargin: 20
-        width: parent.width - 40
-        height: 5
-        cursorShape: Qt.SizeVerCursor
-        onYResizeChanged: {
-            if (yResize > 0) {
-                mainWindow.height += yResize
-            }
-            else {
-                if (mainWindow.height > mainWindow.minimumHeight) {
-                    mainWindow.height += yResize
-                }
-            }
-        }
-    }
-
-    ResizeController {
-        id: rightController
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 20
-        anchors.right: parent.right
-        width: 5
-        height: parent.height - 20
-        cursorShape: Qt.SizeHorCursor
-        onXResizeChanged: {
-            if (xResize > 0) {
-                mainWindow.width += xResize
-            }
-            else {
-                if (mainWindow.width > mainWindow.minimumWidth) {
-                    mainWindow.width += xResize
-                }
-            }
-        }
-    }
-
-    ResizeController {
-        id: bottomLController
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        width: 20
-        height: width
-        cursorShape: Qt.SizeBDiagCursor
-        onXResizeChanged: {
-            if (xResize < 0) {
-                mainWindow.width -= xResize
-                mainWindow.x += xResize
-            }
-            else {
-                if (mainWindow.width > mainWindow.minimumWidth) {
-                    mainWindow.width -= xResize
-                    mainWindow.x += xResize
-                }
-            }
-        }
-        onYResizeChanged: {
-            if (yResize > 0) {
-                mainWindow.height += yResize
-            }
-            else {
-                if (mainWindow.height > mainWindow.minimumHeight) {
-                    mainWindow.height += yResize
-                }
-            }
-        }
-    }
-
-    ResizeController {
-        id: leftController
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 20
-        anchors.left: parent.left
-        width: 5
-        height: parent.height - 20
-        cursorShape: Qt.SizeHorCursor
-        onXResizeChanged: {
-            if (xResize < 0) {
-                mainWindow.width -= xResize
-                mainWindow.x += xResize
-            }
-            else {
-                if (mainWindow.width > mainWindow.minimumWidth) {
-                    mainWindow.width -= xResize
-                    mainWindow.x += xResize
-                }
-            }
         }
     }
 }

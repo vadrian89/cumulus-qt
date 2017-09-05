@@ -47,7 +47,7 @@ class SettingsController : public QObject {
 
     void loginStartLinux(const bool &loginStart);
 public:
-    explicit SettingsController(QObject *parent = 0);
+    explicit SettingsController(QObject *parent = nullptr);
     void setApplicationBackground(const QString &applicationBackground);
     void setTextColor(const QString &textColor);
     void setApplicationOpacity(const float &applicationOpacity);

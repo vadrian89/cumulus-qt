@@ -22,5 +22,6 @@
         <file>fonts/fontawesome.ttf</file>
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
+        <file>main-desktop.qml</file>
     </qresource>
 </RCC>

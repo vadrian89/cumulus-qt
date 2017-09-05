@@ -26,10 +26,9 @@ import QtQuick.Window 2.2
 
 import ownTypes.settingsController 1.0
 
-ApplicationWindow {
+Rectangle {
     id: mainWindow
     visible: true
-    title: qsTr("Cumulus")
 
     FontLoader {
         id: ubuntuCondensed
@@ -49,7 +48,7 @@ ApplicationWindow {
         anchors.fill: parent
         color: applicationSettingsController.applicationBackground
         focus: true
-        Keys.onBackPressed: mainWindow.close()
+        Keys.onBackPressed: applicationWindow.closeApp()
 
         ApplicationBar {
             id: applicationBar
