@@ -97,7 +97,6 @@ DISTFILES += \
     icons/hicolor/128x128/map.png \
     icons/hicolor/128x128/palette.png \
     icons/hicolor/128x128/speed_icon.png \
-    icons/hicolor/128x128/temperature-icon.png \
     icons/hicolor/256x256/api.png \
     icons/hicolor/256x256/credits.png \
     icons/hicolor/256x256/cumulus.png \
@@ -127,7 +126,8 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/build.gradle \
     android/gradlew.bat \
-    android/gradle.properties
+    android/gradle.properties \
+    icons/hicolor/128x128/temperature_icon.png
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
