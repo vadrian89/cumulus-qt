@@ -19,7 +19,7 @@ script:
   - mkdir -p appdir/usr/share/applications
   - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps
   - cp Cumulus appdir/usr/bin/
-  - cp icons/* appdir/usr/share/icons/
+  - cp icons/*.png appdir/usr/share/icons/
   - cp icons/hicolor/256x256/* appdir/usr/share/icons/
   - cp icons/hicolor/256x256/cumulus.* appdir/
   - cp icons/hicolor/256x256/cumulus.* appdir/usr/share/icons/hicolor/256x256/apps/
