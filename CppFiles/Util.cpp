@@ -275,6 +275,8 @@ int Util::roundToInt(const double &unit) {
 
 QString Util::getLogoImage() const {
     QString prefix = "file:icons/";
+    if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
+        prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/icons/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";
 #endif
@@ -333,9 +335,8 @@ QString Util::windowControlsPos() {
 }
 
 QString Util::iconPathPrefix() {
-    QProcessEnvironment pEnv = QProcessEnvironment::systemEnvironment();
     QString prefix = "file:icons/hicolor/512x512/";
-    if (pEnv.contains("APPIMAGE"))
+    if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
         prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/icons/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";

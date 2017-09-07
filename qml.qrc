@@ -9,7 +9,6 @@
         <file>ForecastDelegate.qml</file>
         <file>ForecastView.qml</file>
         <file>LinkedText.qml</file>
-        <file>main.qml</file>
         <file>main-android.qml</file>
         <file>MenuButton.qml</file>
         <file>ResizeController.qml</file>
