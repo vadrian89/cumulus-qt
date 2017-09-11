@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setCentralWidget(view);
     setMinimumHeight(150);
     setMinimumWidth(140);
+    setWindowIcon(QIcon(Util::iconPathPrefix() + "cumulus.png"));
     if (QFile::exists(QApplication::applicationDirPath() + "/maintenancetool")) {
         QThread thread;
         ThreadWorker *threadWorker = new ThreadWorker();
@@ -58,7 +59,8 @@ MainWindow::~MainWindow() {}
 void MainWindow::loadSettings(){
     QSettings settings;
     settings.beginGroup("app-settings");
-    restoreGeometry(settings.value("geo").toByteArray());
+    if (!restoreGeometry(settings.value("geo").toByteArray()) && Util::osType() != "android")
+        resize(300, 500);
     restoreState(settings.value("state").toByteArray());
     settings.endGroup();
 }
