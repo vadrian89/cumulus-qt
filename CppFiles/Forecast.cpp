@@ -21,6 +21,7 @@
 */
 #include "Forecast.h"
 #include "DbConnection.h"
+#include "Util.h"
 #include <QDebug>
 
 Forecast::Forecast(QObject *parent) : QObject(parent){
@@ -89,7 +90,7 @@ QString Forecast::forecastDesc() const {
 
 void Forecast::setForecastDesc(const QString &forecastDesc) {
     if (m_forecastDesc != forecastDesc) {
-        m_forecastDesc = forecastDesc;
+        m_forecastDesc = Util::firstLetterUp(forecastDesc);
         emit forecastDescChanged();
     }
 }

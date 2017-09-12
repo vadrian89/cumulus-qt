@@ -51,7 +51,7 @@ Item {
             forecastDay: model.modelData.forecastDate
             forecastIcon: model.modelData.weatherCode
             forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
-            forecastDesc: util.firstLetterUp(model.modelData.forecastDesc)
+            forecastDesc: model.modelData.forecastDesc
         }
         onModelChanged: positionViewAtBeginning()
         onWidthChanged: positionViewAtBeginning()

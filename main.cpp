@@ -19,63 +19,21 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QGuiApplication>
 #include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QtQml>
-#include <QIcon>
 
-#include "CppFiles/WeatherType.h"
-#include "CppFiles/Forecast.h"
-#include "CppFiles/Util.h"
-#include "CppFiles/SettingsController.h"
-#include "CppFiles/SearchLocation.h"
-#include "CppFiles/TrayController.h"
-#include "CppFiles/ThreadWorker.h"
-#include "CppFiles/CustomImageProvider.h"
-#include "CppFiles/FontImageProvider.h"
-
-void registerQmlType();
+#include "CppFiles/MainWindow.h"
 
 int main(int argc, char *argv[]) {
     QString applicationName = "Cumulus";
     if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
-        applicationName = argv[2];
+        applicationName = applicationName + "-" + argv[2];
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
-    Util util;    
-    SettingsController settingsController;
-    QThread thread;
-    QQmlApplicationEngine engine;
-    engine.addImageProvider(QLatin1String("customimage"), new CustomImageProvider());
-    engine.addImageProvider(QLatin1String("fontimage"), new FontImageProvider());
-    QQmlContext *context = engine.rootContext();
-    context->setContextProperty("util", &util);
-    context->setContextProperty("settingsController", &settingsController);
-    context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
-    registerQmlType();
-    if (Util::osType() == "android")
-        engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
-    else
-        engine.load(QUrl(QLatin1String("qrc:/main.qml")));
-
-    ThreadWorker *threadWorker = new ThreadWorker();
-    threadWorker->moveToThread(&thread);
-    QObject::connect(&thread, SIGNAL(finished()), threadWorker, SLOT(deleteLater()));
-    QObject::connect(threadWorker, SIGNAL(updateSearchFinished()), &thread, SLOT(quit()));
-    thread.start();
-    threadWorker->updaterTimerStart();
+    MainWindow w;
+    w.launchApp();
 
     return app.exec();    
-}
-
-void registerQmlType() {
-    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
-    qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
-    qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
-    qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
 }

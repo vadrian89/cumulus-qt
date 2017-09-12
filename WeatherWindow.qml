@@ -64,7 +64,7 @@ Item {
         anchors.left: parent.left
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        text: weatherController.location + ": " + util.firstLetterUp(weatherController.weatherDescription)
+        text: weatherController.location + ": " + weatherController.weatherDescription
         font.family: textFontFamily
         font.pixelSize: 20
         wrapMode: Text.WordWrap

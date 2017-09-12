@@ -35,30 +35,15 @@
 #include "WundWeatherController.h"
 class WeatherType : public QObject {
     Q_OBJECT
-    QString m_weather;
-    int m_weatherCode;
-    QString m_weatherIcon;
-    QString m_weatherDescription;
-    QString m_location;
-    QString m_locationLink;
-    int m_temperature;
+    QString m_weather, m_weatherIcon, m_weatherDescription, m_location, m_locationLink, m_tempUnit,
+    m_sunrise, m_sunset, m_speedUnit, m_weatherApi;
     float m_pressure;
-    QString m_tempUnit;
-    int m_windSpeed;
-    int m_windDegree;
-    int m_humidity;
-    QMap<int, QString> *yahooIcons;
-    QMap<int, QString> *owmIcons;
-    QMap<int, QString> *wundIcons;
-    QMap<QString, QString> *nightFonts;    
-    QString m_sunrise;
-    QString m_sunset;
-    int m_tempMin;
-    int m_tempMax;
+    int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity;
+    QMap<int, QString> *yahooIcons, *owmIcons, *wundIcons;
+    QMap<QString, QString> *nightFonts;
+    int m_tempMin, m_tempMax;
     bool m_loadFinished;
     QList<QObject*> m_forecastList;
-    QString m_speedUnit;
-    QString m_weatherApi;
 
     Q_PROPERTY(QString weather READ weather WRITE setWeather NOTIFY weatherChanged)
     Q_PROPERTY(int weatherCode READ weatherCode WRITE setWeatherCode NOTIFY weatherCodeChanged)

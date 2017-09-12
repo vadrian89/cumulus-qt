@@ -9,7 +9,6 @@
         <file>ForecastDelegate.qml</file>
         <file>ForecastView.qml</file>
         <file>LinkedText.qml</file>
-        <file>main.qml</file>
         <file>main-android.qml</file>
         <file>MenuButton.qml</file>
         <file>ResizeController.qml</file>
@@ -20,16 +19,8 @@
         <file>WeatherInfoItem.qml</file>
         <file>WeatherWindow.qml</file>
         <file>fonts/fontawesome.ttf</file>
-        <file>icons/api.png</file>
-        <file>icons/credits.png</file>
-        <file>icons/palette.png</file>
-        <file>icons/speed-icon.png</file>
-        <file>icons/temperature-icon.png</file>
-        <file>icons/yw-logo.png</file>
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
-        <file>icons/map.png</file>
-        <file>icons/wund-logo.png</file>
-        <file>icons/wund-logo-light.png</file>
+        <file>main-desktop.qml</file>
     </qresource>
 </RCC>

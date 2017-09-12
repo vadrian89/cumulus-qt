@@ -19,10 +19,10 @@ Forked from [typhoon](https://github.com/apandada1/typhoon) which was
 Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](https://twitter.com/consindo).
 
 Features:
-- resizable window with weather data adjusting accordingly
 - colors selectors for background and text with alpha channel, knock yourselves up ^^
 - tray icon, with aditional data to be added on menu :)
 - qt installer, without root installation to allow future updates fast without breaking on upgrade
+- AppImage for those who want the application in a portable fashion
 - possbility for multiple instances with different settings and locations
 
 # For multiple instances:
@@ -30,7 +30,6 @@ Features:
 1. make a new shell script with the following content updated for Cumulus installation path  
 #!/bin/bash  
 \<path-to-cumulus-executable> -i \<whatever-you-want>
-
 Example: /home/user/Cumulus/Cumulus -i NewInstance
 
 2. make the shell script executable
