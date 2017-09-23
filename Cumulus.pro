@@ -127,7 +127,8 @@ DISTFILES += \
     android/build.gradle \
     android/gradlew.bat \
     android/gradle.properties \
-    icons/hicolor/128x128/temperature_icon.png
+    icons/hicolor/128x128/temperature_icon.png \
+    icons/hicolor/scalable/cumulus.svg
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj

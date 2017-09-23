@@ -59,9 +59,7 @@ Item {
                 color: "transparent"
             }
 
-            onTextChanged: {
-                locationSearcher.locationName = text
-            }
+            onTextChanged: locationSearcher.locationName = text
         }
 
         Image {
