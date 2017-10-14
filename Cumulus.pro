@@ -1,4 +1,4 @@
-QT += qml quick sql widgets quickwidgets
+QT += qml quick sql widgets quickwidgets concurrent
 
 CONFIG += c++11
 

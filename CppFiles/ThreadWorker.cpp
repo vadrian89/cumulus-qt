@@ -26,6 +26,7 @@
 #include <QFile>
 #include <QThread>
 #include <QFont>
+#include <QTimer>
 
 ThreadWorker::ThreadWorker(QObject *parent) : QObject(parent) {
     connect(this, SIGNAL(startUpdateTimerSignal()), this, SLOT(updaterTimerStart()));
@@ -36,7 +37,7 @@ void ThreadWorker::updaterTimerStart() {
 }
 
 void ThreadWorker::startLookingForUpdates() {
-    qDebug() << "Updater started";
+    qDebug() << "Updater started.";
     QString maintenancetoolPath = QCoreApplication::applicationDirPath() + "/maintenancetool";
     if (!QFile::exists(maintenancetoolPath)) {
         qDebug() << "maintenancetool is missing!";
@@ -51,12 +52,18 @@ void ThreadWorker::startLookingForUpdates() {
         if(process.error() != QProcess::UnknownError) {
             qDebug() << "Error checking for updates!";
             qDebug() << "Error message: " + process.errorString();
-            emit startUpdateTimerSignal();
         }
         else {
             QByteArray data = process.readAllStandardOutput();
-            if(data.isEmpty()) {
+            qDebug() << "data: " << data;
+            if (data.isEmpty()) {
                 qDebug() << "No updates are available!";
+                emit startUpdateTimerSignal();
+            }
+            else if (QString(data).toLower().contains(QRegExp("(error|null|empty)"))) {
+                qDebug() << "Error occurred while searching for updates!";
+                qDebug() << "Error: " << data;
+                emit startUpdateTimerSignal();
             }
             else {
                 QStringList args("--updater");

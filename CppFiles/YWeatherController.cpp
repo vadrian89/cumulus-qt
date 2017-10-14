@@ -20,8 +20,9 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "YWeatherController.h"
-
+#include <QRegExp>
 #include <QDebug>
+
 YWeatherController::YWeatherController(QObject *parent) : AbstractWeatherController(parent) {
     locationId = 1;
     temperatureUnit = "f";
@@ -81,7 +82,7 @@ void YWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     description = nextBranch(item, "condition").find("text").value().toString();
     temperatureUnit = units.find("temperature").value().toString().toLower();
     location = nextBranch(channel, "location").find("city").value().toString();
-    link = channel.find("link").value().toString();
+    link = channel.find("link").value().toString().remove(QRegExp("^http.+\\*"));
     windSpeed = wind.find("speed").value().toString().toInt();
     windDegree = wind.find("direction").value().toString().toInt();
     windSpeedUnit = units.find("speed").value().toString().toLower();
