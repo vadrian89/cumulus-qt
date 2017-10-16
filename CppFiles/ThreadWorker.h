@@ -37,7 +37,6 @@ class ThreadWorker : public QObject {
 public:
     explicit ThreadWorker(QObject *parent = 0);
     void createTrayIcon(const QString &weather, const QString &theme);
-//    void changeActionData(const QAction* action, const );
 public slots:
     void updaterTimerStart();
 private slots:

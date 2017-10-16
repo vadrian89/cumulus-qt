@@ -5,7 +5,6 @@
 #include "SettingsController.h"
 #include "SearchLocation.h"
 #include "TrayController.h"
-#include "ThreadWorker.h"
 #include "CustomImageProvider.h"
 #include "FontImageProvider.h"
 
@@ -30,10 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     context->setContextProperty("applicationWindow", this);
     registerQmlType();
-    if (Util::osType() == "android")
-        view->setSource(QUrl(QLatin1String("qrc:/main-android.qml")));
-    else
-        view->setSource(QUrl(QLatin1String("qrc:/main-desktop.qml")));
+    view->setSource(QUrl(QLatin1String("qrc:/main-desktop.qml")));
     view->show();
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
     view->setClearColor(Qt::transparent);
@@ -43,15 +39,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setMinimumHeight(150);
     setMinimumWidth(140);
     setWindowIcon(QIcon(Util::iconPathPrefix() + "cumulus.png"));
-    if (QFile::exists(QApplication::applicationDirPath() + "/maintenancetool")) {
-        QThread thread;
-        ThreadWorker *threadWorker = new ThreadWorker();
-        threadWorker->moveToThread(&thread);
-        QObject::connect(&thread, SIGNAL(finished()), threadWorker, SLOT(deleteLater()));
-        QObject::connect(threadWorker, SIGNAL(updateSearchFinished()), &thread, SLOT(quit()));
-        thread.start();
-        threadWorker->updaterTimerStart();
-    }
 }
 
 MainWindow::~MainWindow() {}
@@ -92,9 +79,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 void MainWindow::launchApp() {
-    if (!Util::trayVisibility()) {
+    if (!Util::trayVisibility())
         this->show();
-    }
 }
 
 void MainWindow::closeApp() {

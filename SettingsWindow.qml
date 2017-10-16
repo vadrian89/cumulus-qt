@@ -467,7 +467,7 @@ Item {
         id: colorDialog
         title: "Please choose a color"
         showAlphaChannel: purpose == "background" ? true : false
-        modality: Qt.ApplicationModal
+        modality: Qt.WindowModal
         property string purpose
         onVisibleChanged: visible == false ? root.focus = true : root.focus = false
         onAccepted: {
