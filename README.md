@@ -1,7 +1,19 @@
+# Announcement  
+Hello everybody,  
+The journey to Cumulus-Qt was a blast, met people, learned stuff and enjoyed seeing Cumulus-Qt articles here and there but I don't want it to stop here.    
+I know I haven't updated the application in a while now but this wasn't because I didn't want to, it's just September was a full month for me(even though I have made some updates then) because I got married then and in October til now I simply couldn't handle myself to do any programming because of work schedule and my mind simply being tired.   
+Going further and December right around the corner(with it's winter holidays) Cumulus-Qt might not get updated til January, the app isn't getting abandoned and I will monitory any issues which might arise in the issue tracker, it's just I want to focus on some other endeavors, such as:   
+
+- working on a feature I promised to do for [linuxdeployqt](https://github.com/probonopd/linuxdeployqt), because it's a great tool for deploying on Linux(which it is used for AppImages, also used for Cumulus-Qt), maybe I will go further and create a front-end for it...who knows    
+- learn snap to package Cumulus and any future projects I will get myself into         
+- focus on Ubuntu Touch development; I loved UT and finally managing to get my hands on a Nexus 5 I want to focus my development into making applications and scopes for the platform, I hope something good will come from this  
+
+Besides those mentioned above, I will also try to make Cumulus-Qt better, add more features, making a better UI aswell finishing making it a true cross-platform application, because it is my first open-source project.
+
+
 # Info  
 [![Build Status](https://travis-ci.org/vadrian89/cumulus-qt.svg?branch=master)](https://travis-ci.org/vadrian89/cumulus-qt)   
 Both offline and online installers for 64 bit Linux distributions can be found at the [releases page](https://github.com/vadrian89/cumulus-qt/releases).
-Still not decided on 32 bit.
 
 For any feedback you can mail me at verbanady@gmail.com, please add the following subject so I can save them into a special category: Cumulus - Feedback.
 Thanks!
