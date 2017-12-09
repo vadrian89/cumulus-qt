@@ -38,23 +38,23 @@ void WundWeatherController::searchByLocation(QString &location) {
 void WundWeatherController::searchBycode(QString &code) {
     operationData = OperationData::GetWeather;
     locationCode = code;
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
+    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
-    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/conditions/lang:RO/q/zmw:" + code + ".json");
+    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/conditions/lang:" + systemLang + "/q/zmw:" + code + ".json");
 }
 
 void WundWeatherController::getAstronomy(const QString &code) {
     operationData = OperationData::GetAstronomy;
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
+    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
-    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:RO/q/zmw:" + code + ".json");
+    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:" + systemLang + "/q/zmw:" + code + ".json");
 }
 
 void WundWeatherController::getForecast(const QString &code) {
     operationData = OperationData::GetForecast;
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
+    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
-    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/forecast10day/lang:RO/q/zmw:" + code + ".json");
+    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/forecast10day/lang:" + systemLang + "/q/zmw:" + code + ".json");
 }
 
 void WundWeatherController::readJsonData(QJsonObject jsonObject) {
