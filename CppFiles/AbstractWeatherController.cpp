@@ -40,71 +40,17 @@ void AbstractWeatherController::saveDataToDb() {
 }
 
 bool AbstractWeatherController::saveLocation(const QString &code) {
-    if (db->startCon() == true) {
-        QString queryString = "update sw_ma_location set loc_code = :code "
-                              "where loc_id = :id";
-        QSqlQuery query;
-        query.prepare(queryString);
-        query.bindValue(":code", code);
-        query.bindValue(":id", locationId);
-        if (query.exec()) {
-            return true;
-        }
-        else {
-            qDebug() << "AbstractWeatherController::saveLocationCode query error: " << query.lastError().text();
-            emit saveDataError(query.lastError().text());
-            return false;
-        }
+    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
+    bool result = false;
+    if (!dbHelperPtr.isNull()) {
+        QPointer<Location> locationPtr = dbHelperPtr.data()->getLocation(locationId);
+        locationPtr.data()->m_locationCode = code;
+        if (!dbHelperPtr.data()->updateLocation(locationPtr))
+            emit saveDataError("Error saving location code!");
+        else
+            result = true;
     }
-    else {
-        qDebug() << "AbstractWeatherController::saveLocationCode database error: " << db->getError();
-        emit saveDataError(db->getError());
-        return false;
-    }
-    db->stopCon();
-}
-
-bool AbstractWeatherController::clearWeather() {
-    if (db->startCon())  {
-        QString str = "delete from sw_tr_weather where w_loc_id = :id";
-        QSqlQuery query;
-        query.prepare(str);
-        query.bindValue(":id", locationId);
-        if (query.exec()) {
-            return true;
-        }
-        else {
-            qDebug() << "AbstractWeatherController::clearWeather query error: " << query.lastError().text();
-            return false;
-        }
-    }
-    else {
-        qDebug() << "AbstractWeatherController::clearWeather database error: " << db->getError();
-        return false;
-    }
-    db->stopCon();
-}
-
-bool AbstractWeatherController::clearForecastData() {
-    if (db->startCon())  {
-        QString str = "delete from sw_tr_forecast where forec_loc_id = :id";
-        QSqlQuery query;
-        query.prepare(str);
-        query.bindValue(":id", locationId);
-        if ( query.exec() ) {
-            return true;
-        }
-        else {
-            qDebug() << "AbstractWeatherController::clearForecastData query error: " << query.lastError().text();
-            return false;
-        }
-    }
-    else {
-        qDebug() << "AbstractWeatherController::clearForecastData database error: " << db->getError();
-        return false;
-    }
-
-    db->stopCon();
+    return result;
 }
 
 void AbstractWeatherController::manageError() {

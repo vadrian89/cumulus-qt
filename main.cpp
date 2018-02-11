@@ -48,7 +48,7 @@ void registerQmlType();
 int main(int argc, char *argv[]) {
     QString applicationName = "Cumulus";
     if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
-        applicationName = argv[2];
+        applicationName = applicationName + "-" + argv[2];
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);

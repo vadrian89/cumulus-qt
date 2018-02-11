@@ -19,13 +19,11 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef WEATHER_H
-#define WEATHER_H
+#ifndef WEATHERTYPE_H
+#define WEATHERTYPE_H
 
 #include <QObject>
 #include <QMap>
-#include <QThread>
-#include <QTime>
 
 #include "DbConnection.h"
 #include "Util.h"
@@ -39,8 +37,6 @@ class WeatherType : public QObject {
     m_sunrise, m_sunset, m_speedUnit, m_weatherApi;
     float m_pressure;
     int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity;
-    QMap<int, QString> *yahooIcons, *owmIcons, *wundIcons;
-    QMap<QString, QString> *nightFonts;
     int m_tempMin, m_tempMax;
     bool m_loadFinished;
     QList<QObject*> m_forecastList;
@@ -66,22 +62,12 @@ class WeatherType : public QObject {
     Q_PROPERTY(QString speedUnit READ speedUnit WRITE setSpeedUnit NOTIFY speedUnitChanged)
     Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
 
-    int locationId();
-    void loadData();
-    void loadData(QSqlQuery &query);
-    void mapYahooIcon();
-    void mapOwmIcons();
-    void mapNightIcons();
-    void mapWundIcons();
-    QString findIcon(int weatherCode);
-    QString findNightIcon(const QString fontCode) const;
-    QMap<QString,QString> searchCriteria();
+    int searchCriteria();
     void updateForecastTemp(const QString &oldUnit);
     YWeatherController *yweather;
     OwmWeatherController *owmWeather;
     WundWeatherController *wundWeather;
-    QThread workerThread;
-    bool clearLocationCode();
+    bool clearLocationCode();    
 public:
     explicit WeatherType(QObject *parent = 0);
     void setWeather(const QString &weather);
@@ -123,11 +109,10 @@ public:
     QString speedUnit() const;
     void setSpeedUnit(const QString &unit);
     QString weatherApi() const;
-    void setWeatherApi(const QString &weatherApi);
+    void setWeatherApi(const QString &weatherApi);    
 public slots:
     void getWeatherData();
-    void setWeatherData();    
-    QList<QObject*> getForecastData();
+    void setWeatherData();
     void changeTempUnit(const QString &unit);
     void changeSpeedUnit(const QString &unit);
 signals:
@@ -157,4 +142,4 @@ signals:
     void networkError(const QString &error);
 };
 
-#endif // WEATHER_H
+#endif // WEATHERTYPE_H

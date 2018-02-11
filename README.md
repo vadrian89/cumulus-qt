@@ -1,14 +1,13 @@
-# Announcement  
+# News
 Hello everybody,  
-The journey to Cumulus-Qt was a blast, met people, learned stuff and enjoyed seeing Cumulus-Qt articles here and there but I don't want it to stop here.    
-I know I haven't updated the application in a while now but this wasn't because I didn't want to, it's just September was a full month for me(even though I have made some updates then) because I got married then and in October til now I simply couldn't handle myself to do any programming because of work schedule and my mind simply being tired.   
-Going further and December right around the corner(with it's winter holidays) Cumulus-Qt might not get updated til January, the app isn't getting abandoned and I will monitory any issues which might arise in the issue tracker, it's just I want to focus on some other endeavors, such as:   
-
-- working on a feature I promised to do for [linuxdeployqt](https://github.com/probonopd/linuxdeployqt), because it's a great tool for deploying on Linux(which it is used for AppImages, also used for Cumulus-Qt), maybe I will go further and create a front-end for it...who knows    
-- learn snap to package Cumulus and any future projects I will get myself into         
-- focus on Ubuntu Touch development; I loved UT and finally managing to get my hands on a Nexus 5 I want to focus my development into making applications and scopes for the platform, I hope something good will come from this  
-
-Besides those mentioned above, I will also try to make Cumulus-Qt better, add more features, making a better UI aswell finishing making it a true cross-platform application, because it is my first open-source project.
+I have managed to work a bit on Cumulus, have been working on refactoring the code a bit because it was turning
+into one big pile of \"mom's spaghetti\".
+I haven't managed to make a snap out of Cumulus because it is a bit hard, because the
+Qt version used in snap packaging is lower than what I am using so I am going to take a step back and focus on
+application development.
+I mentioned I wanted to focus on Ubuntu Touch development, but after taking a look at the bigger picture I saw that
+I cannot focus to much on it because of all the other things I am working on.
+That's about for this commit update.
 
 
 # Info  
@@ -62,7 +61,9 @@ which sadly has discontinued support for them
 - The resizing is implemented, but it's a bit haotic on Linux-based OSes, looking into it and hopefully I will find a solution soon.
 
 # TODO
-- Add another API
 - Code refactoring
-- Improve application resizing
+- Multiple locations from same instance
+- Add possibility for translations
+- Automatic location search
+- Improve UI
 

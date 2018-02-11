@@ -27,10 +27,15 @@
 #include <QJsonArray>
 #include <QLocale>
 #include <QSqlDriver>
+#include <QPointer>
 
 #include "DataController.h"
 #include "DbConnection.h"
 #include "Util.h"
+#include "Weather.h"
+#include "DatabaseHelper.h"
+#include "Forecast.h"
+
 class AbstractWeatherController : public QObject {
     Q_OBJECT
 protected:
@@ -47,8 +52,6 @@ protected:
     QJsonObject nextBranch(const QJsonObject &jsonObject, const QString current) const;
     virtual void saveWeatherToDb(const QJsonObject &jsonObject) = 0;
     virtual void saveForecastToDb(const QJsonObject &jsonObject) = 0;
-    bool clearWeather();
-    bool clearForecastData();
     bool saveLocation(const QString &code);
 public:
     explicit AbstractWeatherController(QObject *parent = 0);
@@ -56,6 +59,7 @@ public:
     virtual void searchBycode(QString &code) = 0;
 protected slots:
     virtual void readJsonData(QJsonObject jsonObject) = 0;
+    virtual QPointer<Weather> getWeatherFromJson(const QJsonObject &jsonObject) = 0;
     void manageError();
 public slots:
     void saveDataToDb();

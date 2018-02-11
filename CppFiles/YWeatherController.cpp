@@ -55,127 +55,103 @@ void YWeatherController::readJsonData(QJsonObject jsonObject) {
 
 void YWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     qDebug() << "In YWeatherController::saveWeatherToDb";
-    QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
-    qint32 weatherCode = -1;
-    int temperature = 0;
-    QString location = "Undefined";
-    int windSpeed = 0;
-    int windDegree = 0;
-    qint16 humidity = 0;
-    QString windSpeedUnit = "mph";
-    QString link = "www.google.ro";
-    QString description = "";
-    QDateTime sunriseTime;
-    QDateTime sunsetTime;
-    QString pressureUnit = "mbar";
-    double pressure = 0.0;
-
-    QJsonObject channel = nextBranch(nextBranch(nextBranch(jsonObject, "query"), "results"), "channel");
-    QJsonObject units = nextBranch(channel, "units");
-    QJsonObject item = nextBranch(channel, "item");
-    QJsonObject wind = nextBranch(channel, "wind");
-    QJsonObject atmosphere = nextBranch(channel, "atmosphere");
-    QJsonObject astronomy = nextBranch(channel, "astronomy");
-
-    weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();
-    temperature = nextBranch(item, "condition").find("temp").value().toString().toInt();
-    description = nextBranch(item, "condition").find("text").value().toString();
-    temperatureUnit = units.find("temperature").value().toString().toLower();
-    location = nextBranch(channel, "location").find("city").value().toString();
-    link = channel.find("link").value().toString().remove(QRegExp("^http.+\\*"));
-    windSpeed = wind.find("speed").value().toString().toInt();
-    windDegree = wind.find("direction").value().toString().toInt();
-    windSpeedUnit = units.find("speed").value().toString().toLower();
-    humidity = atmosphere.find("humidity").value().toString().toInt();
-    sunriseTime = QLocale().toDateTime(astronomy.find("sunrise").value().toString(), "h:m ap");
-    sunsetTime = QLocale().toDateTime(astronomy.find("sunset").value().toString(), "h:m ap");
-    pressure = atmosphere.find("pressure").value().toString().toDouble();
-
-    if (clearWeather()) {
-        if (db->startCon())  {
-            QString str = "insert into sw_tr_weather(w_weather_id, w_weather_code, w_description, "
-                          "w_temperature, w_humidity, w_wind_speed, w_wind_degree, w_sunrise, w_sunset, w_loc_id, "
-                          "w_pressure, w_link) values (:id, :code, :description, :temperature, "
-                          ":humidity, :wind_speed, :wind_degree, :sunrise, :sunset, :loc_id, :pressure, :link)";
-            QSqlQuery query;
-            query.prepare(str);
-            query.bindValue(":id", 1);
-            query.bindValue(":code", weatherCode);
-            query.bindValue(":description", description);
-            query.bindValue(":temperature", Util::calculateTemperature(temperature, temperatureUnit));
-            query.bindValue(":humidity", humidity);
-            query.bindValue(":wind_speed", Util::calculateWindSpeed(windSpeed, windSpeedUnit));
-            query.bindValue(":wind_degree", windDegree);
-            query.bindValue(":sunrise", sunriseTime.time().toString(Qt::SystemLocaleShortDate));
-            query.bindValue(":sunset", sunsetTime.time().toString(Qt::SystemLocaleShortDate));
-            query.bindValue(":pressure", Util::calculatePressure(pressure, pressureUnit));
-            query.bindValue(":link", link);
-            query.bindValue(":loc_id", 1);
-            if (!query.exec()) {
-                qDebug() << "YWeatherController::saveWeatherToDb query error: " << query.lastError().text();
-                emit saveDataError(query.lastError().text());
+    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
+    if (!dbHelperPtr.isNull()) {
+        QPointer<Weather> weatherPtr = getWeatherFromJson(jsonObject);
+        if (!weatherPtr.isNull()) {
+            if (dbHelperPtr.data()->deleteWeather(locationId)) {
+                if (!dbHelperPtr.data()->insertWeather(weatherPtr)) {
+                    qDebug() << "YWeatherController::saveWeatherToDb error!";
+                    emit saveDataError("Error saving the weather to database!");
+                }
             }
         }
-        else {
-            qDebug() << "YWeatherController::saveWeatherToDb database error: " << db->getError();
-            emit saveDataError(db->getError());
-        }
-        db->stopCon();
-    }	
+    }
 }
 
 void YWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
     QJsonArray forecastArray = jsonObject.find("forecast").value().toArray();
-    qint32 weatherCode = -1;
-    qint16 tempHigh = 0;
-    qint16 tempLow = 0;
+    int weatherCode = -1;
+    int tempHigh = 0;
+    int tempLow = 0;
     QLocale yahooLocale(QLocale(QLocale::English));
     QDate date = QDate::currentDate();	
     QString description = "";
-    if (clearForecastData()) {
-        if (db->startCon())  {
-            QString str = "insert into sw_tr_forecast(forec_id, forec_date, forec_weather_code, "
-                          "forec_weather_description, forec_temp_min, forec_temp_max, forec_loc_id) "
-                          "values "
-                          "(:id, :date ,:code, :description, :temp_min, :temp_max, :loc_id)";
-            QSqlQuery query;
-            query.prepare(str);
-            if (db->getDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
-                db->getDatabase().transaction();
-            }
-		    for ( int i = 0; i < forecastArray.size(); i++) {
-                weatherCode = forecastArray.at(i).toObject().find("code").value().toString().toInt();
-                tempHigh = forecastArray.at(i).toObject().find("high").value().toString().toInt();
-                tempLow = forecastArray.at(i).toObject().find("low").value().toString().toInt();
-				QString forecastDateStr = forecastArray.at(i).toObject().find("date").value().toString().replace(" ", "/");
-				date = yahooLocale.toDate(forecastDateStr, "dd/MMM/yyyy");
-                description = forecastArray.at(i).toObject().find("text").value().toString();
-                query.bindValue(":id", i + 1);
-                query.bindValue(":date", date);
-                query.bindValue(":code", weatherCode);
-                query.bindValue(":description", description);
-                query.bindValue(":temp_max", Util::calculateTemperature(tempHigh, temperatureUnit));
-                query.bindValue(":temp_min", Util::calculateTemperature(tempLow, temperatureUnit));
-                query.bindValue(":loc_id", locationId);
-                if ( !query.exec() ) {
-                    qDebug() << "YWeatherController::saveForecastToDb query error: " << query.lastError().text();
-                    qDebug() << "YWeatherController::saveForecastToDb db error: " << db->getError();
-                    emit saveDataError(query.lastError().text());
-                    if ( db->getDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
-                        db->getDatabase().rollback();
-                    }
-                    break;
-                }
-            }
-            if ( db->getDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
-                db->getDatabase().commit();
-            }
-            emit forecastChanged();
-        }
-        else {
-            qDebug() << "YWeatherController::saveForecastToDb database error: " << db->getError();
-            emit saveDataError(db->getError());
-        }
-        db->stopCon();
+    QList<Forecast*> forecastList;
+    for (QJsonValue forecastJson : forecastArray) {
+        Forecast *forecast = new Forecast();
+        weatherCode = forecastJson.toObject().find("code").value().toString().toInt();
+        tempHigh = forecastJson.toObject().find("high").value().toString().toInt();
+        tempLow = forecastJson.toObject().find("low").value().toString().toInt();
+        QString forecastDateStr = forecastJson.toObject().find("date").value().toString().replace(" ", "/");
+        date = yahooLocale.toDate(forecastDateStr, "dd/MMM/yyyy");
+        description = forecastJson.toObject().find("text").value().toString();
+        forecast->setWeatherCode(weatherCode);
+        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
+        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
+        forecast->setForecastDesc(description);
+        forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
+        forecast->setLocationId(locationId);
+        forecastList.append(forecast);
     }
+    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
+    if (dbHelperPtr.data()->insertForecast(forecastList))
+        emit forecastChanged();
+    else
+        emit saveDataError("Error saving forecast!");
+}
+
+QPointer<Weather> YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
+    QPointer<Weather> weatherPtr = nullptr;
+    if (!jsonObject.isEmpty()) {
+        weatherPtr = new Weather;
+        QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
+        qint32 weatherCode = -1;
+        int temperature = 0;
+        QString location = "Undefined";
+        int windSpeed = 0;
+        int windDegree = 0;
+        qint16 humidity = 0;
+        QString windSpeedUnit = "mph";
+        QString link = "www.google.ro";
+        QString description = "";
+        QDateTime sunriseTime;
+        QDateTime sunsetTime;
+        QString pressureUnit = "mbar";
+        double pressure = 0.0;
+
+        QJsonObject channel = nextBranch(nextBranch(nextBranch(jsonObject, "query"), "results"), "channel");
+        QJsonObject units = nextBranch(channel, "units");
+        QJsonObject item = nextBranch(channel, "item");
+        QJsonObject wind = nextBranch(channel, "wind");
+        QJsonObject atmosphere = nextBranch(channel, "atmosphere");
+        QJsonObject astronomy = nextBranch(channel, "astronomy");
+
+        weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();
+        temperature = nextBranch(item, "condition").find("temp").value().toString().toInt();
+        description = nextBranch(item, "condition").find("text").value().toString();
+        temperatureUnit = units.find("temperature").value().toString().toLower();
+        location = nextBranch(channel, "location").find("city").value().toString();
+        link = channel.find("link").value().toString().remove(QRegExp("^http.+\\*"));
+        windSpeed = wind.find("speed").value().toString().toInt();
+        windDegree = wind.find("direction").value().toString().toInt();
+        windSpeedUnit = units.find("speed").value().toString().toLower();
+        humidity = atmosphere.find("humidity").value().toString().toInt();
+        sunriseTime = QLocale().toDateTime(astronomy.find("sunrise").value().toString(), "h:m ap");
+        sunsetTime = QLocale().toDateTime(astronomy.find("sunset").value().toString(), "h:m ap");
+        pressure = atmosphere.find("pressure").value().toString().toDouble();
+
+        weatherPtr.data()->setWeatherCode(weatherCode);
+        weatherPtr.data()->setWeatherDescription(description);
+        weatherPtr.data()->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
+        weatherPtr.data()->setHumidity(humidity);
+        weatherPtr.data()->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
+        weatherPtr.data()->setWindDegree(windDegree);
+        weatherPtr.data()->setSunrise(sunriseTime.time().toString(Qt::SystemLocaleShortDate));
+        weatherPtr.data()->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
+        weatherPtr.data()->setPressure(Util::calculatePressure(pressure, pressureUnit));
+        weatherPtr.data()->setLocationLink(link);
+        weatherPtr.data()->setLocationId(locationId);
+    }
+    return weatherPtr;
 }

@@ -22,6 +22,9 @@
 #include <QProcessEnvironment>
 #include "Util.h"
 #include "CreditsAuthor.h"
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Util::Util(QObject *parent) : QObject(parent){}
 
@@ -342,4 +345,19 @@ QString Util::iconPathPrefix() {
     prefix = "assets:/";
 #endif
     return prefix;
+}
+
+QString Util::findFontCode(const QString &branch,const QString &code) {
+    QFile fontCodesFile(":/other/weather_codes.json");
+    QByteArray baJsonData;
+    if (!fontCodesFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Util::findFontCode cannot open file " + fontCodesFile.fileName();
+        return "";
+    }
+    while (!fontCodesFile.atEnd()) {
+        baJsonData.append(fontCodesFile.readLine());
+    }
+    QJsonObject jsonObject = QJsonDocument::fromJson(baJsonData).object();
+    QString result = jsonObject.find(branch).value().toObject().find(code).value().toString();
+    return result;
 }

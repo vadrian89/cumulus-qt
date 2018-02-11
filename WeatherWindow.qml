@@ -277,7 +277,6 @@ Item {
         onWeatherApiChanged: updateWeather()
         onNetworkError: root.networkError()
         onWeatherDataChanged: {
-            weatherController.getForecastData()
             root.finishedWeatherUpdate()
             logo.source = util.getLogoImage()
         }

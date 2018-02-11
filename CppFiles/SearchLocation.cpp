@@ -21,6 +21,8 @@
 */
 #include "SearchLocation.h"
 #include "DbConnection.h"
+#include "DatabaseHelper.h"
+#include "Location.h"
 
 #include <QDebug>
 SearchLocation::SearchLocation(QObject *parent) : QObject(parent) {
@@ -78,30 +80,19 @@ void SearchLocation::errorSlot() {
 }
 
 void SearchLocation::setLocation(const QString &location) {
-    DbConnection *con = new DbConnection(this);
-    QString deleteQ = "delete from sw_ma_location";
-    QString insertQ = "insert into sw_ma_location (loc_id, loc_name) values ("
-                      "(select count(*)+1 from sw_ma_location), "
-                      ":location"
-                      ")";
-    if(con->startCon()) {
-        QSqlQuery q;
-        q.prepare(deleteQ);
-        if(q.exec()) {
-            q.prepare(insertQ);
-            q.bindValue(":location", location);
-            if(q.exec()) {
+    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
+    if (!dbHelperPtr.isNull()) {
+        if (dbHelperPtr.data()->deleteLocation(1)) {
+            QPointer<Location> locPtr = new Location(nullptr, 1, "", location);
+            if (dbHelperPtr.data()->insertLocation(locPtr)) {
                 emit locationChanged();
             }
             else {
-                setError("Sql error when saving location: " + q.lastError().text());
+                setError("Error when saving location!");
             }
         }
         else {
-            setError("Error cleaning location table: " + q.lastError().text());
+            setError("Error cleaning location table!");
         }
-    }
-    else {
-        setError("Database error: " + con->getError());
     }
 }

@@ -26,6 +26,8 @@
 #include <QDir>
 #include <QDebug>
 
+#include "DatabaseHelper.h"
+
 DbConnection::DbConnection(QObject *parent) : QObject(parent){
     QString appName = QApplication::applicationName();
     db = QSqlDatabase::database();

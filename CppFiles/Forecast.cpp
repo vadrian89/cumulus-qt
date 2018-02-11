@@ -26,7 +26,7 @@
 
 Forecast::Forecast(QObject *parent) : QObject(parent){
 	m_forecastIndex = 1;
-    m_weatherCode = "-1";
+    m_weatherCode = -1;
 	m_tempHigh = 0;
 	m_tempLow  = 0;
     m_forecastDate = QDate::currentDate().toString("ddd");
@@ -39,11 +39,11 @@ void Forecast::setForecastIndex(const int &forecastIndex) {
 	}
 }
 
-QString Forecast::weatherCode() const {
+int Forecast::weatherCode() const {
     return m_weatherCode;
 }
 
-void Forecast::setWeatherCode(const QString &weatherCode) {
+void Forecast::setWeatherCode(const int &weatherCode) {
 	if ( m_weatherCode != weatherCode ) {
 		m_weatherCode = weatherCode;
 		emit weatherCodeChanged();
@@ -93,4 +93,26 @@ void Forecast::setForecastDesc(const QString &forecastDesc) {
         m_forecastDesc = Util::firstLetterUp(forecastDesc);
         emit forecastDescChanged();
     }
+}
+
+void Forecast::setLocationId(const int &locationId) {
+    if (m_locationId != locationId) {
+        m_locationId = locationId;
+        emit locationIdChanged();
+    }
+}
+
+int Forecast::locationId() const {
+    return m_locationId;
+}
+
+void Forecast::setWeatherIcon(const QString &weatherIcon) {
+    if (m_weatherIcon != weatherIcon) {
+        m_weatherIcon = weatherIcon;
+        emit weatherIconChanged();
+    }
+}
+
+QString Forecast::weatherIcon() const {
+    return m_weatherIcon;
 }

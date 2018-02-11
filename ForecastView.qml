@@ -49,7 +49,7 @@ Item {
             iconFont: weatherIconsFont.name
             fontColor: root.fontColor
             forecastDay: model.modelData.forecastDate
-            forecastIcon: model.modelData.weatherCode
+            forecastIcon: model.modelData.weatherIcon
             forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
             forecastDesc: model.modelData.forecastDesc
         }

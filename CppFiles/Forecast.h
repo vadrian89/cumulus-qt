@@ -30,34 +30,36 @@
 
 class Forecast : public QObject {
     Q_OBJECT
-    int m_forecastIndex;
-    QString m_weatherCode;
-    int m_tempHigh;
-    int m_tempLow;
-    QString m_forecastDate;
-    QString m_forecastDesc;
+    int m_forecastIndex, m_tempHigh, m_tempLow, m_locationId, m_weatherCode;
+    QString m_weatherIcon, m_forecastDate, m_forecastDesc;
 
     Q_PROPERTY(int forecastIndex READ forecastIndex WRITE setForecastIndex NOTIFY forecastIndexChanged)
-    Q_PROPERTY(QString weatherCode READ weatherCode WRITE setWeatherCode NOTIFY weatherCodeChanged)
+    Q_PROPERTY(int weatherCode READ weatherCode WRITE setWeatherCode NOTIFY weatherCodeChanged)
+    Q_PROPERTY(QString weatherIcon READ weatherIcon WRITE setWeatherIcon NOTIFY weatherIconChanged)
     Q_PROPERTY(int tempHigh READ tempHigh WRITE setTempHigh NOTIFY tempHighChanged)
     Q_PROPERTY(int tempLow READ tempLow WRITE setTempLow NOTIFY tempLowChanged)
     Q_PROPERTY(QString forecastDate READ forecastDate WRITE setForecastDate NOTIFY forecastDateChanged)
     Q_PROPERTY(QString forecastDesc READ forecastDesc WRITE setForecastDesc NOTIFY forecastDescChanged)
+    Q_PROPERTY(int locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged)
 public:
     explicit Forecast(QObject *parent = 0);
     void setForecastIndex(const int &forecastIndex);
-    void setWeatherCode(const QString &weatherCode);
+    void setWeatherCode(const int &weatherCode);
     void setTempHigh(const int &tempHigh);
     void setTempLow(const int &tempLow);
     void setForecastDate(const QString &forecastDate);
 	
     int forecastIndex() const;
-    QString weatherCode() const;
+    int weatherCode() const;
     int tempHigh() const;
     int tempLow() const;
     QString forecastDate() const;
     QString forecastDesc() const;
     void setForecastDesc(const QString &desc);
+    void setLocationId(const int &locationId);
+    int locationId() const;
+    void setWeatherIcon(const QString &weatherIcon);
+    QString weatherIcon() const;
 private slots:
 signals:
     void forecastIndexChanged();
@@ -67,6 +69,8 @@ signals:
 	void forecastDateChanged();
 	void forecastChanged();
     void forecastDescChanged();
+    void locationIdChanged();
+    void weatherIconChanged();
 };
 
 #endif // FORECAST_H

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>qt/etc/qt.conf</file>
         <file>ApplicationBar.qml</file>
         <file>ColorPalleteButton.qml</file>
         <file>CreditsListDelegate.qml</file>
@@ -22,5 +21,6 @@
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
         <file>main-desktop.qml</file>
+        <file>other/weather_codes.json</file>
     </qresource>
 </RCC>

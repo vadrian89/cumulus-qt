@@ -19,7 +19,10 @@ SOURCES += main.cpp \
     CppFiles/CustomImageProvider.cpp \
     CppFiles/FontImageProvider.cpp \
     CppFiles/WundWeatherController.cpp \
-    CppFiles/MainWindow.cpp
+    CppFiles/MainWindow.cpp \
+    CppFiles/DatabaseHelper.cpp \
+    CppFiles/Weather.cpp \
+    CppFiles/Location.cpp
 
 RESOURCES += qml.qrc
 
@@ -46,9 +49,12 @@ HEADERS += \
     CppFiles/CustomImageProvider.h \
     CppFiles/FontImageProvider.h \
     CppFiles/WundWeatherController.h \
-    CppFiles/MainWindow.h
+    CppFiles/MainWindow.h \
+    CppFiles/DatabaseHelper.h \
+    CppFiles/Weather.h \
+    CppFiles/Location.h
 
-QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
+#QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 DISTFILES += \
     README.md \

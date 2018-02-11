@@ -32,6 +32,7 @@
 #include <QFont>
 #include <QApplication>
 #include <QSysInfo>
+#include <QFile>
 
 class Util : public QObject {
     Q_OBJECT    
@@ -53,6 +54,7 @@ public:
     static double kphToMph(double speed);
     static double kphToMs(double speed);
     static int roundToInt(const double &unit);
+    static QString findFontCode(const QString &branch,const QString &code);
 
     Q_INVOKABLE static QString getWeatherApi();
     Q_INVOKABLE static void setWeatherApi(const QString &weatherApi);
@@ -67,7 +69,7 @@ public:
     Q_INVOKABLE static QString speedUnitSymbol();
     Q_INVOKABLE static QString pressureUnitSymbol();
     Q_INVOKABLE static QString osType();
-    Q_INVOKABLE static QString firstLetterUp(const QString &string);    
+    Q_INVOKABLE static QString firstLetterUp(const QString &string);
     Q_INVOKABLE static bool trayVisibility();
     Q_INVOKABLE static QList<QObject*> creditsList();
     Q_INVOKABLE static QString trayTheme();
