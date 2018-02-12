@@ -55,15 +55,13 @@ void YWeatherController::readJsonData(QJsonObject jsonObject) {
 
 void YWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     qDebug() << "In YWeatherController::saveWeatherToDb";
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    if (!dbHelperPtr.isNull()) {
-        QPointer<Weather> weatherPtr = getWeatherFromJson(jsonObject);
-        if (!weatherPtr.isNull()) {
-            if (dbHelperPtr.data()->deleteWeather(locationId)) {
-                if (!dbHelperPtr.data()->insertWeather(weatherPtr)) {
-                    qDebug() << "YWeatherController::saveWeatherToDb error!";
-                    emit saveDataError("Error saving the weather to database!");
-                }
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr) {
+        unique_ptr<Weather> weatherPtr(getWeatherFromJson(jsonObject));
+        if (weatherPtr && dbHelperPtr.get()->deleteWeather(locationId)) {
+            if (!dbHelperPtr.get()->insertWeather(weatherPtr.get())) {
+                qDebug() << "WundWeatherController::saveWeatherToDb error!";
+                emit saveDataError("Error saving the weather to database!");
             }
         }
     }
@@ -80,7 +78,7 @@ void YWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
     QList<Forecast*> forecastList;
     for (QJsonValue forecastJson : forecastArray) {
         Forecast *forecast = new Forecast();
-        weatherCode = forecastJson.toObject().find("code").value().toString().toInt();
+        weatherCode = forecastJson.toObject().find("code").value().toString().toInt();        
         tempHigh = forecastJson.toObject().find("high").value().toString().toInt();
         tempLow = forecastJson.toObject().find("low").value().toString().toInt();
         QString forecastDateStr = forecastJson.toObject().find("date").value().toString().replace(" ", "/");
@@ -94,15 +92,15 @@ void YWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
         forecast->setLocationId(locationId);
         forecastList.append(forecast);
     }
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    if (dbHelperPtr.data()->insertForecast(forecastList))
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr.get()->insertForecast(forecastList))
         emit forecastChanged();
     else
         emit saveDataError("Error saving forecast!");
 }
 
-QPointer<Weather> YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
-    QPointer<Weather> weatherPtr = nullptr;
+Weather* YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
+    Weather *weatherPtr = nullptr;
     if (!jsonObject.isEmpty()) {
         weatherPtr = new Weather;
         QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
@@ -127,7 +125,7 @@ QPointer<Weather> YWeatherController::getWeatherFromJson(const QJsonObject &json
         QJsonObject atmosphere = nextBranch(channel, "atmosphere");
         QJsonObject astronomy = nextBranch(channel, "astronomy");
 
-        weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();
+        weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();        
         temperature = nextBranch(item, "condition").find("temp").value().toString().toInt();
         description = nextBranch(item, "condition").find("text").value().toString();
         temperatureUnit = units.find("temperature").value().toString().toLower();
@@ -141,17 +139,17 @@ QPointer<Weather> YWeatherController::getWeatherFromJson(const QJsonObject &json
         sunsetTime = QLocale().toDateTime(astronomy.find("sunset").value().toString(), "h:m ap");
         pressure = atmosphere.find("pressure").value().toString().toDouble();
 
-        weatherPtr.data()->setWeatherCode(weatherCode);
-        weatherPtr.data()->setWeatherDescription(description);
-        weatherPtr.data()->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
-        weatherPtr.data()->setHumidity(humidity);
-        weatherPtr.data()->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
-        weatherPtr.data()->setWindDegree(windDegree);
-        weatherPtr.data()->setSunrise(sunriseTime.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr.data()->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr.data()->setPressure(Util::calculatePressure(pressure, pressureUnit));
-        weatherPtr.data()->setLocationLink(link);
-        weatherPtr.data()->setLocationId(locationId);
+        weatherPtr->setWeatherCode(weatherCode);
+        weatherPtr->setWeatherDescription(description);
+        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
+        weatherPtr->setHumidity(humidity);
+        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
+        weatherPtr->setWindDegree(windDegree);
+        weatherPtr->setSunrise(sunriseTime.time().toString(Qt::SystemLocaleShortDate));
+        weatherPtr->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
+        weatherPtr->setPressure(Util::calculatePressure(pressure, pressureUnit));
+        weatherPtr->setLocationLink(link);
+        weatherPtr->setLocationId(locationId);
     }
     return weatherPtr;
 }

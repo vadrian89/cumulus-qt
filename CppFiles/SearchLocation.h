@@ -29,8 +29,11 @@
 #include <QTimer>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <memory>
 
 #include "DataController.h"
+
+using namespace std;
 class SearchLocation : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString locationName MEMBER m_locationName WRITE setLocationName NOTIFY locationNameChanged)

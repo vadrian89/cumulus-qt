@@ -23,7 +23,6 @@
 
 AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent), operationData(0){
     dataController = new DataController(this);
-    db = new DbConnection(this);
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(readJsonData(QJsonObject)));
     connect(dataController, SIGNAL(networkError()), this, SLOT(manageError()));
 }
@@ -40,12 +39,12 @@ void AbstractWeatherController::saveDataToDb() {
 }
 
 bool AbstractWeatherController::saveLocation(const QString &code) {
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
     bool result = false;
-    if (!dbHelperPtr.isNull()) {
-        QPointer<Location> locationPtr = dbHelperPtr.data()->getLocation(locationId);
-        locationPtr.data()->m_locationCode = code;
-        if (!dbHelperPtr.data()->updateLocation(locationPtr))
+    if (dbHelperPtr) {
+        unique_ptr<Location> locationPtr(dbHelperPtr.get()->getLocation(locationId));
+        locationPtr.get()->m_locationCode = code;
+        if (!dbHelperPtr.get()->updateLocation(locationPtr.get()))
             emit saveDataError("Error saving location code!");
         else
             result = true;

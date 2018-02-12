@@ -4,7 +4,6 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     CppFiles/Util.cpp \
-    CppFiles/DbConnection.cpp \
     CppFiles/DataController.cpp \
     CppFiles/YWeatherController.cpp \
     CppFiles/Forecast.cpp \
@@ -34,7 +33,6 @@ include(deployment.pri)
 
 HEADERS += \
     CppFiles/Util.h \
-    CppFiles/DbConnection.h \
     CppFiles/DataController.h \
     CppFiles/YWeatherController.h \
     CppFiles/Forecast.h \

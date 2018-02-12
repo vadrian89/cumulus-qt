@@ -25,51 +25,55 @@
 #include "DatabaseHelper.h"
 #include "Weather.h"
 
-#include <QPointer>
 #include <QDebug>
+#include <memory>
+
+using namespace std;
+
 WeatherType::WeatherType(QObject *parent) : QObject(parent){}
 
 void WeatherType::getWeatherData(){
-    qDebug() << "WeatherType::getWeatherData >> Weather data request.";        
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    QPointer<Location> locationPtr = nullptr;
-    if (!dbHelperPtr.isNull()) {
-        locationPtr = dbHelperPtr.data()->getLocation(1);
-    }
-    if (!locationPtr.isNull()) {
-        int locationCodeSize = locationPtr.data()->m_locationCode.trimmed().size();
-        if (Util::getWeatherApi() == "y") {
-            yweather = new YWeatherController();
-            connect(yweather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-            connect(yweather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
-            connect(yweather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
-            connect(yweather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-            if (locationCodeSize > 0)
-                yweather->searchBycode(locationPtr.data()->m_locationCode);
-            else
-                yweather->searchByLocation(locationPtr.data()->m_locationName);
-        }
-        else if (Util::getWeatherApi() == "wund") {
-            wundWeather = new WundWeatherController();
-            connect(wundWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-            connect(wundWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
-            connect(wundWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
-            connect(wundWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-            if (locationCodeSize > 0)
-                wundWeather->searchBycode(locationPtr.data()->m_locationCode);
-            else
-                wundWeather->searchByLocation(locationPtr.data()->m_locationName);
+    qDebug() << "WeatherType::getWeatherData >> Weather data request.";
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr) {
+        unique_ptr<Location> locationPtr(dbHelperPtr.get()->getLocation(1));
+        if (locationPtr) {
+            int locationCodeSize = locationPtr.get()->m_locationCode.trimmed().size();
+            if (Util::getWeatherApi() == "y") {
+                yweather = new YWeatherController();
+                connect(yweather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
+                connect(yweather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
+                connect(yweather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+                if (locationCodeSize > 0)
+                    yweather->searchBycode(locationPtr.get()->m_locationCode);
+                else
+                    yweather->searchByLocation(locationPtr.get()->m_locationName);
+            }
+            else if (Util::getWeatherApi() == "wund") {
+                wundWeather = new WundWeatherController();
+                connect(wundWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
+                connect(wundWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
+                connect(wundWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
+                connect(wundWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+                if (locationCodeSize > 0)
+                    wundWeather->searchBycode(locationPtr.get()->m_locationCode);
+                else
+                    wundWeather->searchByLocation(locationPtr.get()->m_locationName);
+            }
+            else {
+                owmWeather = new OwmWeatherController();
+                connect(owmWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
+                connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
+                connect(owmWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
+                connect(owmWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+                if (locationCodeSize > 0)
+                    owmWeather->searchBycode(locationPtr.get()->m_locationCode);
+                else
+                    owmWeather->searchByLocation(locationPtr.get()->m_locationName);
+            }
         }
         else {
-            owmWeather = new OwmWeatherController();
-            connect(owmWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-            connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));            
-            connect(owmWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
-            connect(owmWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-            if (locationCodeSize > 0)
-                owmWeather->searchBycode(locationPtr.data()->m_locationCode);
-            else
-                owmWeather->searchByLocation(locationPtr.data()->m_locationName);
+            emit noLocationSet();
         }
     }
     else {
@@ -78,29 +82,28 @@ void WeatherType::getWeatherData(){
 }
 
 void WeatherType::setWeatherData() {
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    QPointer<Weather> weatherPtr = nullptr;
-    if (!dbHelperPtr.isNull()) {
-        weatherPtr = dbHelperPtr.data()->getWeather(1);
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr) {
+        unique_ptr<Weather> weatherPtr(dbHelperPtr.get()->getWeather(1));
         setLocation("Undefined");
-        if (!weatherPtr.isNull()) {
-            setWeatherCode(weatherPtr.data()->weatherCode());
-            setWeatherIcon(weatherPtr.data()->weatherIcon());
-            setWeatherDescription(weatherPtr.data()->weatherDescription());
-            setTemperature(weatherPtr.data()->temperature());
-            setPressure(weatherPtr.data()->pressure());
-            setHumidity(weatherPtr.data()->humidity());
-            setWindSpeed(weatherPtr.data()->windSpeed());
-            setWindDegree(weatherPtr.data()->windDegree());
-            setSunrise(weatherPtr.data()->sunrise());
-            setSunset(weatherPtr.data()->sunset());
-            setTempMax(weatherPtr.data()->tempMax());
-            setTempMin(weatherPtr.data()->tempMin());
-            setTempUnit(weatherPtr.data()->tempUnit());
-            setSpeedUnit(weatherPtr.data()->speedUnit());
-            setLocationLink(weatherPtr.data()->locationLink());
-            setLocation(weatherPtr.data()->location());
-            setForecastList(weatherPtr.data()->forecastList());
+        if (weatherPtr) {
+            setWeatherCode(weatherPtr->weatherCode());
+            setWeatherIcon(weatherPtr->weatherIcon());
+            setWeatherDescription(weatherPtr->weatherDescription());
+            setTemperature(weatherPtr->temperature());
+            setPressure(weatherPtr->pressure());
+            setHumidity(weatherPtr->humidity());
+            setWindSpeed(weatherPtr->windSpeed());
+            setWindDegree(weatherPtr->windDegree());
+            setSunrise(weatherPtr->sunrise());
+            setSunset(weatherPtr->sunset());
+            setTempMax(weatherPtr->tempMax());
+            setTempMin(weatherPtr->tempMin());
+            setTempUnit(weatherPtr->tempUnit());
+            setSpeedUnit(weatherPtr->speedUnit());
+            setLocationLink(weatherPtr->locationLink());
+            setLocation(weatherPtr->location());
+            setForecastList(weatherPtr->forecastList());
         }
     }
     emit weatherDataChanged();
@@ -358,10 +361,10 @@ void WeatherType::setSpeedUnit(const QString &unit) {
 }
 
 bool WeatherType::clearLocationCode() {
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
     bool result = false;
-    if (!dbHelperPtr.isNull()) {
-        result = dbHelperPtr.data()->clearLocationCode(1);
+    if (dbHelperPtr) {
+        result = dbHelperPtr.get()->clearLocationCode(1);
     }
     return result;
 }

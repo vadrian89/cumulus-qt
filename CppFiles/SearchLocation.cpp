@@ -20,7 +20,6 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "SearchLocation.h"
-#include "DbConnection.h"
 #include "DatabaseHelper.h"
 #include "Location.h"
 
@@ -80,11 +79,11 @@ void SearchLocation::errorSlot() {
 }
 
 void SearchLocation::setLocation(const QString &location) {
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    if (!dbHelperPtr.isNull()) {
-        if (dbHelperPtr.data()->deleteLocation(1)) {
-            QPointer<Location> locPtr = new Location(nullptr, 1, "", location);
-            if (dbHelperPtr.data()->insertLocation(locPtr)) {
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr) {
+        if (dbHelperPtr.get()->deleteLocation(1)) {
+            unique_ptr<Location> locPtr(new Location(nullptr, 1, "", location));
+            if (dbHelperPtr.get()->insertLocation(locPtr.get())) {
                 emit locationChanged();
             }
             else {

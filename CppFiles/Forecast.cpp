@@ -20,7 +20,6 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Forecast.h"
-#include "DbConnection.h"
 #include "Util.h"
 #include <QDebug>
 

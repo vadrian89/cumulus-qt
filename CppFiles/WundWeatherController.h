@@ -10,7 +10,7 @@ class WundWeatherController : public AbstractWeatherController {
     void saveWeatherToDb(const QJsonObject &jsonObject);
     void saveForecastToDb(const QJsonObject &jsonObject);
     void readJsonData(QJsonObject jsonObject);
-    QPointer<Weather> getWeatherFromJson(const QJsonObject &jsonObject);
+    Weather* getWeatherFromJson(const QJsonObject &jsonObject);
     void getForecast(const QString &code);
     void getAstronomy(const QString &code);
     QDate dateFromJson(const QJsonObject &jsonObject);

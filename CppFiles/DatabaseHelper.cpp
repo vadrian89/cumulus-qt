@@ -176,9 +176,9 @@ Location* DatabaseHelper::getLocation(const int &locationId) {
     return location;
 }
 
-bool DatabaseHelper::insertLocation(const QPointer<Location> &locationPtr) {
+bool DatabaseHelper::insertLocation(const Location *locationPtr) {
     bool result = false;
-    if (!locationPtr.isNull()) {
+    if (locationPtr != nullptr) {
         QSqlDatabase db = getDatabase();
         if (startCon(&db)) {
             QSqlQuery q(db);
@@ -189,8 +189,8 @@ bool DatabaseHelper::insertLocation(const QPointer<Location> &locationPtr) {
                     + DB_MA_LOCATION.LOC_NAME_COLUMN +
                     ") values ((select count(*)+1 from " + DB_MA_LOCATION.TABLE_NAME + "), :code, :name)";
             q.prepare(queryString);
-            q.bindValue(":code", locationPtr.data()->m_locationCode);
-            q.bindValue(":name", locationPtr.data()->m_locationName);
+            q.bindValue(":code", locationPtr->m_locationCode);
+            q.bindValue(":name", locationPtr->m_locationName);
             if (q.exec()) {
                 emit querySuccessful();
                 result = true;
@@ -205,9 +205,9 @@ bool DatabaseHelper::insertLocation(const QPointer<Location> &locationPtr) {
     return result;
 }
 
-bool DatabaseHelper::updateLocation(const QPointer<Location> &locationPtr) {
+bool DatabaseHelper::updateLocation(const Location *locationPtr) {
     bool result = false;
-    if (!locationPtr.isNull()) {
+    if (locationPtr != nullptr) {
         QSqlDatabase db = getDatabase();
         if (startCon(&db)) {
             QSqlQuery q(db);
@@ -217,9 +217,9 @@ bool DatabaseHelper::updateLocation(const QPointer<Location> &locationPtr) {
                     + DB_MA_LOCATION.LOC_NAME_COLUMN + " = :name where "
                     + DB_MA_LOCATION.LOC_ID_COLUMN + " = :id";
             q.prepare(queryString);
-            q.bindValue(":code", locationPtr.data()->m_locationCode);
-            q.bindValue(":name", locationPtr.data()->m_locationName);
-            q.bindValue(":id", locationPtr.data()->m_locationId);
+            q.bindValue(":code", locationPtr->m_locationCode);
+            q.bindValue(":name", locationPtr->m_locationName);
+            q.bindValue(":id", locationPtr->m_locationId);
             if (q.exec()) {
                 emit querySuccessful();
                 result = true;
@@ -294,8 +294,11 @@ Weather* DatabaseHelper::getWeather(const int &locationId) {
                 QString weatherIconCode = Util::findFontCode(Util::getWeatherApi(), QString::number(q.value("weather_code").toInt()));
                 weather->setWeatherCode(q.value("weather_id").toInt());
                 weather->setWeatherIcon(weatherIconCode);
-                if (QTime::currentTime() > QTime::fromString(q.value("sunset").toString(), "HH:mm"))
-                    weather->setWeatherIcon(Util::findFontCode("night-font", weatherIconCode));
+                if (QTime::currentTime() > QTime::fromString(q.value("sunset").toString(), "HH:mm")) {
+                    QString nightFont = Util::findFontCode("night-font", weatherIconCode);
+                    if (nightFont.trimmed().size() > 0)
+                        weather->setWeatherIcon(nightFont);
+                }
                 weather->setWeatherDescription(q.value("description").toString());
                 weather->setTemperature(q.value("temperature").toInt());
                 weather->setPressure(q.value("pressure").toDouble());
@@ -310,9 +313,9 @@ Weather* DatabaseHelper::getWeather(const int &locationId) {
                 weather->setSpeedUnit(Util::speedUnitSymbol());
                 weather->setLocationLink(q.value("link").toString());
                 weather->setForecastList(getForecast(locationId));
-                QPointer<Location> locPtr = getLocation(locationId);
-                if (!locPtr.isNull())
-                    weather->setLocation(locPtr.data()->m_locationName);
+                unique_ptr<Location> locPtr(getLocation(locationId));
+                if (locPtr)
+                    weather->setLocation(locPtr.get()->m_locationName);
             }
             emit querySuccessful();
         }
@@ -324,7 +327,7 @@ Weather* DatabaseHelper::getWeather(const int &locationId) {
     return weather;
 }
 
-bool DatabaseHelper::insertWeather(const QPointer<Weather> &weatherPtr) {
+bool DatabaseHelper::insertWeather(const Weather *weatherPtr) {
     bool result = false;
     QSqlDatabase db = getDatabase();
     if (startCon(&db)) {
@@ -347,17 +350,17 @@ bool DatabaseHelper::insertWeather(const QPointer<Weather> &weatherPtr) {
                            + DB_TR_WEATHER.TABLE_NAME + "), :code, :description, :temperature, "
                                                         ":humidity, :wind_speed, :wind_degree, :sunrise, :sunset, :loc_id, :pressure, :link)");
         q.prepare(queryString);
-        q.bindValue(":code", weatherPtr.data()->weatherCode());
-        q.bindValue(":description", weatherPtr.data()->weatherDescription());
-        q.bindValue(":temperature", weatherPtr.data()->temperature());
-        q.bindValue(":humidity", weatherPtr.data()->humidity());
-        q.bindValue(":wind_speed", weatherPtr.data()->windSpeed());
-        q.bindValue(":wind_degree", weatherPtr.data()->windDegree());
-        q.bindValue(":sunrise", weatherPtr.data()->sunrise());
-        q.bindValue(":sunset", weatherPtr.data()->sunset());
-        q.bindValue(":pressure", weatherPtr.data()->pressure());
-        q.bindValue(":link", weatherPtr.data()->locationLink());
-        q.bindValue(":loc_id", weatherPtr.data()->locationId());
+        q.bindValue(":code", weatherPtr->weatherCode());
+        q.bindValue(":description", weatherPtr->weatherDescription());
+        q.bindValue(":temperature", weatherPtr->temperature());
+        q.bindValue(":humidity", weatherPtr->humidity());
+        q.bindValue(":wind_speed", weatherPtr->windSpeed());
+        q.bindValue(":wind_degree", weatherPtr->windDegree());
+        q.bindValue(":sunrise", weatherPtr->sunrise());
+        q.bindValue(":sunset", weatherPtr->sunset());
+        q.bindValue(":pressure", weatherPtr->pressure());
+        q.bindValue(":link", weatherPtr->locationLink());
+        q.bindValue(":loc_id", weatherPtr->locationId());
         if (q.exec()) {
             emit querySuccessful();
             result = true;
@@ -370,7 +373,7 @@ bool DatabaseHelper::insertWeather(const QPointer<Weather> &weatherPtr) {
     return result;
 }
 
-bool DatabaseHelper::updateWeather(const QPointer<Weather> &weatherPtr) {
+bool DatabaseHelper::updateWeather(const Weather *weatherPtr) {
     bool result = false;
     QSqlDatabase db = getDatabase();
     if (startCon(&db)) {
@@ -381,17 +384,17 @@ bool DatabaseHelper::updateWeather(const QPointer<Weather> &weatherPtr) {
                               "w_pressure = :pressure, w_link = :link "
                               "where w_loc_id = :loc_id";
         q.prepare(queryString);
-        q.bindValue(":code", weatherPtr.data()->weatherCode());
-        q.bindValue(":description", weatherPtr.data()->weatherDescription());
-        q.bindValue(":temperature", weatherPtr.data()->temperature());
-        q.bindValue(":humidity", weatherPtr.data()->humidity());
-        q.bindValue(":wind_speed", weatherPtr.data()->windSpeed());
-        q.bindValue(":wind_degree", weatherPtr.data()->windDegree());
-        q.bindValue(":sunrise", weatherPtr.data()->sunrise());
-        q.bindValue(":sunset", weatherPtr.data()->sunset());
-        q.bindValue(":pressure", weatherPtr.data()->pressure());
-        q.bindValue(":link", weatherPtr.data()->locationLink());
-        q.bindValue(":loc_id", weatherPtr.data()->locationId());
+        q.bindValue(":code", weatherPtr->weatherCode());
+        q.bindValue(":description", weatherPtr->weatherDescription());
+        q.bindValue(":temperature", weatherPtr->temperature());
+        q.bindValue(":humidity", weatherPtr->humidity());
+        q.bindValue(":wind_speed", weatherPtr->windSpeed());
+        q.bindValue(":wind_degree", weatherPtr->windDegree());
+        q.bindValue(":sunrise", weatherPtr->sunrise());
+        q.bindValue(":sunset", weatherPtr->sunset());
+        q.bindValue(":pressure", weatherPtr->pressure());
+        q.bindValue(":link", weatherPtr->locationLink());
+        q.bindValue(":loc_id", weatherPtr->locationId());
         if (q.exec()) {
             emit querySuccessful();
             result = true;

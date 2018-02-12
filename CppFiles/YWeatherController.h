@@ -30,7 +30,7 @@ class YWeatherController : public AbstractWeatherController {
     void saveWeatherToDb(const QJsonObject &jsonObject);
     void saveForecastToDb(const QJsonObject &jsonObject);
     void readJsonData(QJsonObject jsonObject);
-    QPointer<Weather> getWeatherFromJson(const QJsonObject &jsonObject);
+    Weather* getWeatherFromJson(const QJsonObject &jsonObject);
 public:
     explicit YWeatherController(QObject *parent = 0);
     void searchByLocation(QString &location);

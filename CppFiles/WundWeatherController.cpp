@@ -82,15 +82,13 @@ void WundWeatherController::readJsonData(QJsonObject jsonObject) {
 
 void WundWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
     qDebug() << "In WundWeatherController::saveWeatherToDb";
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    if (!dbHelperPtr.isNull()) {
-        QPointer<Weather> weatherPtr = getWeatherFromJson(jsonObject);
-        if (!weatherPtr.isNull()) {
-            if (dbHelperPtr.data()->deleteWeather(locationId)) {
-                if (!dbHelperPtr.data()->insertWeather(weatherPtr)) {
-                    qDebug() << "WundWeatherController::saveWeatherToDb error!";
-                    emit saveDataError("Error saving the weather to database!");
-                }
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr) {
+        unique_ptr<Weather> weatherPtr(getWeatherFromJson(jsonObject));
+        if (weatherPtr && dbHelperPtr.get()->deleteWeather(locationId)) {
+            if (!dbHelperPtr.get()->insertWeather(weatherPtr.get())) {
+                qDebug() << "WundWeatherController::saveWeatherToDb error!";
+                emit saveDataError("Error saving the weather to database!");
             }
         }
     }
@@ -119,8 +117,8 @@ void WundWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
         forecast->setLocationId(locationId);
         forecastList.append(forecast);
     }
-    QPointer<DatabaseHelper> dbHelperPtr = new DatabaseHelper;
-    if (dbHelperPtr.data()->insertForecast(forecastList))
+    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
+    if (dbHelperPtr.get()->insertForecast(forecastList))
         emit forecastChanged();
     else
         emit saveDataError("Error saving forecast!");
@@ -133,8 +131,8 @@ QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {
     return date;
 }
 
-QPointer<Weather> WundWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
-    QPointer<Weather> weatherPtr = nullptr;
+Weather* WundWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
+    Weather *weatherPtr = nullptr;
     if (!jsonObject.isEmpty()) {
         weatherPtr = new Weather;
         int weatherCode = -1;
@@ -158,17 +156,17 @@ QPointer<Weather> WundWeatherController::getWeatherFromJson(const QJsonObject &j
         humidity = weatherData.find("relative_humidity").value().toString().remove("%").toInt();
         pressure = weatherData.find("pressure_mb").value().toString().toDouble();
 
-        weatherPtr.data()->setWeatherCode(weatherCode);
-        weatherPtr.data()->setWeatherDescription(description);
-        weatherPtr.data()->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
-        weatherPtr.data()->setHumidity(humidity);
-        weatherPtr.data()->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
-        weatherPtr.data()->setWindDegree(windDegree);
-        weatherPtr.data()->setSunrise(sunrise.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr.data()->setSunset(sunset.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr.data()->setPressure(Util::calculatePressure(pressure, pressureUnit));
-        weatherPtr.data()->setLocationLink(link);
-        weatherPtr.data()->setLocationId(locationId);
+        weatherPtr->setWeatherCode(weatherCode);
+        weatherPtr->setWeatherDescription(description);
+        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
+        weatherPtr->setHumidity(humidity);
+        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
+        weatherPtr->setWindDegree(windDegree);
+        weatherPtr->setSunrise(sunrise.time().toString(Qt::SystemLocaleShortDate));
+        weatherPtr->setSunset(sunset.time().toString(Qt::SystemLocaleShortDate));
+        weatherPtr->setPressure(Util::calculatePressure(pressure, pressureUnit));
+        weatherPtr->setLocationLink(link);
+        weatherPtr->setLocationId(locationId);
     }
     return weatherPtr;
 }

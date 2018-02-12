@@ -25,7 +25,6 @@
 #include <QObject>
 #include <QMap>
 
-#include "DbConnection.h"
 #include "Util.h"
 #include "YWeatherController.h"
 #include "OwmWeatherController.h"
@@ -62,7 +61,6 @@ class WeatherType : public QObject {
     Q_PROPERTY(QString speedUnit READ speedUnit WRITE setSpeedUnit NOTIFY speedUnitChanged)
     Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
 
-    int searchCriteria();
     void updateForecastTemp(const QString &oldUnit);
     YWeatherController *yweather;
     OwmWeatherController *owmWeather;

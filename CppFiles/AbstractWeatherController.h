@@ -27,20 +27,20 @@
 #include <QJsonArray>
 #include <QLocale>
 #include <QSqlDriver>
-#include <QPointer>
+#include <memory>
 
 #include "DataController.h"
-#include "DbConnection.h"
 #include "Util.h"
 #include "Weather.h"
 #include "DatabaseHelper.h"
 #include "Forecast.h"
 
+using namespace std;
+
 class AbstractWeatherController : public QObject {
     Q_OBJECT
 protected:
     DataController *dataController;
-    DbConnection *db;
     enum OperationData { GetLocationId, GetWeather, GetForecast, GetAstronomy };
     int operationData;
     int locationId;
@@ -59,7 +59,7 @@ public:
     virtual void searchBycode(QString &code) = 0;
 protected slots:
     virtual void readJsonData(QJsonObject jsonObject) = 0;
-    virtual QPointer<Weather> getWeatherFromJson(const QJsonObject &jsonObject) = 0;
+    virtual Weather* getWeatherFromJson(const QJsonObject &jsonObject) = 0;
     void manageError();
 public slots:
     void saveDataToDb();

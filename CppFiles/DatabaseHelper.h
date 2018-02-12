@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QSqlDatabase>
-#include <QPointer>
 #include <QApplication>
 #include <QDir>
 #include <QSqlError>
@@ -11,10 +10,13 @@
 #include <QDebug>
 #include <QList>
 #include <QSqlDriver>
+#include <memory>
 
 #include "Location.h"
 #include "Weather.h"
 #include "Forecast.h"
+
+using namespace std;
 
 struct location_table_definition {
     const QString
@@ -75,12 +77,12 @@ public:
     explicit DatabaseHelper(QObject *parent = nullptr);
     bool clearLocationCode(const int &locationId);            
     Location* getLocation(const int &locationId);
-    bool insertLocation(const QPointer<Location> &locationPtr);
-    bool updateLocation(const QPointer<Location> &locationPtr);
+    bool insertLocation(const Location *locationPtr);
+    bool updateLocation(const Location *locationPtr);
     bool deleteLocation(const int &locationId);
     Weather* getWeather(const int &locationId);
-    bool insertWeather(const QPointer<Weather> &weatherPtr);
-    bool updateWeather(const QPointer<Weather> &weatherPtr);
+    bool insertWeather(const Weather *weatherPtr);
+    bool updateWeather(const Weather *weatherPtr);
     bool deleteWeather(const int &locationId);
     QList<QObject*> getForecast(const int &locationId);
     bool insertForecast(const QList<Forecast*> &forecastList);
