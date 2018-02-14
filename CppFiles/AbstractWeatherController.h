@@ -34,6 +34,7 @@
 #include "Weather.h"
 #include "DatabaseHelper.h"
 #include "Forecast.h"
+#include "SettingsController.h"
 
 using namespace std;
 
@@ -56,19 +57,22 @@ protected:
 public:
     explicit AbstractWeatherController(QObject *parent = 0);
     virtual void searchByLocation(QString &location) = 0;
-    virtual void searchBycode(QString &code) = 0;
+    virtual void searchBycode(QString &code) = 0;        
 protected slots:
     virtual void readJsonData(QJsonObject jsonObject) = 0;
     virtual Weather* getWeatherFromJson(const QJsonObject &jsonObject) = 0;
-    void manageError();
+    void manageError(const QString &error);
 public slots:
     void saveDataToDb();
+    void setWeather();
+    void getWeather();
 signals:
     void dataChanged();
     void forecastChanged();
     void saveDataError(QString error);
     void networkError(QString error);
     void dataDownloaded();
+    void weatherReady(const Weather *weather);
 };
 
 #endif // ABSTRACTWEATHERCONTROLLER_H

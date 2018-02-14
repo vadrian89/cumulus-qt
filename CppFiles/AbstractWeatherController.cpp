@@ -21,11 +21,8 @@
 */
 #include "AbstractWeatherController.h"
 
-AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent), operationData(0){
-    dataController = new DataController(this);
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(readJsonData(QJsonObject)));
-    connect(dataController, SIGNAL(networkError()), this, SLOT(manageError()));
-}
+AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent),
+    operationData(0) {}
 
 QJsonObject AbstractWeatherController::nextBranch(const QJsonObject &jsonObject, const QString current) const {
     return jsonObject.find(current).value().toObject();
@@ -52,6 +49,34 @@ bool AbstractWeatherController::saveLocation(const QString &code) {
     return result;
 }
 
-void AbstractWeatherController::manageError() {
-    emit networkError(dataController->managerError());
+void AbstractWeatherController::manageError(const QString &error) {
+    emit networkError(error);
+}
+
+void AbstractWeatherController::setWeather() {
+    SettingsController settings;
+    DatabaseHelper dbHelper;
+    const unique_ptr<Weather> weather(dbHelper.getWeather(settings.currentLocationId()));
+    if (weather)
+        emit weatherReady(weather.get());
+}
+
+void AbstractWeatherController::getWeather() {
+    SettingsController settings;
+    DatabaseHelper dbHelper;
+    dataController = new DataController(this);
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(readJsonData(QJsonObject)));
+    connect(dataController, SIGNAL(networkError(QString)), this, SLOT(manageError(QString)));
+    connect(this, SIGNAL(dataDownloaded()), this, SLOT(saveDataToDb()));
+    connect(this, SIGNAL(forecastChanged()), this, SLOT(setWeather()));
+    int locationId = settings.currentLocationId();
+    unique_ptr<Location> locationPtr(dbHelper.getLocation(locationId));
+    if (locationPtr) {
+        if (locationPtr.get()->m_locationCode.trimmed().size() > 0) {
+            searchBycode(locationPtr.get()->m_locationCode);
+        }
+        else {
+            searchByLocation(locationPtr.get()->m_locationName);
+        }
+    }
 }

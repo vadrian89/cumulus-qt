@@ -21,32 +21,25 @@
 */
 #include "DataController.h"
 
-DataController::DataController(QObject *parent) : QObject(parent) {
-    networkManager = new QNetworkAccessManager(this);
-}
+DataController::DataController(QObject *parent) : QObject(parent) {}
 
 void DataController::getDataFromUrl(QString urlString) {
+    networkManager = new QNetworkAccessManager(this);
+    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(readFinished(QNetworkReply*)));
+    QNetworkRequest networkRequest;
     networkRequest.setUrl(QUrl(urlString));
     networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    networkReply = networkManager->get(networkRequest);
-    connect(networkReply, SIGNAL(finished()), this, SLOT(readFinished()));
-    connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
+    networkManager->get(networkRequest);
 }
 
-void DataController::readFinished() {
-    if (networkReply->error() == QNetworkReply::NoError) {
-        QString dataRead = (QString)networkReply->readAll();
+void DataController::readFinished(QNetworkReply *reply) {
+    if (reply->error() == QNetworkReply::NoError) {
+        QString dataRead = (QString)reply->readAll();
         QJsonDocument jsonResponse = QJsonDocument::fromJson(dataRead.toUtf8());
         QJsonObject jsonObject = jsonResponse.object();
         emit jsonObjectReady(jsonObject);
     }
-}
-
-void DataController::networkError(QNetworkReply::NetworkError) {
-    qDebug() << "Network Error: " << networkReply->errorString();
-    emit networkError();
-}
-
-QString DataController::managerError() const {
-    return networkReply->errorString();
+    else {
+        emit networkError(reply->errorString());
+    }
 }

@@ -27,7 +27,7 @@
 SearchLocation::SearchLocation(QObject *parent) : QObject(parent) {
     dataController = new DataController(this);
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(readJsonData(QJsonObject)));
-    connect(dataController, SIGNAL(networkError()), this, SLOT(errorSlot()));
+    connect(dataController, SIGNAL(networkError(QString)), this, SLOT(errorSlot(QString)));
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(doSearch()));
 }
@@ -74,8 +74,8 @@ void SearchLocation::setError(const QString &error) {
     }
 }
 
-void SearchLocation::errorSlot() {
-    setError(dataController->managerError());
+void SearchLocation::errorSlot(const QString &error) {
+    setError(error);
 }
 
 void SearchLocation::setLocation(const QString &location) {

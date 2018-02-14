@@ -107,16 +107,14 @@ ApplicationWindow {
                     visible = true
                     applicationBar.menuButtonAlias.visible = true
                     applicationBar.refreshButtonAlias.visible = true
+                    applicationBar.animationAlias.stop()
+                    timer.interval = 3600000
                 }
                 onUpdateWeather: {
                     if (applicationBar.animationAlias.running == false) {
                         applicationBar.animationAlias.start()
                         applicationBar.animationAlias.loops = RotationAnimation.Infinite
                     }
-                }
-                onDataDownloadFinished: {
-                    applicationBar.animationAlias.stop()
-                    timer.interval = 3600000
                 }
             }
             Component.onCompleted: weatherView.updateWeather()

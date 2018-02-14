@@ -62,9 +62,7 @@ class WeatherType : public QObject {
     Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
 
     void updateForecastTemp(const QString &oldUnit);
-    YWeatherController *yweather;
-    OwmWeatherController *owmWeather;
-    WundWeatherController *wundWeather;
+    AbstractWeatherController *weatherController;
     bool clearLocationCode();    
 public:
     explicit WeatherType(QObject *parent = 0);
@@ -110,7 +108,7 @@ public:
     void setWeatherApi(const QString &weatherApi);    
 public slots:
     void getWeatherData();
-    void setWeatherData();
+    void setWeatherData(const Weather *weather);
     void changeTempUnit(const QString &unit);
     void changeSpeedUnit(const QString &unit);
 signals:

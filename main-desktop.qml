@@ -57,7 +57,6 @@ Rectangle {
         onRefreshButtonClicked: weatherViewLoader.item.updateWeather()
         onMenuButtonClicked: settingsViewDialog.visible = true
     }
-    Component.onCompleted: weatherViewLoader.source = "WeatherWindow.qml"
 
     Flickable {
         id: bodyView
@@ -116,6 +115,8 @@ Rectangle {
                     weatherViewLoader.visible = true
                     applicationBar.menuButtonAlias.visible = true
                     applicationBar.refreshButtonAlias.visible = true
+                    applicationBar.animationAlias.stop()
+                    timer.interval = 3600000
                 }
                 onUpdateWeather: {
                     if (applicationBar.animationAlias.running == false) {
@@ -123,16 +124,15 @@ Rectangle {
                         applicationBar.animationAlias.loops = RotationAnimation.Infinite
                     }
                 }
-                onDataDownloadFinished: {
-                    applicationBar.animationAlias.stop()
-                    timer.interval = 3600000
-                }
                 onNetworkError: {
                     timer.interval = 60000
                 }
             }
         }
-        Component.onCompleted: weatherViewLoader.item.updateWeather()
+    }
+    Component.onCompleted: {
+        weatherViewLoader.source = "WeatherWindow.qml"
+        weatherViewLoader.item.updateWeather()
     }
 
 

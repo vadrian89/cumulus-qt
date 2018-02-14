@@ -23,7 +23,7 @@
 #include "Util.h"
 
 TrayController::TrayController(QObject *parent) : QObject(parent) {
-    trayIcon = NULL;
+    trayIcon = nullptr;
     m_trayVisibility = false;
 }
 
@@ -46,12 +46,12 @@ bool TrayController::trayVisibility() const {
 void TrayController::setTrayVisibility(const bool &trayVisibility) {
     if (m_trayVisibility != trayVisibility) {        
         if (trayVisibility == true) {
-            if (trayIcon == NULL)
+            if (trayIcon == nullptr)
                 initialiseTray();
             enableTray();
         }
         else {
-            if (trayIcon != NULL)
+            if (trayIcon != nullptr)
                 disableTray();
         }
         m_trayVisibility = trayVisibility;
@@ -60,7 +60,7 @@ void TrayController::setTrayVisibility(const bool &trayVisibility) {
 }
 
 void TrayController::setTrayIcon() {
-    if (QSystemTrayIcon::isSystemTrayAvailable() && trayIcon != NULL) {
+    if (QSystemTrayIcon::isSystemTrayAvailable() && trayIcon != nullptr) {
         worker = new ThreadWorker();
         thread = new QThread(this);
         connect(worker, SIGNAL(finishedCreatingPixmap(QImage)), this, SLOT(setTrayIcon(QImage)));
@@ -72,7 +72,7 @@ void TrayController::setTrayIcon() {
 }
 
 void TrayController::setTrayIcon(const QImage &image) {
-    if (trayIcon != NULL)
+    if (trayIcon != nullptr)
         trayIcon->setIcon(QIcon(QPixmap::fromImage(image)));
     thread->quit();
     thread->wait();
@@ -80,7 +80,7 @@ void TrayController::setTrayIcon(const QImage &image) {
 
 void TrayController::initialiseTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
-        QIcon firstIcon(qApp->applicationDirPath() +"/cumulus.svg");
+        QIcon firstIcon(qApp->applicationDirPath() +"/icons/hicolor/512x512/cumulus.png");
         trayIcon = new QSystemTrayIcon();
         trayIcon->setIcon(firstIcon);
         QMenu *trayMenu = new QMenu();
@@ -105,7 +105,7 @@ void TrayController::disableTray() {
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         trayIcon->hide();
         delete trayIcon;
-        trayIcon = NULL;
+        trayIcon = nullptr;
     }
 }
 

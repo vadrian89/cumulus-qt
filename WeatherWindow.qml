@@ -22,7 +22,7 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 
-import ownTypes.weather 1.8
+import ownTypes.weather 1.9
 
 Item {
     id: root
@@ -47,7 +47,6 @@ Item {
     signal finishedWeatherUpdate()
     signal startedWeatherUpdate()
     signal noLocationDetected()
-    signal dataDownloadFinished()
     signal changeTempUnit(string unit)
     signal changeSpeedUnit(string unit)
     signal networkError()
@@ -273,7 +272,6 @@ Item {
     Weather {
         id: weatherController
         onNoLocationSet: root.noLocationDetected()
-        onDataDownloadFinished: root.dataDownloadFinished()
         onWeatherApiChanged: updateWeather()
         onNetworkError: root.networkError()
         onWeatherDataChanged: {

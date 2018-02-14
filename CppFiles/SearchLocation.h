@@ -59,7 +59,7 @@ public slots:
 private slots:    
     void readJsonData(QJsonObject jsonObject);
     void doSearch();
-    void errorSlot();
+    void errorSlot(const QString &error);
 signals:
     void locationNameChanged();
     void locationResultChanged();

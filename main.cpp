@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 
 #if defined(Q_OS_ANDROID)
 void registerQmlType() {
-    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
+    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 9, "Weather");
     qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
     qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");

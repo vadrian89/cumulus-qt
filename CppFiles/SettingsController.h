@@ -30,9 +30,9 @@
 class SettingsController : public QObject {
     Q_OBJECT
     bool m_trayVisibility, m_loginStart;
-    QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor;
+    QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor, m_weatherApi;
     float m_applicationOpacity;
-    int m_windowX, m_windowY, m_windowHeight, m_windowWidth;
+    int m_windowX, m_windowY, m_windowHeight, m_windowWidth, m_currentLocationId;
     Q_PROPERTY(QString applicationBackground MEMBER m_applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
     Q_PROPERTY(QString textColor MEMBER m_textColor WRITE setTextColor NOTIFY textColorChanged)
     Q_PROPERTY(float applicationOpacity MEMBER m_applicationOpacity WRITE setApplicationOpacity NOTIFY applicationOpacityChanged)
@@ -44,6 +44,8 @@ class SettingsController : public QObject {
     Q_PROPERTY(int windowY MEMBER m_windowY WRITE setWindowY NOTIFY windowYChanged)
     Q_PROPERTY(int windowHeight MEMBER m_windowHeight WRITE setWindowHeight NOTIFY windowHeightChanged)
     Q_PROPERTY(int windowWidth MEMBER m_windowWidth WRITE setWindowWidth NOTIFY windowWidthChanged)
+    Q_PROPERTY(int currentLocationId READ currentLocationId WRITE setCurrentLocationId NOTIFY currentLocationIdChanged)
+    Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
 
     void loginStartLinux(const bool &loginStart);
 public:
@@ -59,7 +61,10 @@ public:
     void setWindowY(const int &windowY);
     void setWindowHeight(const int &windowHeight);
     void setWindowWidth(const int &windowWidth);
-
+    void setCurrentLocationId(const int &locationId);
+    int currentLocationId() const;
+    QString weatherApi() const;
+    void setWeatherApi(const QString &weatherApi);
     Q_INVOKABLE static bool loginStartCheck();
 signals:
     void applicationBackgroundChanged();
@@ -73,6 +78,8 @@ signals:
     void windowYChanged();
     void windowHeightChanged();
     void windowWidthChanged();
+    void currentLocationIdChanged();
+    void weatherApiChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

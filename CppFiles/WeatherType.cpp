@@ -34,78 +34,47 @@ WeatherType::WeatherType(QObject *parent) : QObject(parent){}
 
 void WeatherType::getWeatherData(){
     qDebug() << "WeatherType::getWeatherData >> Weather data request.";
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    if (dbHelperPtr) {
-        unique_ptr<Location> locationPtr(dbHelperPtr.get()->getLocation(1));
-        if (locationPtr) {
-            int locationCodeSize = locationPtr.get()->m_locationCode.trimmed().size();
-            if (Util::getWeatherApi() == "y") {
-                yweather = new YWeatherController();
-                connect(yweather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-                connect(yweather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
-                connect(yweather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-                if (locationCodeSize > 0)
-                    yweather->searchBycode(locationPtr.get()->m_locationCode);
-                else
-                    yweather->searchByLocation(locationPtr.get()->m_locationName);
-            }
-            else if (Util::getWeatherApi() == "wund") {
-                wundWeather = new WundWeatherController();
-                connect(wundWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-                connect(wundWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
-                connect(wundWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
-                connect(wundWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-                if (locationCodeSize > 0)
-                    wundWeather->searchBycode(locationPtr.get()->m_locationCode);
-                else
-                    wundWeather->searchByLocation(locationPtr.get()->m_locationName);
-            }
-            else {
-                owmWeather = new OwmWeatherController();
-                connect(owmWeather, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
-                connect(owmWeather, SIGNAL(dataDownloaded()), this, SIGNAL(dataDownloadFinished()));
-                connect(owmWeather, SIGNAL(networkError(QString)), this, SLOT(setWeatherData()));
-                connect(owmWeather, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-                if (locationCodeSize > 0)
-                    owmWeather->searchBycode(locationPtr.get()->m_locationCode);
-                else
-                    owmWeather->searchByLocation(locationPtr.get()->m_locationName);
-            }
+    DatabaseHelper dbHelperPtr;
+    SettingsController settings;
+    unique_ptr<Location> locationPtr(dbHelperPtr.getLocation(settings.currentLocationId()));
+    if (locationPtr) {
+        if (settings.weatherApi() == "y") {
+            weatherController = new YWeatherController();
+        }
+        else if (settings.weatherApi() == "wund") {
+            weatherController = new WundWeatherController();
         }
         else {
-            emit noLocationSet();
+            weatherController = new OwmWeatherController();
         }
+        connect(weatherController, SIGNAL(weatherReady(const Weather*)), this, SLOT(setWeatherData(const Weather*)));
+        connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+        connect(this, SIGNAL(weatherChanged()), weatherController, SLOT(deleteLater()));
+        weatherController->getWeather();
     }
     else {
         emit noLocationSet();
     }
 }
 
-void WeatherType::setWeatherData() {
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    if (dbHelperPtr) {
-        unique_ptr<Weather> weatherPtr(dbHelperPtr.get()->getWeather(1));
-        setLocation("Undefined");
-        if (weatherPtr) {
-            setWeatherCode(weatherPtr->weatherCode());
-            setWeatherIcon(weatherPtr->weatherIcon());
-            setWeatherDescription(weatherPtr->weatherDescription());
-            setTemperature(weatherPtr->temperature());
-            setPressure(weatherPtr->pressure());
-            setHumidity(weatherPtr->humidity());
-            setWindSpeed(weatherPtr->windSpeed());
-            setWindDegree(weatherPtr->windDegree());
-            setSunrise(weatherPtr->sunrise());
-            setSunset(weatherPtr->sunset());
-            setTempMax(weatherPtr->tempMax());
-            setTempMin(weatherPtr->tempMin());
-            setTempUnit(weatherPtr->tempUnit());
-            setSpeedUnit(weatherPtr->speedUnit());
-            setLocationLink(weatherPtr->locationLink());
-            setLocation(weatherPtr->location());
-            setForecastList(weatherPtr->forecastList());
-        }
-    }
+void WeatherType::setWeatherData(const Weather *weather) {
+    setWeatherCode(weather->weatherCode());
+    setWeatherIcon(weather->weatherIcon());
+    setWeatherDescription(weather->weatherDescription());
+    setTemperature(weather->temperature());
+    setPressure(weather->pressure());
+    setHumidity(weather->humidity());
+    setWindSpeed(weather->windSpeed());
+    setWindDegree(weather->windDegree());
+    setSunrise(weather->sunrise());
+    setSunset(weather->sunset());
+    setTempMax(weather->tempMax());
+    setTempMin(weather->tempMin());
+    setTempUnit(weather->tempUnit());
+    setSpeedUnit(weather->speedUnit());
+    setLocationLink(weather->locationLink());
+    setLocation(weather->location());
+    setForecastList(weather->forecastList());
     emit weatherDataChanged();
 }
 
@@ -277,18 +246,6 @@ int WeatherType::tempMin() const {
 void WeatherType::setLoadFinished(const bool &loadFinished) {
     if (m_loadFinished != loadFinished) {
         m_loadFinished = loadFinished;
-        if (m_loadFinished == true) {
-            if(Util::getWeatherApi() == "y") {
-                yweather->saveDataToDb();
-            }
-            else if(Util::getWeatherApi() == "wund") {
-                wundWeather->saveDataToDb();
-            }
-            else {
-                owmWeather->saveDataToDb();
-            }
-
-        }
         emit loadFinishedChanged();
     }
 }
@@ -376,7 +333,8 @@ QString WeatherType::weatherApi() const {
 void WeatherType::setWeatherApi(const QString &weatherApi) {
     if (m_weatherApi != weatherApi && clearLocationCode()) {
         m_weatherApi = weatherApi;
-        Util::setWeatherApi(weatherApi);
+        SettingsController settings;
+        settings.setWeatherApi(weatherApi);
         emit weatherApiChanged();
     }
 }

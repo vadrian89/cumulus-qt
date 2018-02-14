@@ -39,7 +39,11 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_windowX = settings.value("windowX", 0).toInt();
     m_windowY = settings.value("windowY", 0).toInt();
     m_windowHeight = settings.value("windowHeight", 500).toInt();
-    m_windowWidth = settings.value("windowWidth", 300).toInt();
+    m_windowWidth = settings.value("windowWidth", 300).toInt();    
+    settings.endGroup();
+    settings.beginGroup("weather-settings");
+    m_currentLocationId = settings.value("currentLocationId", 1).toInt();
+    m_weatherApi = settings.value("api", "owm").toString();
     settings.endGroup();
 }
 
@@ -214,4 +218,34 @@ void SettingsController::setWindowWidth(const int &windowWidth) {
         settings.endGroup();
         emit windowXChanged();
     }
+}
+
+void SettingsController::setCurrentLocationId(const int &locationId) {
+    if (m_currentLocationId != locationId) {
+        m_currentLocationId = locationId;
+        QSettings settings;
+        settings.beginGroup("weather-settings");
+        settings.setValue("currentLocationId", m_currentLocationId);
+        settings.endGroup();
+        emit currentLocationIdChanged();
+    }
+}
+
+int SettingsController::currentLocationId() const {
+    return m_currentLocationId;
+}
+
+void SettingsController::setWeatherApi(const QString &weatherApi) {
+    if (m_weatherApi != weatherApi) {
+        m_weatherApi = weatherApi;
+        QSettings settings;
+        settings.beginGroup("weather-settings");
+        settings.setValue("api", m_weatherApi);
+        settings.endGroup();
+        emit weatherApiChanged();
+    }
+}
+
+QString SettingsController::weatherApi() const {
+    return m_weatherApi;
 }
