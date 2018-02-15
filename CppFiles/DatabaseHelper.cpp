@@ -169,7 +169,7 @@ Location* DatabaseHelper::getLocation(const int &locationId) {
             emit querySuccessful();
         }
         else {
-            emitQueryError("DatabaseHelper::searchCriteria", q.lastError().text());
+            emitQueryError("DatabaseHelper::getLocation", q.lastError().text());
         }
     }
     stopCon(&db);

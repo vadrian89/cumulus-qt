@@ -38,6 +38,7 @@ void WeatherType::getWeatherData(){
     SettingsController settings;
     unique_ptr<Location> locationPtr(dbHelperPtr.getLocation(settings.currentLocationId()));
     if (locationPtr) {
+        weatherController = new OwmWeatherController();
         if (settings.weatherApi() == "y") {
             weatherController = new YWeatherController();
         }
@@ -47,35 +48,46 @@ void WeatherType::getWeatherData(){
         else {
             weatherController = new OwmWeatherController();
         }
-        connect(weatherController, SIGNAL(weatherReady(const Weather*)), this, SLOT(setWeatherData(const Weather*)));
+        thread = new QThread();
+        weatherController->moveToThread(thread);
+        connect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        connect(weatherController, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
         connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
         connect(this, SIGNAL(weatherChanged()), weatherController, SLOT(deleteLater()));
-        weatherController->getWeather();
+        thread->start();
     }
     else {
         emit noLocationSet();
     }
 }
 
-void WeatherType::setWeatherData(const Weather *weather) {
-    setWeatherCode(weather->weatherCode());
-    setWeatherIcon(weather->weatherIcon());
-    setWeatherDescription(weather->weatherDescription());
-    setTemperature(weather->temperature());
-    setPressure(weather->pressure());
-    setHumidity(weather->humidity());
-    setWindSpeed(weather->windSpeed());
-    setWindDegree(weather->windDegree());
-    setSunrise(weather->sunrise());
-    setSunset(weather->sunset());
-    setTempMax(weather->tempMax());
-    setTempMin(weather->tempMin());
-    setTempUnit(weather->tempUnit());
-    setSpeedUnit(weather->speedUnit());
-    setLocationLink(weather->locationLink());
-    setLocation(weather->location());
-    setForecastList(weather->forecastList());
-    emit weatherDataChanged();
+void WeatherType::setWeatherData() {
+    SettingsController settings;
+    DatabaseHelper dbHelper;
+    const unique_ptr<Weather> weather(dbHelper.getWeather(settings.currentLocationId()));
+    if (weather) {
+        setWeatherCode(weather.get()->weatherCode());
+        setWeatherIcon(weather.get()->weatherIcon());
+        setWeatherDescription(weather.get()->weatherDescription());
+        setTemperature(weather.get()->temperature());
+        setPressure(weather.get()->pressure());
+        setHumidity(weather.get()->humidity());
+        setWindSpeed(weather.get()->windSpeed());
+        setWindDegree(weather.get()->windDegree());
+        setSunrise(weather.get()->sunrise());
+        setSunset(weather.get()->sunset());
+        setTempMax(weather.get()->tempMax());
+        setTempMin(weather.get()->tempMin());
+        setTempUnit(weather.get()->tempUnit());
+        setSpeedUnit(weather.get()->speedUnit());
+        setLocationLink(weather.get()->locationLink());
+        setLocation(weather.get()->location());
+        setForecastList(weather.get()->forecastList());
+        emit weatherDataChanged();
+    }
+    thread->quit();
+    thread->wait();
 }
 
 void WeatherType::setWeather(const QString &weather) {

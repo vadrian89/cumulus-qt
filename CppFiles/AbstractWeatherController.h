@@ -26,8 +26,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QLocale>
-#include <QSqlDriver>
+#include <QMap>
 #include <memory>
+#include <QRegExp>
 
 #include "DataController.h"
 #include "Util.h"
@@ -42,37 +43,27 @@ class AbstractWeatherController : public QObject {
     Q_OBJECT
 protected:
     DataController *dataController;
-    enum OperationData { GetLocationId, GetWeather, GetForecast, GetAstronomy };
-    int operationData;
-    int locationId;
-    QString temperatureUnit;
-    QString apiKey;
-    QJsonObject weatherObject, forecastObject;
-    QString locationCode, locationName;
+    QString temperatureUnit, apiKey, locationCode;
 
     QJsonObject nextBranch(const QJsonObject &jsonObject, const QString current) const;
-    virtual void saveWeatherToDb(const QJsonObject &jsonObject) = 0;
-    virtual void saveForecastToDb(const QJsonObject &jsonObject) = 0;
+    bool saveWeather(const Weather *weather);
+    void saveForecast(const QList<Forecast*> &forecastList);
     bool saveLocation(const QString &code);
 public:
     explicit AbstractWeatherController(QObject *parent = 0);
     virtual void searchByLocation(QString &location) = 0;
-    virtual void searchBycode(QString &code) = 0;        
+    virtual void searchBycode(QString &code) = 0;
 protected slots:
-    virtual void readJsonData(QJsonObject jsonObject) = 0;
-    virtual Weather* getWeatherFromJson(const QJsonObject &jsonObject) = 0;
+    virtual void getLocationFromJson(const QJsonObject &jsonObject) = 0;
+    virtual void getWeatherFromJson(const QJsonObject &jsonObject) = 0;
+    virtual void getForecastFromJson(const QJsonObject &jsonObject) = 0;
     void manageError(const QString &error);
 public slots:
-    void saveDataToDb();
-    void setWeather();
     void getWeather();
 signals:
-    void dataChanged();
     void forecastChanged();
-    void saveDataError(QString error);
-    void networkError(QString error);
-    void dataDownloaded();
-    void weatherReady(const Weather *weather);
+    void saveDataError(const QString &error);
+    void networkError(const QString &error);
 };
 
 #endif // ABSTRACTWEATHERCONTROLLER_H

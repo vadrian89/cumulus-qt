@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QThread>
 
 #include "Util.h"
 #include "YWeatherController.h"
@@ -39,6 +40,7 @@ class WeatherType : public QObject {
     int m_tempMin, m_tempMax;
     bool m_loadFinished;
     QList<QObject*> m_forecastList;
+    QThread *thread;
 
     Q_PROPERTY(QString weather READ weather WRITE setWeather NOTIFY weatherChanged)
     Q_PROPERTY(int weatherCode READ weatherCode WRITE setWeatherCode NOTIFY weatherCodeChanged)
@@ -108,7 +110,7 @@ public:
     void setWeatherApi(const QString &weatherApi);    
 public slots:
     void getWeatherData();
-    void setWeatherData(const Weather *weather);
+    void setWeatherData();
     void changeTempUnit(const QString &unit);
     void changeSpeedUnit(const QString &unit);
 signals:

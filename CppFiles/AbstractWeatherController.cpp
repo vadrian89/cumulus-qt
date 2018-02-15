@@ -21,54 +21,21 @@
 */
 #include "AbstractWeatherController.h"
 
-AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent),
-    operationData(0) {}
+AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent) {}
 
 QJsonObject AbstractWeatherController::nextBranch(const QJsonObject &jsonObject, const QString current) const {
     return jsonObject.find(current).value().toObject();
-}
-
-void AbstractWeatherController::saveDataToDb() {
-    if (locationCode.trimmed().size() > 0)
-        saveLocation(locationCode);
-    saveWeatherToDb(weatherObject);
-    saveForecastToDb(forecastObject);
-}
-
-bool AbstractWeatherController::saveLocation(const QString &code) {
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    bool result = false;
-    if (dbHelperPtr) {
-        unique_ptr<Location> locationPtr(dbHelperPtr.get()->getLocation(locationId));
-        locationPtr.get()->m_locationCode = code;
-        if (!dbHelperPtr.get()->updateLocation(locationPtr.get()))
-            emit saveDataError("Error saving location code!");
-        else
-            result = true;
-    }
-    return result;
 }
 
 void AbstractWeatherController::manageError(const QString &error) {
     emit networkError(error);
 }
 
-void AbstractWeatherController::setWeather() {
-    SettingsController settings;
-    DatabaseHelper dbHelper;
-    const unique_ptr<Weather> weather(dbHelper.getWeather(settings.currentLocationId()));
-    if (weather)
-        emit weatherReady(weather.get());
-}
-
 void AbstractWeatherController::getWeather() {
     SettingsController settings;
     DatabaseHelper dbHelper;
     dataController = new DataController(this);
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(readJsonData(QJsonObject)));
     connect(dataController, SIGNAL(networkError(QString)), this, SLOT(manageError(QString)));
-    connect(this, SIGNAL(dataDownloaded()), this, SLOT(saveDataToDb()));
-    connect(this, SIGNAL(forecastChanged()), this, SLOT(setWeather()));
     int locationId = settings.currentLocationId();
     unique_ptr<Location> locationPtr(dbHelper.getLocation(locationId));
     if (locationPtr) {
@@ -79,4 +46,36 @@ void AbstractWeatherController::getWeather() {
             searchByLocation(locationPtr.get()->m_locationName);
         }
     }
+}
+
+bool AbstractWeatherController::saveLocation(const QString &code) {
+    SettingsController settings;
+    DatabaseHelper dbHelper;
+    bool result = false;
+    unique_ptr<Location> locationPtr(dbHelper.getLocation(settings.currentLocationId()));
+    locationPtr.get()->m_locationCode = code;
+    result = dbHelper.updateLocation(locationPtr.get());
+    if (!result)
+        emit saveDataError("Error saving location code!");
+    return result;
+}
+
+bool AbstractWeatherController::saveWeather(const Weather *weather) {
+    DatabaseHelper dbHelper;
+    bool result = dbHelper.deleteWeather(weather->locationId());
+    if (result) {
+        result = dbHelper.insertWeather(weather);
+        if (!result)
+            emit saveDataError("Error saving weather!");
+    }
+    return result;
+}
+
+void AbstractWeatherController::saveForecast(const QList<Forecast*> &forecastList) {
+    DatabaseHelper dbHelper;
+    bool result = dbHelper.insertForecast(forecastList);
+    if (!result)
+        emit saveDataError("Error saving forecast!");
+    else
+        emit forecastChanged();
 }

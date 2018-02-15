@@ -20,87 +20,34 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "YWeatherController.h"
-#include <QRegExp>
-#include <QDebug>
 
 YWeatherController::YWeatherController(QObject *parent) : AbstractWeatherController(parent) {
-    locationId = 1;
     temperatureUnit = "f";
     locationCode = "";
 }
 
 void YWeatherController::searchByLocation(QString &location) {
-    operationData = OperationData::GetLocationId;
-    locationName = location;
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
     dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select woeid from geo.places(1) where text='" + location + "'&format=json");
 }
 
+void YWeatherController::getLocationFromJson(const QJsonObject &jsonObject) {
+    QJsonObject resultsObject = nextBranch(jsonObject, "query").find("results").value().toObject();
+    locationCode = nextBranch(resultsObject, "place").find("woeid").value().toString();
+    if (saveLocation(locationCode))
+        searchBycode(locationCode);
+}
+
 void YWeatherController::searchBycode(QString &code) {
-    operationData = OperationData::GetWeather;
+    locationCode = code;
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=" + code +"&format=json");
 }
 
-void YWeatherController::readJsonData(QJsonObject jsonObject) {
-    QJsonObject resultsObject = nextBranch(jsonObject, "query").find("results").value().toObject();
-    if (operationData == OperationData::GetLocationId) {
-        locationCode = nextBranch(resultsObject, "place").find("woeid").value().toString();
-        searchBycode(locationCode);
-    }
-    else {
-        weatherObject = jsonObject;
-        forecastObject = nextBranch(nextBranch(resultsObject, "channel"), "item");
-        emit dataDownloaded();
-    }
-}
-
-void YWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
-    qDebug() << "In YWeatherController::saveWeatherToDb";
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    if (dbHelperPtr) {
-        unique_ptr<Weather> weatherPtr(getWeatherFromJson(jsonObject));
-        if (weatherPtr && dbHelperPtr.get()->deleteWeather(locationId)) {
-            if (!dbHelperPtr.get()->insertWeather(weatherPtr.get())) {
-                qDebug() << "WundWeatherController::saveWeatherToDb error!";
-                emit saveDataError("Error saving the weather to database!");
-            }
-        }
-    }
-}
-
-void YWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
-    QJsonArray forecastArray = jsonObject.find("forecast").value().toArray();
-    int weatherCode = -1;
-    int tempHigh = 0;
-    int tempLow = 0;
-    QLocale yahooLocale(QLocale(QLocale::English));
-    QDate date = QDate::currentDate();	
-    QString description = "";
-    QList<Forecast*> forecastList;
-    for (QJsonValue forecastJson : forecastArray) {
-        Forecast *forecast = new Forecast();
-        weatherCode = forecastJson.toObject().find("code").value().toString().toInt();        
-        tempHigh = forecastJson.toObject().find("high").value().toString().toInt();
-        tempLow = forecastJson.toObject().find("low").value().toString().toInt();
-        QString forecastDateStr = forecastJson.toObject().find("date").value().toString().replace(" ", "/");
-        date = yahooLocale.toDate(forecastDateStr, "dd/MMM/yyyy");
-        description = forecastJson.toObject().find("text").value().toString();
-        forecast->setWeatherCode(weatherCode);
-        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
-        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
-        forecast->setForecastDesc(description);
-        forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
-        forecast->setLocationId(locationId);
-        forecastList.append(forecast);
-    }
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    if (dbHelperPtr.get()->insertForecast(forecastList))
-        emit forecastChanged();
-    else
-        emit saveDataError("Error saving forecast!");
-}
-
-Weather* YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
+void YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
     Weather *weatherPtr = nullptr;
+    SettingsController settings;
     if (!jsonObject.isEmpty()) {
         weatherPtr = new Weather;
         QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
@@ -125,7 +72,7 @@ Weather* YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
         QJsonObject atmosphere = nextBranch(channel, "atmosphere");
         QJsonObject astronomy = nextBranch(channel, "astronomy");
 
-        weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();        
+        weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();
         temperature = nextBranch(item, "condition").find("temp").value().toString().toInt();
         description = nextBranch(item, "condition").find("text").value().toString();
         temperatureUnit = units.find("temperature").value().toString().toLower();
@@ -149,7 +96,38 @@ Weather* YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
         weatherPtr->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
         weatherPtr->setPressure(Util::calculatePressure(pressure, pressureUnit));
         weatherPtr->setLocationLink(link);
-        weatherPtr->setLocationId(locationId);
+        weatherPtr->setLocationId(settings.currentLocationId());
     }
-    return weatherPtr;
+    QJsonObject resultsObject = nextBranch(jsonObject, "query").find("results").value().toObject();
+    if (saveWeather(weatherPtr))
+        getForecastFromJson(nextBranch(nextBranch(resultsObject, "channel"), "item"));
+}
+
+void YWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
+    QJsonArray forecastArray = jsonObject.find("forecast").value().toArray();
+    int weatherCode = -1;
+    int tempHigh = 0;
+    int tempLow = 0;
+    QLocale yahooLocale(QLocale(QLocale::English));
+    QDate date = QDate::currentDate();
+    QString description = "";
+    QList<Forecast*> forecastList;
+    SettingsController settings;
+    for (QJsonValue forecastJson : forecastArray) {
+        Forecast *forecast = new Forecast();
+        weatherCode = forecastJson.toObject().find("code").value().toString().toInt();
+        tempHigh = forecastJson.toObject().find("high").value().toString().toInt();
+        tempLow = forecastJson.toObject().find("low").value().toString().toInt();
+        QString forecastDateStr = forecastJson.toObject().find("date").value().toString().replace(" ", "/");
+        date = yahooLocale.toDate(forecastDateStr, "dd/MMM/yyyy");
+        description = forecastJson.toObject().find("text").value().toString();
+        forecast->setWeatherCode(weatherCode);
+        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
+        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
+        forecast->setForecastDesc(description);
+        forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
+        forecast->setLocationId(settings.currentLocationId());
+        forecastList.append(forecast);
+    }
+    saveForecast(forecastList);
 }

@@ -23,92 +23,43 @@
 
 OwmWeatherController::OwmWeatherController(QObject *parent) : AbstractWeatherController(parent) {
     apiKey = "15c2836a71c126524d35af1d29d563c5";
-    locationId = 1;
     temperatureUnit = "k";
     locationCode = "";
 }
 
 void OwmWeatherController::searchByLocation(QString &location) {
-    operationData = OperationData::GetLocationId;
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apiKey + "&lang=" + systemLang);
-    locationName = location;
+}
+
+void OwmWeatherController::getLocationFromJson(const QJsonObject &jsonObject) {
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
+    locationCode = QString::number(jsonObject.find("id").value().toInt());
+    if (saveLocation(locationCode))
+        getWeatherFromJson(jsonObject);
 }
 
 void OwmWeatherController::searchBycode(QString &code) {
-    operationData = OperationData::GetWeather;
+    locationCode = code;
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?id=" + code + "&appid=" + apiKey + "&lang=" + systemLang);
 }
 
 void OwmWeatherController::getForecast(const QString &code) {
-    operationData = OperationData::GetForecast;
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getForecastFromJson(QJsonObject)));
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/forecast/daily?id=" + code + "&appid=" + apiKey + "&lang=" + systemLang);
 }
 
-void OwmWeatherController::readJsonData(QJsonObject jsonObject) {
-    if (operationData == OperationData::GetLocationId || operationData == OperationData::GetWeather) {
-        locationCode = QString::number(jsonObject.find("id").value().toInt());
-        weatherObject = jsonObject;
-        getForecast(locationCode);
-    }
-    else if (operationData == OperationData::GetForecast) {
-        forecastObject = jsonObject;
-        emit dataDownloaded();
-    }
-}
-
-void OwmWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
-    qDebug() << "In OwmWeatherController::saveWeatherToDb";
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    if (dbHelperPtr) {
-        unique_ptr<Weather> weatherPtr(getWeatherFromJson(jsonObject));
-        if (weatherPtr && dbHelperPtr.get()->deleteWeather(locationId)) {
-            if (!dbHelperPtr.get()->insertWeather(weatherPtr.get())) {
-                qDebug() << "OwmWeatherController::saveWeatherToDb error!";
-                emit saveDataError("Error saving the weather to database!");
-            }
-        }
-    }
-}
-
-void OwmWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
-    QJsonArray forecastArray = jsonObject.find("list").value().toArray();
-    int weatherCode = -1;
-    int tempHigh = 0;
-    int tempLow = 0;
-    QDate date = QDate::currentDate();
-    QString description = "";
-    QList<Forecast*> forecastList;
-    for (QJsonValue forecastJson : forecastArray) {
-        Forecast *forecast = new Forecast();
-        QJsonObject weatherInfo = forecastJson.toObject().find("weather").value().toArray().at(0).toObject();
-        weatherCode = weatherInfo.find("id").value().toInt();
-        tempHigh = nextBranch(forecastJson.toObject(), "temp").find("day").value().toDouble();
-        tempLow = nextBranch(forecastJson.toObject(), "temp").find("night").value().toDouble();
-        date = QDate::fromString(QDateTime::fromTime_t(forecastJson.toObject().find("dt").value().toInt()).toString("dd/MM/yyyy"), "dd/MM/yyyy");
-        description = weatherInfo.find("description").value().toString();
-        forecast->setWeatherCode(weatherCode);
-        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
-        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
-        forecast->setForecastDesc(description);
-        forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
-        forecast->setLocationId(locationId);
-        forecastList.append(forecast);
-    }
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    if (dbHelperPtr.get()->insertForecast(forecastList))
-        emit forecastChanged();
-    else
-        emit saveDataError("Error saving forecast!");
-}
-
-Weather* OwmWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
+void OwmWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     Weather *weatherPtr = nullptr;
+    SettingsController settings;
     if (!jsonObject.isEmpty()) {
         weatherPtr = new Weather;
         int weatherCode = -1;
@@ -146,7 +97,36 @@ Weather* OwmWeatherController::getWeatherFromJson(const QJsonObject &jsonObject)
         weatherPtr->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
         weatherPtr->setPressure(Util::calculatePressure(pressure, pressureUnit));
         weatherPtr->setLocationLink(link);
-        weatherPtr->setLocationId(locationId);
+        weatherPtr->setLocationId(settings.currentLocationId());
     }
-    return weatherPtr;
+    if (saveWeather(weatherPtr))
+        getForecast(locationCode);
+}
+
+void OwmWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
+    QJsonArray forecastArray = jsonObject.find("list").value().toArray();
+    SettingsController settings;
+    int weatherCode = -1;
+    int tempHigh = 0;
+    int tempLow = 0;
+    QDate date = QDate::currentDate();
+    QString description = "";
+    QList<Forecast*> forecastList;
+    for (QJsonValue forecastJson : forecastArray) {
+        Forecast *forecast = new Forecast();
+        QJsonObject weatherInfo = forecastJson.toObject().find("weather").value().toArray().at(0).toObject();
+        weatherCode = weatherInfo.find("id").value().toInt();
+        tempHigh = nextBranch(forecastJson.toObject(), "temp").find("day").value().toDouble();
+        tempLow = nextBranch(forecastJson.toObject(), "temp").find("night").value().toDouble();
+        date = QDate::fromString(QDateTime::fromTime_t(forecastJson.toObject().find("dt").value().toInt()).toString("dd/MM/yyyy"), "dd/MM/yyyy");
+        description = weatherInfo.find("description").value().toString();
+        forecast->setWeatherCode(weatherCode);
+        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
+        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
+        forecast->setForecastDesc(description);
+        forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
+        forecast->setLocationId(settings.currentLocationId());
+        forecastList.append(forecast);
+    }
+    saveForecast(forecastList);
 }
