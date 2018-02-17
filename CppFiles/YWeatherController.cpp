@@ -88,9 +88,9 @@ void YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
 
         weatherPtr->setWeatherCode(weatherCode);
         weatherPtr->setWeatherDescription(description);
-        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
+        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit, settings.tempUnit()));
         weatherPtr->setHumidity(humidity);
-        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
+        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit, settings.windSpeedUnit()));
         weatherPtr->setWindDegree(windDegree);
         weatherPtr->setSunrise(sunriseTime.time().toString(Qt::SystemLocaleShortDate));
         weatherPtr->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
@@ -122,8 +122,8 @@ void YWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
         date = yahooLocale.toDate(forecastDateStr, "dd/MMM/yyyy");
         description = forecastJson.toObject().find("text").value().toString();
         forecast->setWeatherCode(weatherCode);
-        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
-        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
+        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit, settings.tempUnit()));
+        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit, settings.tempUnit()));
         forecast->setForecastDesc(description);
         forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
         forecast->setLocationId(settings.currentLocationId());

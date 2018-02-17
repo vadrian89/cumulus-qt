@@ -34,7 +34,7 @@
 class WeatherType : public QObject {
     Q_OBJECT
     QString m_weather, m_weatherIcon, m_weatherDescription, m_location, m_locationLink, m_tempUnit,
-    m_sunrise, m_sunset, m_speedUnit, m_weatherApi;
+    m_sunrise, m_sunset, m_speedUnit;
     float m_pressure;
     int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity;
     int m_tempMin, m_tempMax;
@@ -61,11 +61,10 @@ class WeatherType : public QObject {
     Q_PROPERTY(bool loadFinished READ loadFinished WRITE setLoadFinished NOTIFY loadFinishedChanged)
     Q_PROPERTY(QList<QObject*> forecastList READ forecastList WRITE setForecastList NOTIFY forecastListChanged)
     Q_PROPERTY(QString speedUnit READ speedUnit WRITE setSpeedUnit NOTIFY speedUnitChanged)
-    Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
 
-    void updateForecastTemp(const QString &oldUnit);
+    void updateTemperature(const QString &tempUnit);
+    void updateForecastTemp(const QString &newUnit);
     AbstractWeatherController *weatherController;
-    bool clearLocationCode();    
 public:
     explicit WeatherType(QObject *parent = 0);
     void setWeather(const QString &weather);
@@ -106,13 +105,9 @@ public:
     void setForecastList(const QList<QObject*> &list);
     QString speedUnit() const;
     void setSpeedUnit(const QString &unit);
-    QString weatherApi() const;
-    void setWeatherApi(const QString &weatherApi);    
 public slots:
     void getWeatherData();
-    void setWeatherData();
-    void changeTempUnit(const QString &unit);
-    void changeSpeedUnit(const QString &unit);
+    void setWeatherData();        
 signals:
     void weatherChanged();
     void weatherCodeChanged();
@@ -136,7 +131,6 @@ signals:
     void loadFinishedChanged();
     void forecastListChanged();
     void speedUnitChanged();
-    void weatherApiChanged();
     void networkError(const QString &error);
 };
 

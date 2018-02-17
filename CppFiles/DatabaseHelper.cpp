@@ -309,7 +309,8 @@ Weather* DatabaseHelper::getWeather(const int &locationId) {
         if (q.exec()) {
             if (q.next()) {
                 weather = new Weather();
-                QString weatherIconCode = Util::findFontCode(Util::getWeatherApi(), QString::number(q.value("weather_code").toInt()));
+                SettingsController settings;
+                QString weatherIconCode = Util::findFontCode(settings.weatherApi(), QString::number(q.value("weather_code").toInt()));
                 weather->setWeatherCode(q.value("weather_id").toInt());
                 weather->setWeatherIcon(weatherIconCode);
                 if (QTime::currentTime() > QTime::fromString(q.value("sunset").toString(), "HH:mm")) {
@@ -327,8 +328,6 @@ Weather* DatabaseHelper::getWeather(const int &locationId) {
                 weather->setSunset(q.value("sunset").toString());
                 weather->setTempMax(q.value("temp_max").toInt());
                 weather->setTempMin(q.value("temp_min").toInt());
-                weather->setTempUnit(Util::temperatureUnitSymbol());
-                weather->setSpeedUnit(Util::speedUnitSymbol());
                 weather->setLocationLink(q.value("link").toString());
                 weather->setForecastList(getForecast(locationId));
                 unique_ptr<Location> locPtr(getLocation(locationId));
@@ -461,11 +460,12 @@ QList<QObject*> DatabaseHelper::getForecast(const int &locationId) {
         q.prepare(queryString);
         q.bindValue(":loc_id", locationId);
         if (q.exec()) {
+            SettingsController settings;
             while (q.next()) {
-                Forecast *forecast = new Forecast();
+                Forecast *forecast = new Forecast();                
                 forecast->setForecastIndex(q.value("forec_id").toInt());
                 forecast->setWeatherCode(q.value("weather_code").toInt());
-                forecast->setWeatherIcon(Util::findFontCode(Util::getWeatherApi(), QString::number(forecast->weatherCode())));
+                forecast->setWeatherIcon(Util::findFontCode(settings.weatherApi(), QString::number(forecast->weatherCode())));
                 forecast->setForecastDesc(q.value("description").toString());
                 forecast->setTempLow(q.value("temp_min").toInt());
                 forecast->setTempHigh(q.value("temp_max").toInt());

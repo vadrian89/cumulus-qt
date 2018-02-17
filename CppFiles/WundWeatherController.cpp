@@ -22,7 +22,8 @@
 #include "WundWeatherController.h"
 
 WundWeatherController::WundWeatherController(QObject *parent) : AbstractWeatherController(parent) {
-    apiKey = "30be6723cf95f92c";
+    QString testApiKey = SettingsController::testApiKey();
+    apiKey = testApiKey.trimmed().size() > 0 ? testApiKey : "30be6723cf95f92c";
     temperatureUnit = "c";
     locationCode = "";
 }
@@ -95,9 +96,9 @@ void WundWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
 
         weatherPtr->setWeatherCode(weatherCode);
         weatherPtr->setWeatherDescription(description);
-        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit));
+        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit, settings.tempUnit()));
         weatherPtr->setHumidity(humidity);
-        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit));
+        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit, settings.windSpeedUnit()));
         weatherPtr->setWindDegree(windDegree);
         weatherPtr->setSunrise(sunrise.time().toString(Qt::SystemLocaleShortDate));
         weatherPtr->setSunset(sunset.time().toString(Qt::SystemLocaleShortDate));
@@ -134,8 +135,8 @@ void WundWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
         date = dateFromJson(nextBranch(forecastJson.toObject(), "date"));
         description = forecastJson.toObject().find("conditions").value().toString();
         forecast->setWeatherCode(weatherCode);
-        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit));
-        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit));
+        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit, settings.tempUnit()));
+        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit, settings.tempUnit()));
         forecast->setForecastDesc(description);
         forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
         forecast->setLocationId(settings.currentLocationId());

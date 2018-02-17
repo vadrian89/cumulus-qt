@@ -26,17 +26,36 @@
 #include <QSettings>
 #include <QPoint>
 #include <QSize>
+#include <memory>
+#include <QDir>
+#include <QFile>
+#include <QApplication>
+#include <QSysInfo>
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include "DatabaseHelper.h"
+
+using namespace std;
+
+struct api_keys {
+    const QString wund = "30be6723cf95f92c";
+    const QString owm = "15c2836a71c126524d35af1d29d563c5";
+};
 
 class SettingsController : public QObject {
     Q_OBJECT
     bool m_trayVisibility, m_loginStart;
-    QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor, m_weatherApi;
+    QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor, m_weatherApi,
+    m_windSpeedUnit, m_tempUnit, m_pressureUnit;
     float m_applicationOpacity;
     int m_windowX, m_windowY, m_windowHeight, m_windowWidth, m_currentLocationId;
+    static api_keys API_KEYS;
+
     Q_PROPERTY(QString applicationBackground MEMBER m_applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
-    Q_PROPERTY(QString textColor MEMBER m_textColor WRITE setTextColor NOTIFY textColorChanged)
+    Q_PROPERTY(QString textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
     Q_PROPERTY(float applicationOpacity MEMBER m_applicationOpacity WRITE setApplicationOpacity NOTIFY applicationOpacityChanged)
-    Q_PROPERTY(bool trayVisibility MEMBER m_trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
+    Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
     Q_PROPERTY(QString trayTheme MEMBER m_trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
     Q_PROPERTY(QString windowControlsPos MEMBER m_windowControlsPos WRITE setWindowControlsPos NOTIFY windowControlsPosChanged)
     Q_PROPERTY(bool loginStart MEMBER m_loginStart WRITE setLoginStart NOTIFY loginStartChanged)
@@ -46,14 +65,20 @@ class SettingsController : public QObject {
     Q_PROPERTY(int windowWidth MEMBER m_windowWidth WRITE setWindowWidth NOTIFY windowWidthChanged)
     Q_PROPERTY(int currentLocationId READ currentLocationId WRITE setCurrentLocationId NOTIFY currentLocationIdChanged)
     Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
+    Q_PROPERTY(QString windSpeedUnit READ windSpeedUnit WRITE setWindSpeedUnit NOTIFY windSpeedUnitChanged)
+    Q_PROPERTY(QString tempUnit READ tempUnit WRITE setTempUnit NOTIFY tempUnitChanged)
+    Q_PROPERTY(QString pressureUnit READ pressureUnit WRITE setPressureUnit NOTIFY pressureUnitChanged)
 
     void loginStartLinux(const bool &loginStart);
-public:
+    bool clearLocationCode();
+public:    
     explicit SettingsController(QObject *parent = nullptr);
     void setApplicationBackground(const QString &applicationBackground);
     void setTextColor(const QString &textColor);
+    QString textColor() const;
     void setApplicationOpacity(const float &applicationOpacity);
     void setTrayVisibility(const bool &trayVisibility);
+    bool trayVisibility() const;
     void setTrayTheme(const QString &trayTheme);
     void setWindowControlsPos(const QString &windowControlsPos);
     void setLoginStart(const bool &loginStart);
@@ -63,9 +88,17 @@ public:
     void setWindowWidth(const int &windowWidth);
     void setCurrentLocationId(const int &locationId);
     int currentLocationId() const;
-    QString weatherApi() const;
     void setWeatherApi(const QString &weatherApi);
+    QString weatherApi() const;    
+    void setWindSpeedUnit(const QString &windSpeedUnit);
+    QString windSpeedUnit() const;
+    void setTempUnit(const QString &tempUnit);
+    QString tempUnit() const;
+    void setPressureUnit(const QString &pressureUnit);
+    QString pressureUnit() const;
+    static QString testApiKey();
     Q_INVOKABLE static bool loginStartCheck();
+    Q_INVOKABLE static QString getWeatherApi();
 signals:
     void applicationBackgroundChanged();
     void textColorChanged();
@@ -80,6 +113,9 @@ signals:
     void windowWidthChanged();
     void currentLocationIdChanged();
     void weatherApiChanged();
+    void tempUnitChanged();
+    void windSpeedUnitChanged();
+    void pressureUnitChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

@@ -90,7 +90,8 @@ void MainWindow::registerQmlType() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     saveSettings();
-    if (!m_closeApp && Util::trayVisibility()) {
+    SettingsController settings;
+    if (!m_closeApp && settings.trayVisibility()) {
         this->hide();
         event->ignore();
     }
@@ -100,7 +101,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 void MainWindow::launchApp() {
-    if (!Util::trayVisibility())
+    SettingsController settings;
+    if (!settings.trayVisibility())
         this->show();
 }
 

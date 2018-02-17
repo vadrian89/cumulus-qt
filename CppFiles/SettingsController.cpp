@@ -20,11 +20,6 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "SettingsController.h"
-#include <QDir>
-#include <QFile>
-#include <QDebug>
-#include <QApplication>
-#include <QSysInfo>
 
 SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     QSettings settings;
@@ -44,6 +39,9 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     settings.beginGroup("weather-settings");
     m_currentLocationId = settings.value("currentLocationId", 1).toInt();
     m_weatherApi = settings.value("api", "owm").toString();
+    m_windSpeedUnit = settings.value("windSpeedUnit", "m/s").toString();
+    m_tempUnit = settings.value("temperatureUnit", "c").toString();
+    m_pressureUnit = settings.value("pressureUnit", "mbar").toString();
     settings.endGroup();
 }
 
@@ -69,6 +67,10 @@ void SettingsController::setTextColor(const QString &textColor) {
     }
 }
 
+QString SettingsController::textColor() const {
+    return m_textColor;
+}
+
 void SettingsController::setApplicationOpacity(const float &applicationOpacity) {
     if (m_applicationOpacity != applicationOpacity) {
         QSettings settings;
@@ -89,6 +91,10 @@ void SettingsController::setTrayVisibility(const bool &trayVisibility) {
         m_trayVisibility = trayVisibility;
         emit trayVisibilityChanged();
     }
+}
+
+bool SettingsController::trayVisibility() const {
+    return m_trayVisibility;
 }
 
 void SettingsController::setTrayTheme(const QString &trayTheme) {
@@ -148,7 +154,7 @@ void SettingsController::loginStartLinux(const bool &loginStart) {
         out << "Terminal=false" << endl;
         out << "Categories=Utility;" << endl;
         if (appName != "Cumulus") {
-            out << "Exec=" + qApp->applicationDirPath() + "/Cumulus -i " << appName << endl;
+            out << "Exec=" + qApp->applicationDirPath() + "/Cumulus -i " << appName.remove("Cumulus") << endl;
         }
         else {
             out << "Exec=" + qApp->applicationDirPath() + "/Cumulus" << endl;
@@ -236,7 +242,7 @@ int SettingsController::currentLocationId() const {
 }
 
 void SettingsController::setWeatherApi(const QString &weatherApi) {
-    if (m_weatherApi != weatherApi) {
+    if (m_weatherApi != weatherApi && clearLocationCode()) {
         m_weatherApi = weatherApi;
         QSettings settings;
         settings.beginGroup("weather-settings");
@@ -248,4 +254,78 @@ void SettingsController::setWeatherApi(const QString &weatherApi) {
 
 QString SettingsController::weatherApi() const {
     return m_weatherApi;
+}
+
+bool SettingsController::clearLocationCode() {
+    DatabaseHelper dbHelper;
+    return dbHelper.clearLocationCode(m_currentLocationId);
+}
+
+void SettingsController::setWindSpeedUnit(const QString &windSpeedUnit) {
+    if (m_windSpeedUnit != windSpeedUnit) {
+        m_windSpeedUnit = windSpeedUnit;
+        QSettings settings;
+        settings.beginGroup("weather-settings");
+        settings.setValue("windSpeedUnit", windSpeedUnit);
+        settings.endGroup();
+        emit windSpeedUnitChanged();
+    }
+}
+
+QString SettingsController::windSpeedUnit() const {
+    return m_windSpeedUnit;
+}
+
+void SettingsController::setTempUnit(const QString &tempUnit) {
+    if (m_tempUnit != tempUnit) {
+        m_tempUnit = tempUnit;
+        QSettings settings;
+        settings.beginGroup("weather-settings");
+        settings.setValue("temperatureUnit", tempUnit);
+        settings.endGroup();
+        emit tempUnitChanged();
+    }
+
+}
+
+QString SettingsController::tempUnit() const {
+    return m_tempUnit;
+}
+
+void SettingsController::setPressureUnit(const QString &pressureUnit) {
+    if (m_pressureUnit != pressureUnit) {
+        m_pressureUnit = pressureUnit;
+        QSettings settings;
+        settings.beginGroup("weather-settings");
+        settings.setValue("pressureUnit", pressureUnit);
+        settings.endGroup();
+        emit pressureUnitChanged();
+    }
+}
+
+QString SettingsController::pressureUnit() const {
+    return m_pressureUnit;
+}
+
+QString SettingsController::getWeatherApi() {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    QString api = settings.value("api", "owm").toString();
+    settings.endGroup();
+    return api;
+}
+
+QString SettingsController::testApiKey() {
+    QString fileLocation = QApplication::applicationDirPath() + "/api-keys.json";
+    QFile apiKeysFile(fileLocation);
+    QByteArray baJsonData;
+    if (!apiKeysFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "SettingsController::testApiKey cannot open file " + apiKeysFile.fileName();
+        return "";
+    }
+    while (!apiKeysFile.atEnd()) {
+        baJsonData.append(apiKeysFile.readLine());
+    }
+    QJsonObject jsonObject = QJsonDocument::fromJson(baJsonData).object();
+    return jsonObject.find(getWeatherApi()).value().toString();
 }

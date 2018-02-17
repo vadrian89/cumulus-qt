@@ -44,6 +44,7 @@ Rectangle {
 
     SettingsController {
         id: applicationSettingsController
+        onWeatherApiChanged: weatherViewLoader.item.updateWeather()
     }
 
     ApplicationBar {
@@ -90,7 +91,7 @@ Rectangle {
             Binding {
                 target: weatherViewLoader.item
                 property: "speedUnit"
-                value: settingsView.speedUnit
+                value: applicationSettingsController.windSpeedUnit
             }
             Binding {
                 target: weatherViewLoader.item
@@ -101,6 +102,16 @@ Rectangle {
                 target: weatherViewLoader.item
                 property: "loadingEnded"
                 value: !applicationBar.animationAlias.running
+            }
+            Binding {
+                target: weatherViewLoader.item
+                property: "tempUnit"
+                value: applicationSettingsController.tempUnit
+            }
+            Binding {
+                target: weatherViewLoader.item
+                property: "pressureUnit"
+                value: applicationSettingsController.pressureUnit
             }
             Connections {
                 id: weatherViewCon
@@ -164,35 +175,29 @@ Rectangle {
             anchors.fill: parent
             visible: true
             iconsFont: weatherIcons.name
-            onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
-            onTrayThemeChanged: applicationSettingsController.trayTheme = trayTheme
-            onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls
-            onLoginStartChanged: applicationSettingsController.loginStart = loginStart
+            backgroundColor: applicationSettingsController.applicationBackground
             onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
-            onShowCredits: creditsViewDialog.visible = true
-            onLocationChanged: {
-                weatherViewLoader.item.updateWeather()
-                settingsViewDialog.visible = false
-            }
+            textColor: applicationSettingsController.textColor
             onTextColorChanged: {
                 applicationSettingsController.textColor = textColor
                 weatherViewLoader.item.loadLogoImage()
             }
-            onTemperatureUnitChanged: {
-                if (settingsViewDialog.visible == true) {
-                    weatherViewLoader.item.changeTempUnit(settingsView.temperatureUnit)
-                }
+            trayVisible: applicationSettingsController.trayVisibility
+            onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
+            trayTheme: applicationSettingsController.trayTheme
+            onTrayThemeChanged: applicationSettingsController.trayTheme = trayTheme
+            onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls
+            onLoginStartChanged: applicationSettingsController.loginStart = loginStart
+            onShowCredits: creditsViewDialog.visible = true
+            api: applicationSettingsController.weatherApi
+            onApiChanged: applicationSettingsController.weatherApi = api
+            onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
+            onSpeedUnitChanged: applicationSettingsController.windSpeedUnit = settingsView.speedUnit
+            onLocationChanged: {                
+                settingsViewDialog.visible = false
+                weatherViewLoader.item.updateWeather()
             }
-            onSpeedUnitChanged: {
-                if (settingsViewDialog.visible == true) {
-                    weatherViewLoader.item.changeSpeedUnit(settingsView.speedUnit)
-                }
-            }
-            onApiChanged: {
-                if (settingsViewDialog.visible == true) {
-                    weatherViewLoader.item.weatherApi = api
-                }
-            }
+
             Keys.onEscapePressed: settingsViewDialog.visible = false
         }
         onVisibilityChanged: {

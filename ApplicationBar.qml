@@ -28,14 +28,14 @@ Item {
     signal closeButtonClicked()
     signal minimizeButtonClicked()
     signal refreshButtonClicked()
-    property string textColor
+    property string textColor: "#ffffff"
     property string iconsFont
     property alias animationAlias: refreshRotateAnim
     property alias moveControlAlias: moveControlBar
     property alias menuButtonAlias: menuButton
     property alias refreshButtonAlias: refreshButton
     property int controlButtonsSize: 18
-    property string windowControlsPos: util.windowControlsPos()
+    property string windowControlsPos
 
     Rectangle {
         anchors.fill: parent
@@ -136,7 +136,7 @@ Item {
                 width: parent.width
                 sourceSize.width: width
                 sourceSize.height: height
-                source: "image://fontimage/\uf021" + root.textColor
+                source: "image://fontimage/\uf021" + (root.textColor ? root.textColor : "#ffffff")
             }
             MouseArea {
                 anchors.fill: parent

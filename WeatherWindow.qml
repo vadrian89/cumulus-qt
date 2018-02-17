@@ -28,13 +28,12 @@ Item {
     id: root
     property alias loadingEnded: weatherController.loadFinished
     property alias tempValue: weatherController.temperature
-    property alias tempUnit: weatherController.tempUnit
-    property alias speedUnitSymbol: weatherController.speedUnit
+    property string tempUnit
     property string iconsFont
     property string textFontFamily
     property string textColor    
-    property string speedUnit: util.getWindSpeedUnit()
-    property alias weatherApi: weatherController.weatherApi
+    property string speedUnit
+    property string pressureUnit
     property int widthBreakPoint: 170
     property int locationHeight: Math.round(root.height * 10 / 100)
     property int weatherInfoHeight: Math.round(root.height * 50 / 100)
@@ -47,7 +46,6 @@ Item {
     signal finishedWeatherUpdate()
     signal startedWeatherUpdate()
     signal noLocationDetected()
-    signal changeTempUnit(string unit)
     signal changeSpeedUnit(string unit)
     signal networkError()
     signal loadLogoImage()
@@ -126,7 +124,7 @@ Item {
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf0b1"
-            infoText: Math.round(weatherController.windSpeed) + root.speedUnitSymbol
+            infoText: Math.round(weatherController.windSpeed) + util.speedUnitSymbol(root.speedUnit)
             iconRotation: weatherController.windDegree
         }
         WeatherInfoItem {
@@ -142,7 +140,7 @@ Item {
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf079"
-            infoText: (Math.round(weatherController.pressure * 10) / 10) + util.pressureUnitSymbol()
+            infoText: (Math.round(weatherController.pressure * 10) / 10) + util.pressureUnitSymbol(root.pressureUnit)
         }
         WeatherInfoItem {
             id: sunriseData
@@ -187,7 +185,7 @@ Item {
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf058"
-            infoText: weatherController.tempMax + root.tempUnit
+            infoText: weatherController.tempMax + util.tempUnitSymbol(root.tempUnit)
         }
         WeatherInfoItem {
             id: tempMin
@@ -202,7 +200,7 @@ Item {
             fontFamily: textFontFamily
             iconFont: iconsFont
             icon: "\uf044"
-            infoText: weatherController.tempMin + root.tempUnit
+            infoText: weatherController.tempMin + util.tempUnitSymbol(root.tempUnit)
         }
     }
 
@@ -234,7 +232,7 @@ Item {
         font.pixelSize: weatherTemperatureIcon.font.pixelSize
         font.family: textFontFamily
         font.bold: true
-        text: weatherController.temperature + root.tempUnit
+        text: weatherController.temperature + util.tempUnitSymbol(root.tempUnit)
     }
 
     ForecastView {
@@ -272,8 +270,9 @@ Item {
     Weather {
         id: weatherController
         onNoLocationSet: root.noLocationDetected()
-        onWeatherApiChanged: updateWeather()
         onNetworkError: root.networkError()
+        tempUnit: root.tempUnit
+        speedUnit: root.speedUnit
         onWeatherDataChanged: {
             root.finishedWeatherUpdate()
             logo.source = util.getLogoImage()
@@ -283,8 +282,6 @@ Item {
         console.log("WeatherWindow >> update started")
         weatherController.getWeatherData()
     }
-    onChangeTempUnit: weatherController.changeTempUnit(unit)
-    onChangeSpeedUnit: weatherController.changeSpeedUnit(unit)
 
     onWidthChanged: {
         if (width < widthBreakPoint) {

@@ -131,9 +131,8 @@ Item {
                 MouseArea {
                     id: mouse
                     anchors.fill: parent
-                    onClicked: root.state = root.state == root.leftStateValue ? root.rightStateValue : root.leftStateValue
+                    onClicked: root.state = (root.state == root.leftStateValue ? root.rightStateValue : root.leftStateValue)
                 }
-
             }
         }
     }

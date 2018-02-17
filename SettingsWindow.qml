@@ -30,15 +30,15 @@ Item {
     visible: false
     property alias searchLocationAlias: searchLocation
     property alias settingsFlickAlias: settingsFlick
-    property alias trayVisible: traySwitch.checked
+    property bool trayVisible: root.trayVisible ? root.trayVisible : false
     property alias trayTheme: trayColorSwitch.state
     property alias windowControls: winControlSwitch.state
     property alias loginStart: startUpSwitch.checked
-    property string backgroundColor: util.backgroundColor()
-    property string textColor: util.textColor()
-    property string speedUnit: util.getWindSpeedUnit()
-    property string temperatureUnit: util.getTemperatureUnit()
-    property string api: util.getWeatherApi()
+    property string backgroundColor: backgroundColor ? backgroundColor : "#ffffff"
+    property string textColor: textColor ? textColor : "#ffffff"
+    property string speedUnit
+    property string temperatureUnit
+    property string api
     property int settingsItemHeight: 64
     property int textFontSize: 14
     property string iconsFont: "Arial"
@@ -50,7 +50,7 @@ Item {
     Rectangle {
         id: settingsOptionsView
         anchors.fill: parent
-        color: root.backgroundColor.length > 7 ? "#" + root.backgroundColor.substring(3) : root.backgroundColor
+        color: root.backgroundColor.length > 7 ? ("#" + root.backgroundColor.substring(3)) : root.backgroundColor
 
         Flickable {
             id: settingsFlick
@@ -124,7 +124,7 @@ Item {
                     iconUrl: util.iconPathPrefix() + "temperature_icon.png"
                     onClicked: {
                         if (tempUnitSelect.visible == false) {
-                            tempUnitSelect.currentIndex = tempUnitSelect.find(util.temperatureUnitSymbol().trim())
+                            tempUnitSelect.currentIndex = tempUnitSelect.find(util.temperatureUnitSymbol(root.temperatureUnit).trim())
                             tempUnitSelect.visible = true
                         }
                         else {
@@ -192,7 +192,7 @@ Item {
                     iconUrl: util.iconPathPrefix() + "speed_icon.png"
                     onClicked: {
                         if (speedUnitSelect.visible == false) {
-                            speedUnitSelect.currentIndex = speedUnitSelect.find(util.speedUnitSymbol().trim())
+                            speedUnitSelect.currentIndex = speedUnitSelect.find(util.speedUnitSymbol(root.speedUnit).trim())
                             speedUnitSelect.visible = true
                         }
                         else {
@@ -278,7 +278,7 @@ Item {
                         onClicked: {
                             colorDialog.purpose = "background"
                             colorDialog.showAlphaChannel = true
-                            colorDialog.color = util.backgroundColor()
+                            colorDialog.color = root.backgroundColor
                             colorDialog.visible = true
                         }
                     }
@@ -293,7 +293,7 @@ Item {
                         backgroundColor: root.textColor
                         onClicked: {
                             colorDialog.purpose = "text"
-                            colorDialog.color = util.textColor()
+                            colorDialog.color = root.textColor
                             colorDialog.visible = true
                         }
                     }
@@ -367,10 +367,10 @@ Item {
                     }
                 }
                 Component.onCompleted: {
-                    if (util.getWeatherApi() == "y") {
+                    if (settingsController.getWeatherApi() == "y") {
                         apiSelect.currentIndex = 1
                     }
-                    else if (util.getWeatherApi() == "wund") {
+                    else if (settingsController.getWeatherApi() == "wund") {
                         apiSelect.currentIndex = 2
                     }
                     else {
@@ -400,8 +400,9 @@ Item {
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Close To Tray")
-                    state: util.trayVisibility() == true ? "right" : "left"
+                    state: root.trayVisible == true ? "right" : "left"
                     visible: util.osType() === "android" ? false : true
+                    onCheckedChanged: root.trayVisible = checked
                 }
 
                 CustomSwitch {
@@ -414,7 +415,6 @@ Item {
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Tray theme")
-                    state: util.trayTheme()
                     visible: util.osType() === "android" ? false : true
                     leftText: "\uf002"
                     leftTextColor: "black"
@@ -437,7 +437,6 @@ Item {
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Window controls position")
-                    state: util.windowControlsPos()
                     visible: util.osType() === "android" ? false : true
                     leftText: "\uf04d"
                     rightText: "\uf048"
@@ -469,7 +468,15 @@ Item {
         showAlphaChannel: purpose == "background" ? true : false
         modality: Qt.WindowModal
         property string purpose
-        onVisibleChanged: visible == false ? root.focus = true : root.focus = false
+        onVisibleChanged: {
+            if(visible == false) {
+                root.focus = true
+                root.forceActiveFocus()
+            }
+            else {
+                root.focus = false
+            }
+        }
         onAccepted: {
             if (purpose == "background") {
                 root.backgroundColor = currentColor

@@ -38,7 +38,6 @@ void WeatherType::getWeatherData(){
     SettingsController settings;
     unique_ptr<Location> locationPtr(dbHelperPtr.getLocation(settings.currentLocationId()));
     if (locationPtr) {
-        weatherController = new OwmWeatherController();
         if (settings.weatherApi() == "y") {
             weatherController = new YWeatherController();
         }
@@ -79,8 +78,6 @@ void WeatherType::setWeatherData() {
         setSunset(weather.get()->sunset());
         setTempMax(weather.get()->tempMax());
         setTempMin(weather.get()->tempMin());
-        setTempUnit(weather.get()->tempUnit());
-        setSpeedUnit(weather.get()->speedUnit());
         setLocationLink(weather.get()->locationLink());
         setLocation(weather.get()->location());
         setForecastList(weather.get()->forecastList());
@@ -272,28 +269,26 @@ QString WeatherType::tempUnit() const {
 
 void WeatherType::setTempUnit(const QString &tempUnit) {
     if (tempUnit != m_tempUnit) {
+        if (m_tempUnit.trimmed().size() > 0) {
+            updateTemperature(tempUnit);
+        }
         m_tempUnit = tempUnit;
         emit tempUnitChanged();
     }
 }
 
-void WeatherType::changeTempUnit(const QString &unit) {
-    if (m_tempUnit != unit) {
-        QString oldUnit = Util::getTemperatureUnit().toLower();
-        Util::setTemperatureUnit(unit);
-        setTemperature(Util::calculateTemperature(m_temperature, oldUnit));
-        setTempMax(Util::calculateTemperature(m_tempMax, oldUnit));
-        setTempMin(Util::calculateTemperature(m_tempMin, oldUnit));
-        updateForecastTemp(oldUnit);
-        setTempUnit(Util::temperatureUnitSymbol());
-    }
+void WeatherType::updateTemperature(const QString &tempUnit) {
+    setTemperature(Util::calculateTemperature(m_temperature, m_tempUnit, tempUnit));
+    setTempMax(Util::calculateTemperature(m_tempMax, m_tempUnit, tempUnit));
+    setTempMin(Util::calculateTemperature(m_tempMin, m_tempUnit, tempUnit));
+    updateForecastTemp(tempUnit);
 }
 
-void WeatherType::updateForecastTemp(const QString &oldUnit) {
+void WeatherType::updateForecastTemp(const QString &tempUnit) {
     for (int i = 0; i < m_forecastList.size(); i++) {
         Forecast *f = (Forecast*)m_forecastList.at(i);
-        f->setTempHigh(Util::calculateTemperature(f->tempHigh(), oldUnit));
-        f->setTempLow(Util::calculateTemperature(f->tempLow(), oldUnit));
+        f->setTempHigh(Util::calculateTemperature(f->tempHigh(), m_tempUnit, tempUnit));
+        f->setTempLow(Util::calculateTemperature(f->tempLow(), m_tempUnit, tempUnit));
     }
     emit forecastListChanged();
 }
@@ -309,44 +304,15 @@ void WeatherType::setForecastList(const QList<QObject*> &list) {
     }
 }
 
-void WeatherType::changeSpeedUnit(const QString &unit) {
-    if (m_speedUnit != unit) {
-        QString oldUnit = Util::getWindSpeedUnit().toLower();
-        Util::setWindSpeedUnit(unit);
-        setWindSpeed(Util::calculateWindSpeed(m_windSpeed, oldUnit));
-        setSpeedUnit(Util::speedUnitSymbol());
-    }
-}
-
 QString WeatherType::speedUnit() const {
     return m_speedUnit;
 }
 
-void WeatherType::setSpeedUnit(const QString &unit) {
-    if (m_speedUnit != unit) {
-        m_speedUnit = unit;
+void WeatherType::setSpeedUnit(const QString &speedUnit) {
+    if (m_speedUnit != speedUnit) {
+        if (m_speedUnit.trimmed().size() > 0)
+            setWindSpeed(Util::calculateWindSpeed(m_windSpeed, m_speedUnit, speedUnit));
+        m_speedUnit = speedUnit;
         emit speedUnitChanged();
-    }
-}
-
-bool WeatherType::clearLocationCode() {
-    unique_ptr<DatabaseHelper> dbHelperPtr(new DatabaseHelper);
-    bool result = false;
-    if (dbHelperPtr) {
-        result = dbHelperPtr.get()->clearLocationCode(1);
-    }
-    return result;
-}
-
-QString WeatherType::weatherApi() const {
-    return m_weatherApi;
-}
-
-void WeatherType::setWeatherApi(const QString &weatherApi) {
-    if (m_weatherApi != weatherApi && clearLocationCode()) {
-        m_weatherApi = weatherApi;
-        SettingsController settings;
-        settings.setWeatherApi(weatherApi);
-        emit weatherApiChanged();
     }
 }

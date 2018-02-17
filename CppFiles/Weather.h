@@ -10,27 +10,6 @@ class Weather : public QObject {
     float m_pressure;
     int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity, m_tempMin, m_tempMax, m_locationId;
     QList<QObject*> m_forecastList;
-
-//    Q_PROPERTY(QString weather READ weather WRITE setWeather NOTIFY weatherChanged)
-//    Q_PROPERTY(int weatherCode READ weatherCode WRITE setWeatherCode NOTIFY weatherCodeChanged)
-//    Q_PROPERTY(QString weatherIcon READ weatherIcon WRITE setWeatherIcon NOTIFY weatherIconChanged)
-//    Q_PROPERTY(QString weatherDescription READ weatherDescription WRITE setWeatherDescription NOTIFY weatherDescriptionChanged)
-//    Q_PROPERTY(int temperature READ temperature WRITE setTemperature NOTIFY temperatureChanged)
-//    Q_PROPERTY(double pressure READ pressure WRITE setPressure NOTIFY pressureChanged)
-//    Q_PROPERTY(QString tempUnit READ tempUnit WRITE setTempUnit NOTIFY tempUnitChanged)
-//    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY locationChanged)
-//    Q_PROPERTY(QString locationLink READ locationLink WRITE setLocationLink NOTIFY locationLinkChanged)
-//    Q_PROPERTY(int windSpeed READ windSpeed WRITE setWindSpeed NOTIFY windSpeedChanged)
-//    Q_PROPERTY(int windDegree READ windDegree WRITE setWindDegree NOTIFY windDegreeChanged)
-//    Q_PROPERTY(int humidity READ humidity WRITE setHumidity NOTIFY humidityChanged)
-//    Q_PROPERTY(QString sunrise READ sunrise WRITE setSunrise NOTIFY sunriseChanged)
-//    Q_PROPERTY(QString sunset READ sunset WRITE setSunset NOTIFY sunsetChanged)
-//    Q_PROPERTY(int tempMax READ tempMax WRITE setTempMax NOTIFY tempMaxChanged)
-//    Q_PROPERTY(int tempMin READ tempMin WRITE setTempMin NOTIFY tempMinChanged)
-//    Q_PROPERTY(QList<QObject*> forecastList READ forecastList WRITE setForecastList NOTIFY forecastListChanged)
-//    Q_PROPERTY(QString speedUnit READ speedUnit WRITE setSpeedUnit NOTIFY speedUnitChanged)
-//    Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
-//    Q_PROPERTY(int locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged)
 public:
     explicit Weather(QObject *parent = nullptr);
     void setWeatherCode(const int &weatherCode);

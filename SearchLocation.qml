@@ -29,8 +29,8 @@ import ownTypes.searchLocation 0.4
 Item {
     id: root
     signal locationSelected()
-    property string backgroundColor: util.backgroundColor()
-    property string textColor: util.textColor()
+    property string backgroundColor
+    property string textColor
 
     FontLoader {
         id: ubuntuCondensed
@@ -64,7 +64,7 @@ Item {
 
         Image {
             id: loadingIcon
-            source: "image://fontimage/\uf013" + root.textColor
+            source: "image://fontimage/\uf013" + (root.textColor ? root.textColor : "#ffffff")
             height: searchField.height
             width: loadingIcon.height
             sourceSize.width: loadingIcon.width

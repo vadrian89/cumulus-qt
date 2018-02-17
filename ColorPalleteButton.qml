@@ -25,8 +25,8 @@ import QtQuick.Layouts 1.3
 Item {
     id: root
     property string text
-    property string textColor: util.textColor()
-    property string backgroundColor: util.backgroundColor()
+    property string textColor
+    property string backgroundColor
     property string buttonBorderColor: "#FFFFFF"
     signal clicked()
 

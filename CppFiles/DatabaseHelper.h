@@ -37,6 +37,7 @@
 #include "Location.h"
 #include "Weather.h"
 #include "Forecast.h"
+#include "SettingsController.h"
 
 using namespace std;
 

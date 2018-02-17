@@ -37,7 +37,7 @@ Item {
             anchors.centerIn: parent
             height: parent.height
             width: parent.width
-            source: "image://fontimage/\uf085" + root.iconColor
+            source: "image://fontimage/\uf085" + (root.iconColor ? root.iconColor : "#ffffff")
             sourceSize.width: width
             sourceSize.height: height
         }
