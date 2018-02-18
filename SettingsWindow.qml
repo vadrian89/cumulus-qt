@@ -124,7 +124,7 @@ Item {
                     iconUrl: util.iconPathPrefix() + "temperature_icon.png"
                     onClicked: {
                         if (tempUnitSelect.visible == false) {
-                            tempUnitSelect.currentIndex = tempUnitSelect.find(util.temperatureUnitSymbol(root.temperatureUnit).trim())
+                            tempUnitSelect.currentIndex = tempUnitSelect.find(util.tempUnitSymbol(root.temperatureUnit).trim())
                             tempUnitSelect.visible = true
                         }
                         else {
@@ -152,7 +152,6 @@ Item {
                             horizontalAlignment: Text.AlignLeft
                         }
                     }
-
                     onVisibleChanged: {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom

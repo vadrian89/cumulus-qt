@@ -42,6 +42,7 @@ ApplicationWindow {
 
     SettingsController {
         id: applicationSettingsController
+        onWeatherApiChanged: weatherView.updateWeather()
     }
 
     Rectangle {
@@ -59,8 +60,7 @@ ApplicationWindow {
             textColor: applicationSettingsController.textColor
             iconsFont: weatherIcons.name
             onRefreshButtonClicked: weatherView.updateWeather()
-            animationAlias.onStopped: weatherView.loadingEnded = true
-            animationAlias.onStarted: weatherView.loadingEnded = false
+            windowControlsPos: applicationSettingsController.windowControlsPos
             onMenuButtonClicked: {
                 if (bodyView.visible == true) {
                     appView.push(settingsView)
@@ -94,7 +94,9 @@ ApplicationWindow {
                 textColor: applicationSettingsController.textColor
                 textFontFamily: ubuntuCondensed.name
                 iconsFont: weatherIcons.name
-                speedUnit: settingsView.speedUnit
+                speedUnit: applicationSettingsController.windSpeedUnit
+                tempUnit: applicationSettingsController.tempUnit
+                pressureUnit: applicationSettingsController.pressureUnit
                 visible: false
                 onNoLocationDetected: {
                     appView.push(settingsView)
@@ -127,23 +129,16 @@ ApplicationWindow {
                 appView.pop()
                 bodyView.forceActiveFocus()
             }
+            textColor: applicationSettingsController.textColor
             onTextColorChanged: applicationSettingsController.textColor = textColor
+            backgroundColor: applicationSettingsController.applicationBackground
             onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
-            onTemperatureUnitChanged: {
-                if (visible == true) {
-                    weatherView.changeTempUnit(settingsView.temperatureUnit)
-                }
-            }
-            onSpeedUnitChanged: {
-                if (visible == true) {
-                    weatherView.changeSpeedUnit(settingsView.speedUnit)
-                }
-            }
-            onApiChanged: {
-                if (visible == true) {
-                    weatherView.weatherApi = api
-                }
-            }
+            temperatureUnit: applicationSettingsController.tempUnit
+            onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
+            speedUnit: applicationSettingsController.windSpeedUnit
+            onSpeedUnitChanged: applicationSettingsController.windSpeedUnit = settingsView.speedUnit
+            api: applicationSettingsController.weatherApi
+            onApiChanged: applicationSettingsController.weatherApi = api
             onShowCredits: {
                 appView.push(creditsView)
                 creditsView.forceActiveFocus()

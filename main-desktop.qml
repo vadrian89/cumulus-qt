@@ -191,7 +191,9 @@ Rectangle {
             onShowCredits: creditsViewDialog.visible = true
             api: applicationSettingsController.weatherApi
             onApiChanged: applicationSettingsController.weatherApi = api
+            temperatureUnit: applicationSettingsController.tempUnit
             onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
+            speedUnit: applicationSettingsController.windSpeedUnit
             onSpeedUnitChanged: applicationSettingsController.windSpeedUnit = settingsView.speedUnit
             onLocationChanged: {                
                 settingsViewDialog.visible = false
