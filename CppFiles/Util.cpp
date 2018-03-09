@@ -54,9 +54,9 @@ double Util::calculateTemperature(const double &temperature, const QString &oldU
     return roundToInt(finalValue);
 }
 
-double Util::calculateWindSpeed(double speed, const QString &oldUnit, const QString&newUnit) {
+double Util::calculateWindSpeed(double speed, const QString &oldUnit, const QString &newUnit) {
     double finalSpeed = 0;
-    if (newUnit.toLower() == "m/s" && oldUnit.toLower() == "kph") {
+    if (newUnit.toLower() == "m/s" && oldUnit.toLower() == "kph") {        
         finalSpeed = kphToMs(speed);
     }
     else if (newUnit.toLower() == "m/s" && oldUnit.toLower() == "mph") {

@@ -25,11 +25,16 @@ DataController::DataController(QObject *parent) : QObject(parent) {}
 
 void DataController::getDataFromUrl(QString urlString) {
     networkManager = new QNetworkAccessManager(this);
-    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(readFinished(QNetworkReply*)));
-    QNetworkRequest networkRequest;
-    networkRequest.setUrl(QUrl(urlString));
-    networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    networkManager->get(networkRequest);
+    if (networkManager->networkAccessible() == QNetworkAccessManager::Accessible) {
+        connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(readFinished(QNetworkReply*)));
+        QNetworkRequest networkRequest;
+        networkRequest.setUrl(QUrl(urlString));
+        networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        networkManager->get(networkRequest);
+    }
+    else {
+        emit networkError("Network not accessible!");
+    }
 }
 
 void DataController::readFinished(QNetworkReply *reply) {

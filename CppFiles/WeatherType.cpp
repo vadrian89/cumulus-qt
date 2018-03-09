@@ -23,7 +23,6 @@
 #include "Forecast.h"
 #include "Util.h"
 #include "DatabaseHelper.h"
-#include "Weather.h"
 
 #include <QDebug>
 #include <memory>
@@ -33,11 +32,9 @@ using namespace std;
 WeatherType::WeatherType(QObject *parent) : QObject(parent){}
 
 void WeatherType::getWeatherData(){
-    qDebug() << "WeatherType::getWeatherData >> Weather data request.";
-    DatabaseHelper dbHelperPtr;
     SettingsController settings;
-    unique_ptr<Location> locationPtr(dbHelperPtr.getLocation(settings.currentLocationId()));
-    if (locationPtr) {
+    DatabaseHelper dbHelper;
+    if ((settings.currentLocationId() > 0 && dbHelper.lastLocationId() > 0) || settings.useGps()) {
         if (settings.weatherApi() == "y") {
             weatherController = new YWeatherController();
         }
@@ -50,41 +47,65 @@ void WeatherType::getWeatherData(){
         thread = new QThread();
         weatherController->moveToThread(thread);
         connect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-        connect(weatherController, SIGNAL(forecastChanged()), this, SLOT(setWeatherData()));
+        connect(weatherController, SIGNAL(weatherSet(weather_struct)), this, SLOT(setWeatherData(weather_struct)));
         connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-        connect(this, SIGNAL(weatherChanged()), weatherController, SLOT(deleteLater()));
+        connect(this, SIGNAL(weatherChanged()), thread, SLOT(quit()));
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        connect(thread, SIGNAL(finished()), weatherController, SLOT(deleteLater()));
         thread->start();
     }
-    else {
-        emit noLocationSet();
+}
+
+void WeatherType::setWeatherData(const weather_struct &weather) {
+    setSunrise(weather.m_sunrise);
+    setSunset(weather.m_sunset);
+    setWeatherCode(weather.m_weatherCode);
+    setWeatherDescription(weather.m_weatherDescription);
+    setTemperature(weather.m_temperature);
+    setPressure(weather.m_pressure);
+    setHumidity(weather.m_humidity);
+    setWindSpeed(weather.m_windSpeed);
+    setWindDegree(weather.m_windDegree);
+    setTempMax(weather.m_tempMax);
+    setTempMin(weather.m_tempMin);
+    setLocationLink(weather.m_locationLink);
+    setLocation(weather.m_location);
+    m_forecastList.clear();
+    SettingsController settings;
+    for (Forecast *forecast : *weather.m_forecastListPtr) {
+        Forecast *forec = new Forecast();
+        forec->setWeatherIcon(Util::findFontCode(settings.weatherApi(), QString::number(forecast->weatherCode())));
+        forec->setTempLow(forecast->tempLow());
+        forec->setTempHigh(forecast->tempHigh());
+        forec->setForecastDesc(forecast->forecastDesc());
+        QDate date = QDate::fromString(forecast->forecastDate(), "dd/MMM/yyyy");
+        forec->setForecastDate(date.toString("ddd").toUpper().remove("."));
+        forec->setLocationId(forecast->locationId());
+        m_forecastList.append(forec);
     }
+    emit forecastListChanged();
+    emit weatherDataChanged();
 }
 
 void WeatherType::setWeatherData() {
     SettingsController settings;
     DatabaseHelper dbHelper;
-    const unique_ptr<Weather> weather(dbHelper.getWeather(settings.currentLocationId()));
-    if (weather) {
-        setWeatherCode(weather.get()->weatherCode());
-        setWeatherIcon(weather.get()->weatherIcon());
-        setWeatherDescription(weather.get()->weatherDescription());
-        setTemperature(weather.get()->temperature());
-        setPressure(weather.get()->pressure());
-        setHumidity(weather.get()->humidity());
-        setWindSpeed(weather.get()->windSpeed());
-        setWindDegree(weather.get()->windDegree());
-        setSunrise(weather.get()->sunrise());
-        setSunset(weather.get()->sunset());
-        setTempMax(weather.get()->tempMax());
-        setTempMin(weather.get()->tempMin());
-        setLocationLink(weather.get()->locationLink());
-        setLocation(weather.get()->location());
-        setForecastList(weather.get()->forecastList());
-        emit weatherDataChanged();
-    }
-    thread->quit();
-    thread->wait();
+    const weather_struct weather = dbHelper.getWeather(settings.currentLocationId());
+    setSunrise(weather.m_sunrise);
+    setSunset(weather.m_sunset);
+    setWeatherCode(weather.m_weatherCode);
+    setWeatherDescription(weather.m_weatherDescription);
+    setTemperature(weather.m_temperature);
+    setPressure(weather.m_pressure);
+    setHumidity(weather.m_humidity);
+    setWindSpeed(weather.m_windSpeed);
+    setWindDegree(weather.m_windDegree);
+    setTempMax(weather.m_tempMax);
+    setTempMin(weather.m_tempMin);
+    setLocationLink(weather.m_locationLink);
+    setLocation(weather.m_location);
+    setForecastList(weather.m_forecastList);
+    emit weatherDataChanged();
 }
 
 void WeatherType::setWeather(const QString &weather) {
@@ -97,6 +118,8 @@ void WeatherType::setWeather(const QString &weather) {
 void WeatherType::setWeatherCode(const int &weatherCode) {
     if (weatherCode != m_weatherCode) {
         m_weatherCode = weatherCode;
+        SettingsController settings;
+        setWeatherIcon(Util::findFontCode(settings.weatherApi(), QString::number(m_weatherCode)));
         emit weatherCodeChanged();
     }
 }
@@ -104,6 +127,11 @@ void WeatherType::setWeatherCode(const int &weatherCode) {
 void WeatherType::setWeatherIcon(const QString &weatherIcon) {
     if (weatherIcon != m_weatherIcon) {
         m_weatherIcon = weatherIcon;
+        if (QTime::currentTime() > QTime::fromString(m_sunset)) {
+            QString nightFont = Util::findFontCode("night-font", m_weatherIcon);
+            if (nightFont.trimmed().size() > 0)
+                m_weatherIcon = nightFont;
+        }
         emit weatherIconChanged();
     }
 }
@@ -181,6 +209,7 @@ int WeatherType::windDegree() const {
 void WeatherType::setLocation(const QString &location) {
     if (location != m_location) {
         m_location = location;
+        m_location = m_location.remove(m_location.indexOf(","), m_location.size());
         emit locationChanged();
     }
 }
@@ -222,6 +251,11 @@ QString WeatherType::sunrise() const {
 void WeatherType::setSunset(const QString &sunset) {
     if (m_sunset != sunset) {
         m_sunset = sunset;
+        if (QTime::currentTime() > QTime::fromString(m_sunset, "HH:mm")) {
+            QString nightFont = Util::findFontCode("night-font", m_weatherIcon);
+            if (nightFont.trimmed().size() > 0)
+                setWeatherIcon(nightFont);
+        }
         emit sunsetChanged();
     }
 }
@@ -250,17 +284,6 @@ void WeatherType::setTempMin(const int &tempMin) {
 
 int WeatherType::tempMin() const {
     return m_tempMin;
-}
-
-void WeatherType::setLoadFinished(const bool &loadFinished) {
-    if (m_loadFinished != loadFinished) {
-        m_loadFinished = loadFinished;
-        emit loadFinishedChanged();
-    }
-}
-
-bool WeatherType::loadFinished() const {
-    return m_loadFinished;
 }
 
 QString WeatherType::tempUnit() const {

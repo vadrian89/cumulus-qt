@@ -45,7 +45,7 @@ struct api_keys {
 
 class SettingsController : public QObject {
     Q_OBJECT
-    bool m_trayVisibility, m_loginStart;
+    bool m_trayVisibility, m_loginStart, m_useGps;
     QString m_trayTheme, m_windowControlsPos, m_applicationBackground, m_textColor, m_weatherApi,
     m_windSpeedUnit, m_tempUnit, m_pressureUnit;
     float m_applicationOpacity;
@@ -68,6 +68,7 @@ class SettingsController : public QObject {
     Q_PROPERTY(QString windSpeedUnit READ windSpeedUnit WRITE setWindSpeedUnit NOTIFY windSpeedUnitChanged)
     Q_PROPERTY(QString tempUnit READ tempUnit WRITE setTempUnit NOTIFY tempUnitChanged)
     Q_PROPERTY(QString pressureUnit READ pressureUnit WRITE setPressureUnit NOTIFY pressureUnitChanged)
+    Q_PROPERTY(bool useGps READ useGps WRITE setUseGps NOTIFY useGpsChanged)
 
     void loginStartLinux(const bool &loginStart);
     bool clearLocationCode();
@@ -97,6 +98,8 @@ public:
     void setPressureUnit(const QString &pressureUnit);
     QString pressureUnit() const;
     static QString testApiKey();
+    bool useGps() const;
+    void setUseGps(const bool &useGps);
     Q_INVOKABLE static bool loginStartCheck();
     Q_INVOKABLE static QString getWeatherApi();
 signals:
@@ -116,6 +119,7 @@ signals:
     void tempUnitChanged();
     void windSpeedUnitChanged();
     void pressureUnitChanged();
+    void useGpsChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

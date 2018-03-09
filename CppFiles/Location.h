@@ -23,18 +23,55 @@
 #define LOCATION_H
 
 #include <QObject>
+#include <QList>
+#include <QThread>
+#include <QStringList>
+#include <QGeoPositionInfoSource>
+#include <QGeoPositionInfo>
 
+#include "DatabaseHelper.h"
 class Location : public QObject {
-    Q_OBJECT    
-public:
+    Q_OBJECT
     int m_locationId;
-    QString m_locationCode, m_locationName;
-
+    QString m_locationCode, m_locationName, m_gpsLocation;
+    bool m_isCurrentLocation;
+    QList<QObject*> m_locationList;
+    QStringList m_locationSearchList;
+public:
     explicit Location(QObject *parent = nullptr);
-    explicit Location(QObject *parent = nullptr, int locationId = 1, QString locationCode = "", QString locationName = "");
-    Q_PROPERTY(int locationId MEMBER m_locationId)
-    Q_PROPERTY(QString locationCode MEMBER m_locationCode)
-    Q_PROPERTY(QString locationName MEMBER m_locationName)
+    Q_PROPERTY(int locationId MEMBER m_locationId NOTIFY locationIdChanged)
+    Q_PROPERTY(QString locationCode MEMBER m_locationCode NOTIFY locationCodeChanged)
+    Q_PROPERTY(QString locationName MEMBER m_locationName NOTIFY locationNameChanged)
+    Q_PROPERTY(QList<QObject*> locationList MEMBER m_locationList WRITE setLocationList NOTIFY locationListChanged)
+    Q_PROPERTY(bool isCurrentLocation MEMBER m_isCurrentLocation NOTIFY isCurrentLocationChanged)
+    Q_PROPERTY(QStringList locationSearchList READ locationSearchList WRITE setLocationSearchList NOTIFY locationSearchListChanged)
+    Q_PROPERTY(QString gpsLocation MEMBER m_gpsLocation WRITE setGpsLocation NOTIFY gpsLocationChanged)
+
+    void setLocationList(const QList<QObject*> &locationList);
+    QStringList locationSearchList() const;
+private slots:
+    void readLocationList(const QList<location_struct> &locationList);    
+    void locationPositionInfo(const QGeoPositionInfo &posInfo);
+public slots:
+    void getLocationList();
+    void searchLocation(const QString &query);
+    void setLocationSearchList(const QStringList &locationList);
+    void insertLocation(const QString &location);
+    void deleteLocation(const int &locationId);
+    void changeCurrentLocation(const int &locationId);
+    void getGpsLocation();
+    void setGpsLocation(const QString &gpsLocation);
+signals:
+    void locationListChanged();
+    void locationIdChanged();
+    void locationCodeChanged();
+    void locationNameChanged();
+    void isCurrentLocationChanged();
+    void noLocation();
+    void locationSearchListChanged();
+    void duplicateLocation(const QString &location);
+    void networkError(const QString &error);
+    void gpsLocationChanged();
 };
 
 #endif // LOCATION_H

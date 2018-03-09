@@ -28,40 +28,27 @@ WundWeatherController::WundWeatherController(QObject *parent) : AbstractWeatherC
     locationCode = "";
 }
 
+void WundWeatherController::searchByGps(const double &lat, const double &lon) {
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
+    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
+    systemLang.resize(2);
+    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/conditions/lang:" + systemLang + "/q/" + QString::number(lat) + "," + QString::number(lon) + ".json");
+}
+
 void WundWeatherController::searchByLocation(QString &location) {
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
     dataController->getDataFromUrl("http://autocomplete.wunderground.com/aq?query=" + location);
 }
 
 void WundWeatherController::getLocationFromJson(const QJsonObject &jsonObject) {
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
     QJsonArray array = jsonObject.find("RESULTS").value().toArray();
     locationCode = array.at(0).toObject().find("zmw").value().toString();
-    if (saveLocation(locationCode))
-        searchBycode(locationCode);
+    searchBycode(locationCode);
 }
 
 void WundWeatherController::searchBycode(QString &code) {
     locationCode = code;
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getAstronomyFromJson(QJsonObject)));
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
-    systemLang.resize(2);
-    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:" + systemLang + "/q/zmw:" + code + ".json");
-
-}
-
-void WundWeatherController::getAstronomyFromJson(const QJsonObject &jsonObject) {
-    QJsonObject sunriseData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunrise");
-    QJsonObject sunsetData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunset");
-    sunrise = QDateTime::fromString(sunriseData.find("hour").value().toString() + ":" +
-            sunriseData.find("minute").value().toString(), "h:mm");
-    sunset = QDateTime::fromString(sunsetData.find("hour").value().toString() + ":" +
-            sunsetData.find("minute").value().toString(), "h:mm");
-    getAfterAstronomy(locationCode);
-}
-
-void WundWeatherController::getAfterAstronomy(const QString &code) {
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getAstronomyFromJson(QJsonObject)));
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
@@ -69,49 +56,58 @@ void WundWeatherController::getAfterAstronomy(const QString &code) {
 }
 
 void WundWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
-    SettingsController settings;
-    Weather *weatherPtr = nullptr;
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     if (!jsonObject.isEmpty()) {
-        weatherPtr = new Weather;
-        int weatherCode = -1;
-        float temperature = 0;
-        int windSpeed = 0;
-        int windDegree = 0;
-        int humidity = 0;
+        SettingsController settings;
         QString windSpeedUnit = "kph";
-        QString description = "";
         QString pressureUnit = "mbar";
-        QString link = "http://www.wunderground.com/q/zmw:" + locationCode;
-        double pressure = 0.0;
-
         QJsonObject weatherData = nextBranch(jsonObject, "current_observation");
+        m_weather.m_location = nextBranch(weatherData, "display_location").find("full").value().toString();
+        if (locationCode.isEmpty()) {
+            locationCode = nextBranch(weatherData, "display_location").find("zip").value().toString()
+                    .append(".")
+                    .append(nextBranch(weatherData, "display_location").find("magic").value().toString())
+                    .append(".")
+                    .append(nextBranch(weatherData, "display_location").find("wmo").value().toString());
+        }        
+        m_weather.m_weatherCode = Util::findFontCode("wund-map", weatherData.find("icon").value().toString()).toInt();
+        m_weather.m_temperature = weatherData.find("temp_c").value().toDouble();
+        m_weather.m_temperature = Util::calculateTemperature(m_weather.m_temperature, temperatureUnit, settings.tempUnit());
+        m_weather.m_weatherDescription = weatherData.find("weather").value().toString();
+        m_weather.m_windSpeed = weatherData.find("wind_kph").value().toDouble();
+        m_weather.m_windSpeed = Util::calculateWindSpeed(m_weather.m_windSpeed, windSpeedUnit, settings.windSpeedUnit());
+        m_weather.m_windDegree = weatherData.find("wind_degrees").value().toInt();
+        m_weather.m_humidity = weatherData.find("relative_humidity").value().toString().remove("%").toInt();
+        m_weather.m_pressure = weatherData.find("pressure_mb").value().toString().toDouble();
+        m_weather.m_pressure = Util::calculatePressure(m_weather.m_pressure, pressureUnit);
+        m_weather.m_locationLink = weatherData.find("ob_url").value().toString();
+        m_weather.m_locationId = settings.currentLocationId();
+        getAstronomy(locationCode);
+    }    
+}
 
-        weatherCode = Util::findFontCode("wund-map", weatherData.find("icon").value().toString()).toInt();
-        temperature = weatherData.find("temp_c").value().toDouble();
-        description = weatherData.find("weather").value().toString();
-        windSpeed = weatherData.find("wind_kph").value().toDouble();
-        windDegree = weatherData.find("wind_degrees").value().toInt();
-        humidity = weatherData.find("relative_humidity").value().toString().remove("%").toInt();
-        pressure = weatherData.find("pressure_mb").value().toString().toDouble();
+void WundWeatherController::getAstronomy(const QString &code) {
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getAstronomyFromJson(QJsonObject)));
+    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
+    systemLang.resize(2);
+    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:" + systemLang + "/q/zmw:" + code + ".json");
+}
 
-        weatherPtr->setWeatherCode(weatherCode);
-        weatherPtr->setWeatherDescription(description);
-        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit, settings.tempUnit()));
-        weatherPtr->setHumidity(humidity);
-        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit, settings.windSpeedUnit()));
-        weatherPtr->setWindDegree(windDegree);
-        weatherPtr->setSunrise(sunrise.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr->setSunset(sunset.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr->setPressure(Util::calculatePressure(pressure, pressureUnit));
-        weatherPtr->setLocationLink(link);
-        weatherPtr->setLocationId(settings.currentLocationId());
-    }
-    if (saveWeather(weatherPtr))
+void WundWeatherController::getAstronomyFromJson(const QJsonObject &jsonObject) {
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getAstronomyFromJson(QJsonObject)));
+    QJsonObject sunriseData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunrise");
+    QJsonObject sunsetData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunset");
+    QDateTime sunrise = QDateTime::fromString(sunriseData.find("hour").value().toString() + ":" +
+            sunriseData.find("minute").value().toString(), "h:mm");
+    QDateTime sunset = QDateTime::fromString(sunsetData.find("hour").value().toString() + ":" +
+            sunsetData.find("minute").value().toString(), "h:mm");
+    m_weather.m_sunrise = sunrise.time().toString(Qt::SystemLocaleShortDate);
+    m_weather.m_sunset = sunset.time().toString(Qt::SystemLocaleShortDate);
+    if (saveLocation(locationCode) && saveWeather(m_weather))
         getForecast(locationCode);
 }
 
 void WundWeatherController::getForecast(const QString &code) {
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getForecastFromJson(QJsonObject)));
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
@@ -142,7 +138,11 @@ void WundWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
         forecast->setLocationId(settings.currentLocationId());
         forecastList.append(forecast);
     }
-    saveForecast(forecastList);
+    if (!forecastList.isEmpty()) {
+        m_weather.m_tempMax = forecastList.at(1)->tempHigh();
+        m_weather.m_tempMin = forecastList.at(1)->tempLow();
+        saveForecast(forecastList);
+    }
 }
 
 QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {

@@ -37,11 +37,12 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_windowWidth = settings.value("windowWidth", 300).toInt();    
     settings.endGroup();
     settings.beginGroup("weather-settings");
-    m_currentLocationId = settings.value("currentLocationId", 1).toInt();
+    m_currentLocationId = settings.value("currentLocationId", -1).toInt();
     m_weatherApi = settings.value("api", "owm").toString();
     m_windSpeedUnit = settings.value("windSpeedUnit", "m/s").toString();
     m_tempUnit = settings.value("temperatureUnit", "c").toString();
     m_pressureUnit = settings.value("pressureUnit", "mbar").toString();
+    m_useGps = settings.value("useGps", true).toBool();
     settings.endGroup();
 }
 
@@ -258,7 +259,7 @@ QString SettingsController::weatherApi() const {
 
 bool SettingsController::clearLocationCode() {
     DatabaseHelper dbHelper;
-    return dbHelper.clearLocationCode(m_currentLocationId);
+    return dbHelper.clearLocationCode();
 }
 
 void SettingsController::setWindSpeedUnit(const QString &windSpeedUnit) {
@@ -285,7 +286,6 @@ void SettingsController::setTempUnit(const QString &tempUnit) {
         settings.endGroup();
         emit tempUnitChanged();
     }
-
 }
 
 QString SettingsController::tempUnit() const {
@@ -328,4 +328,19 @@ QString SettingsController::testApiKey() {
     }
     QJsonObject jsonObject = QJsonDocument::fromJson(baJsonData).object();
     return jsonObject.find(getWeatherApi()).value().toString();
+}
+
+bool SettingsController::useGps() const {
+    return m_useGps;
+}
+
+void SettingsController::setUseGps(const bool &useGps) {
+    if (m_useGps != useGps) {
+        m_useGps = useGps;
+        QSettings settings;
+        settings.beginGroup("weather-settings");
+        settings.setValue("useGps", useGps);
+        settings.endGroup();
+        emit useGpsChanged();
+    }
 }

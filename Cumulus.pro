@@ -1,4 +1,4 @@
-QT += qml quick sql widgets quickwidgets concurrent
+QT += qml quick sql widgets quickwidgets concurrent positioning
 
 CONFIG += c++11
 
@@ -8,7 +8,6 @@ SOURCES += main.cpp \
     CppFiles/YWeatherController.cpp \
     CppFiles/Forecast.cpp \
     CppFiles/SettingsController.cpp \
-    CppFiles/SearchLocation.cpp \
     CppFiles/OwmWeatherController.cpp \
     CppFiles/ThreadWorker.cpp \
     CppFiles/WeatherType.cpp \
@@ -20,8 +19,8 @@ SOURCES += main.cpp \
     CppFiles/WundWeatherController.cpp \
     CppFiles/MainWindow.cpp \
     CppFiles/DatabaseHelper.cpp \
-    CppFiles/Weather.cpp \
-    CppFiles/Location.cpp
+    CppFiles/Location.cpp \
+    CppFiles/LocationController.cpp
 
 RESOURCES += qml.qrc
 
@@ -37,7 +36,6 @@ HEADERS += \
     CppFiles/YWeatherController.h \
     CppFiles/Forecast.h \
     CppFiles/SettingsController.h \
-    CppFiles/SearchLocation.h \
     CppFiles/OwmWeatherController.h \
     CppFiles/ThreadWorker.h \
     CppFiles/WeatherType.h \
@@ -49,8 +47,8 @@ HEADERS += \
     CppFiles/WundWeatherController.h \
     CppFiles/MainWindow.h \
     CppFiles/DatabaseHelper.h \
-    CppFiles/Weather.h \
-    CppFiles/Location.h
+    CppFiles/Location.h \
+    CppFiles/LocationController.h
 
 #QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 

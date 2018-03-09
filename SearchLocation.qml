@@ -19,35 +19,33 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
-import QtQuick.Window 2.2
+import QtQuick 2.4
 import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2
 
-import ownTypes.searchLocation 0.4
-
-Item {
-    id: root
-    signal locationSelected()
+Dialog {
+    id: root    
     property string backgroundColor
     property string textColor
+    property string textFontFamily
+    property string locationQuery    
+    property string gpsLocation: "-"
+    property alias searchListModel: searchList.model
+    signal locationSelected(string locationSelected)
+    modality: Qt.ApplicationModal
+    visible: true
 
-    FontLoader {
-        id: ubuntuCondensed
-        source: "fonts/Ubuntu-C.ttf"
-    }
-
-    Rectangle {
+    contentItem: Rectangle {
         id: body
         anchors.fill: parent
-        color: root.backgroundColor
+        color: root.backgroundColor.length > 7 ? ("#" + root.backgroundColor.substring(3)) : root.backgroundColor
 
         TextField {
             id: searchField
-            placeholderText: "Search"
+            placeholderText: qsTr("Search")
             maximumLength: 120
             font.pixelSize: 22
-            font.family: ubuntuCondensed.name
+            font.family: root.textFontFamily
             width: (parent.width * 80 / 100) - loadingIcon.width
             anchors.top: parent.top
             anchors.topMargin: 10
@@ -58,8 +56,11 @@ Item {
                 border.width: 0
                 color: "transparent"
             }
-
-            onTextChanged: locationSearcher.locationName = text
+            onTextChanged: {
+                if (text.trim().length > 0) {
+                    searchTimer.restart()
+                }
+            }
         }
 
         Image {
@@ -103,7 +104,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: (parent.width - searchList.width) / 2
             width: (parent.width * 80 / 100)
-            height: (body.height - searchField.height - 30)
+            height: (body.height - searchField.height - gpsLocation.height - 10)
             cacheBuffer: 0
             displayMarginBeginning: 0
             displayMarginEnd: 0
@@ -124,34 +125,33 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        locationSearcher.setLocation(delegateText.text);
-                    }
+                    onClicked: root.locationSelected(delegateText.text);
                 }
             }
+            onModelChanged: loadingIcon.visible = false
+        }
+        GpsLocationItem {
+            id: gpsLocation
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: searchList.anchors.leftMargin
+            width: searchList.width
+            height: 60
+            textColor: root.textColor
+            textFontFamily: root.textFontFamily
+            text: root.gpsLocation
+            onClicked: root.locationSelected(text);
+            fontSize: 16
         }
     }
-
-    LocationSearchController {
-        id: locationSearcher
-        onLocationResultChanged: {
-            searchList.model = locationSearcher.locationResult
-            loadingIcon.visible = false
+    Timer {
+        id: searchTimer
+        interval: 3000
+        running: false
+        repeat: false
+        onTriggered: {
+            loadingIcon.visible = true
+            root.locationQuery = searchField.text.trim()
         }
-        onErrorChanged: {
-            errorDialog.text = locationSearcher.error
-            errorDialog.visible = true
-            loadingIcon.visible = false
-        }
-        onSearchStarted: loadingIcon.visible = true
-        onLocationChanged: root.locationSelected();
-    }
-
-    MessageDialog {
-        id: errorDialog
-        title: "Error"
-        icon: StandardIcon.Critical
-        visible: false
-        standardButtons: StandardButton.Ok
     }
 }

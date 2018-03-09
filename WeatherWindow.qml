@@ -26,7 +26,7 @@ import ownTypes.weather 1.9
 
 Item {
     id: root
-    property alias loadingEnded: weatherController.loadFinished
+    visible: false
     property alias tempValue: weatherController.temperature
     property string tempUnit
     property string iconsFont
@@ -43,15 +43,13 @@ Item {
     property int logoHeight: Math.round(root.height * 15 / 100)
     property int tempFontSize: root.height >= 380 ? 40 : 25
     signal updateWeather()
+    signal setWeather()
     signal finishedWeatherUpdate()
-    signal startedWeatherUpdate()
     signal noLocationDetected()
-    signal changeSpeedUnit(string unit)
     signal networkError()
-    signal loadLogoImage()
-
+    signal loadLogoImage()    
     onLoadLogoImage: logo.source = util.getLogoImage()
-
+    onSetWeather: weatherController.setWeatherData()
     Text {
         id: locationText
         width: parent.width
@@ -269,20 +267,19 @@ Item {
 
     Weather {
         id: weatherController
-        onNoLocationSet: root.noLocationDetected()
-        onNetworkError: root.networkError()
+        onNetworkError: {
+            root.networkError()
+            setWeatherData()
+        }
         tempUnit: root.tempUnit
         speedUnit: root.speedUnit
         onWeatherDataChanged: {
+            root.visible = true
             root.finishedWeatherUpdate()
             logo.source = util.getLogoImage()
         }
     }
-    onUpdateWeather: {
-        console.log("WeatherWindow >> update started")
-        weatherController.getWeatherData()
-    }
-
+    onUpdateWeather: weatherController.getWeatherData()
     onWidthChanged: {
         if (width < widthBreakPoint) {
             weatherIcon.width = root.width

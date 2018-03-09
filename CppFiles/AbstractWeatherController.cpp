@@ -32,37 +32,63 @@ void AbstractWeatherController::manageError(const QString &error) {
 }
 
 void AbstractWeatherController::getWeather() {
-    SettingsController settings;
-    DatabaseHelper dbHelper;
+    SettingsController settings;    
     dataController = new DataController(this);
     connect(dataController, SIGNAL(networkError(QString)), this, SLOT(manageError(QString)));
-    int locationId = settings.currentLocationId();
-    unique_ptr<Location> locationPtr(dbHelper.getLocation(locationId));
-    if (locationPtr) {
-        if (locationPtr.get()->m_locationCode.trimmed().size() > 0) {
-            searchBycode(locationPtr.get()->m_locationCode);
-        }
-        else {
-            searchByLocation(locationPtr.get()->m_locationName);
+    if (settings.useGps()) {
+        QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(this);
+        connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));
+        connect(posInfoSource, SIGNAL(error(QGeoPositionInfoSource::Error)), this, SLOT(locationPositionError(QGeoPositionInfoSource::Error)));
+        if (posInfoSource)
+            posInfoSource->requestUpdate();
+        else
+            emit networkError("Could not use GPS!");
+    }
+    else {
+        DatabaseHelper dbHelper;
+        location_struct location = dbHelper.getLocation(settings.currentLocationId());
+        if (location.m_locationId > 0) {
+            if (location.m_locationCode.trimmed().size() > 0) {
+                searchBycode(location.m_locationCode);
+            }
+            else {
+                searchByLocation(location.m_locationName);
+            }
         }
     }
 }
 
 bool AbstractWeatherController::saveLocation(const QString &code) {
     SettingsController settings;
+    bool result = true;
+    if (!settings.useGps()) {
+        result = false;
+        DatabaseHelper dbHelper;
+        location_struct location = dbHelper.getLocation(settings.currentLocationId());
+        location.m_locationCode = code;
+        result = dbHelper.updateLocation(location);
+        if (!result)
+            emit saveDataError("Error saving location code!");
+    }
+    return result;
+}
+
+bool AbstractWeatherController::saveLocation(const QString &code, const QString &name) {
+    SettingsController settings;
     DatabaseHelper dbHelper;
     bool result = false;
-    unique_ptr<Location> locationPtr(dbHelper.getLocation(settings.currentLocationId()));
-    locationPtr.get()->m_locationCode = code;
-    result = dbHelper.updateLocation(locationPtr.get());
+    location_struct location = dbHelper.getLocation(settings.currentLocationId());
+    location.m_locationCode = code;
+    location.m_locationName = name;
+    result = dbHelper.updateLocation(location);
     if (!result)
         emit saveDataError("Error saving location code!");
     return result;
 }
 
-bool AbstractWeatherController::saveWeather(const Weather *weather) {
+bool AbstractWeatherController::saveWeather(const weather_struct &weather) {
     DatabaseHelper dbHelper;
-    bool result = dbHelper.deleteWeather(weather->locationId());
+    bool result = dbHelper.deleteWeather(weather.m_locationId);
     if (result) {
         result = dbHelper.insertWeather(weather);
         if (!result)
@@ -71,11 +97,32 @@ bool AbstractWeatherController::saveWeather(const Weather *weather) {
     return result;
 }
 
-void AbstractWeatherController::saveForecast(const QList<Forecast*> &forecastList) {
+void AbstractWeatherController::saveForecast(QList<Forecast*> &forecastList) {
     DatabaseHelper dbHelper;
-    bool result = dbHelper.insertForecast(forecastList);
+    bool result = dbHelper.insertForecast(forecastList);    
+    m_weather.m_forecastListPtr = new QList<Forecast*>(forecastList);
     if (!result)
         emit saveDataError("Error saving forecast!");
     else
-        emit forecastChanged();
+        emit weatherSet(m_weather);
+}
+
+void AbstractWeatherController::locationPositionInfo(const QGeoPositionInfo &posInfo) {
+    double lat = posInfo.coordinate().latitude();
+    double lon = posInfo.coordinate().longitude();
+    searchByGps(lat, lon);
+}
+
+void AbstractWeatherController::locationPositionError(const QGeoPositionInfoSource::Error &positioningError) {
+    switch (positioningError) {
+    case QGeoPositionInfoSource::AccessError:
+        manageError("Location has access error!");
+        break;
+    case QGeoPositionInfoSource::ClosedError:
+        manageError("Location services are off!");
+        break;
+    default:
+        manageError("An unidentified error occurred when requesting loation.");
+        break;
+    }
 }

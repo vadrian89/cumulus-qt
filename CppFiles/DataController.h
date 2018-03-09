@@ -39,7 +39,6 @@ public:
     explicit DataController(QObject *parent = 0);
     void getDataFromUrl(QString urlString);
     QString managerError() const;
-public slots:    
 private slots:
     void readFinished(QNetworkReply *reply);
 signals:

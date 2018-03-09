@@ -44,7 +44,7 @@ Rectangle {
 
     SettingsController {
         id: applicationSettingsController
-        onWeatherApiChanged: weatherViewLoader.item.updateWeather()
+        onWeatherApiChanged: bodyView.item.updateWeather()
     }
 
     ApplicationBar {
@@ -55,113 +55,94 @@ Rectangle {
         textColor: applicationSettingsController.textColor
         iconsFont: weatherIcons.name
         windowControlsPos: applicationSettingsController.windowControlsPos
-        onRefreshButtonClicked: weatherViewLoader.item.updateWeather()
+        onRefreshButtonClicked: bodyView.item.updateWeather()
         onMenuButtonClicked: settingsViewDialog.visible = true
     }
 
-    Flickable {
+    Loader {
         id: bodyView
         anchors.top: applicationBar.bottom
         width: parent.width
         height: parent.height - applicationBar.height
-        contentHeight: parent.height
-        contentWidth: parent.width
-        contentX: 0
-        interactive: false
-        Loader {
-            id: weatherViewLoader
-            width: bodyView.width
-            height: bodyView.height
-            visible: false
-            Binding {
-                target: weatherViewLoader.item
-                property: "textColor"
-                value: applicationSettingsController.textColor
+        visible: false
+        source: ""
+        Binding {
+            target: bodyView.item
+            property: "backgroundColor"
+            value: applicationSettingsController.applicationBackground
+        }
+        Binding {
+            target: bodyView.item
+            property: "textColor"
+            value: applicationSettingsController.textColor
+        }
+        Binding {
+            target: bodyView.item
+            property: "textFontFamily"
+            value: ubuntuCondensed.name
+        }
+        Binding {
+            target: bodyView.item
+            property: "iconsFont"
+            value: weatherIcons.name
+        }
+        Binding {
+            target: bodyView.item
+            property: "speedUnit"
+            value: applicationSettingsController.windSpeedUnit
+        }
+        Binding {
+            target: bodyView.item
+            property: "widthBreakPoint"
+            value: mainWindow.widthBreakPoint
+        }
+        Binding {
+            target: bodyView.item
+            property: "tempUnit"
+            value: applicationSettingsController.tempUnit
+        }
+        Binding {
+            target: bodyView.item
+            property: "pressureUnit"
+            value: applicationSettingsController.pressureUnit
+        }
+        Connections {
+            id: weatherViewCon
+            target: bodyView.item
+            onFinishedWeatherUpdate: {
+                applicationBar.animationAlias.stop()
+                timer.interval = 3600000
             }
-            Binding {
-                target: weatherViewLoader.item
-                property: "textFontFamily"
-                value: ubuntuCondensed.name
-            }
-            Binding {
-                target: weatherViewLoader.item
-                property: "iconsFont"
-                value: weatherIcons.name
-            }
-            Binding {
-                target: weatherViewLoader.item
-                property: "speedUnit"
-                value: applicationSettingsController.windSpeedUnit
-            }
-            Binding {
-                target: weatherViewLoader.item
-                property: "widthBreakPoint"
-                value: mainWindow.widthBreakPoint
-            }
-            Binding {
-                target: weatherViewLoader.item
-                property: "loadingEnded"
-                value: !applicationBar.animationAlias.running
-            }
-            Binding {
-                target: weatherViewLoader.item
-                property: "tempUnit"
-                value: applicationSettingsController.tempUnit
-            }
-            Binding {
-                target: weatherViewLoader.item
-                property: "pressureUnit"
-                value: applicationSettingsController.pressureUnit
-            }
-            Connections {
-                id: weatherViewCon
-                target: weatherViewLoader.item
-                onNoLocationDetected: {
-                    settingsViewDialog.visible = true
-                    settingsView.searchLocationAlias.visible = true
-                    applicationBar.menuButtonAlias.visible = false
-                    applicationBar.refreshButtonAlias.visible = false
+            onUpdateWeather: {
+                if (applicationBar.animationAlias.running == false) {
+                    applicationBar.animationAlias.start()
+                    applicationBar.animationAlias.loops = RotationAnimation.Infinite
                 }
-                onFinishedWeatherUpdate: {
-                    weatherViewLoader.visible = true
-                    applicationBar.menuButtonAlias.visible = true
-                    applicationBar.refreshButtonAlias.visible = true
-                    applicationBar.animationAlias.stop()
-                    timer.interval = 3600000
-                }
-                onUpdateWeather: {
-                    if (applicationBar.animationAlias.running == false) {
-                        applicationBar.animationAlias.start()
-                        applicationBar.animationAlias.loops = RotationAnimation.Infinite
-                    }
-                }
-                onNetworkError: {
-                    timer.interval = 60000
-                }
+            }
+            onNetworkError: {
+                timer.interval = 60000
             }
         }
     }
-    Component.onCompleted: {
-        weatherViewLoader.source = "WeatherWindow.qml"
-        weatherViewLoader.item.updateWeather()
-    }
+
 
 
     TrayController {
         id: trayController
         trayVisibility: applicationSettingsController.trayVisibility
         trayTheme: applicationSettingsController.trayTheme
-        icon: weatherViewLoader.item.tempValue
+        icon: bodyView.item.tempValue
         onCloseApp: Qt.quit()
         onShowGui: applicationWindow.show()
     }
 
     Timer {
+        //TODO; check timer
         id: timer
         interval: 3600000
         running: true
         repeat: true
-        onTriggered: weatherViewLoader.item.updateWeather()
+        onTriggered: bodyView.item.updateWeather()
     }
 
     Dialog {
@@ -178,10 +159,7 @@ Rectangle {
             backgroundColor: applicationSettingsController.applicationBackground
             onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
             textColor: applicationSettingsController.textColor
-            onTextColorChanged: {
-                applicationSettingsController.textColor = textColor
-                weatherViewLoader.item.loadLogoImage()
-            }
+            onTextColorChanged: applicationSettingsController.textColor = textColor
             trayVisible: applicationSettingsController.trayVisibility
             onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
             trayTheme: applicationSettingsController.trayTheme
@@ -197,9 +175,10 @@ Rectangle {
             onSpeedUnitChanged: applicationSettingsController.windSpeedUnit = settingsView.speedUnit
             onLocationChanged: {                
                 settingsViewDialog.visible = false
-                weatherViewLoader.item.updateWeather()
+                bodyView.item.updateWeather()
             }
-
+            useGps: applicationSettingsController.useGps
+            onUseGpsChanged: applicationSettingsController.useGps = useGps
             Keys.onEscapePressed: settingsViewDialog.visible = false
         }
         onVisibilityChanged: {
@@ -226,5 +205,10 @@ Rectangle {
             if (visible == true)
                 creditsView.forceActiveFocus()
         }
+    }
+    Component.onCompleted: {
+        bodyView.source = "MainView.qml"
+        bodyView.visible = true
+        bodyView.item.updateWeather()
     }
 }

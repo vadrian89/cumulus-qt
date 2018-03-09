@@ -24,10 +24,10 @@
 #include "Forecast.h"
 #include "Util.h"
 #include "SettingsController.h"
-#include "SearchLocation.h"
 #include "TrayController.h"
 #include "CustomImageProvider.h"
 #include "FontImageProvider.h"
+#include "Location.h"
 
 #include <QSettings>
 #include <QQmlEngine>
@@ -83,9 +83,9 @@ void MainWindow::saveSettings(){
 
 void MainWindow::registerQmlType() {
     qmlRegisterType<WeatherType>("ownTypes.weather", 1, 9, "Weather");
-    qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
-    qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
+    qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");    
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
+    qmlRegisterType<Location>("ownTypes.LocationController", 0, 1, "LocationController");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

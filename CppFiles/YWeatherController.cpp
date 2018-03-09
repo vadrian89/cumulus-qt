@@ -26,81 +26,66 @@ YWeatherController::YWeatherController(QObject *parent) : AbstractWeatherControl
     locationCode = "";
 }
 
+void YWeatherController::searchByGps(const double &lat, const double &lon) {
+    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
+    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"(" + QString::number(lat) + "," + QString::number(lon) + ")\")&format=json");
+}
+
 void YWeatherController::searchByLocation(QString &location) {
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
-    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select woeid from geo.places(1) where text='" + location + "'&format=json");
+    dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + location + "')&format=json");
 }
 
 void YWeatherController::getLocationFromJson(const QJsonObject &jsonObject) {
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
     QJsonObject resultsObject = nextBranch(jsonObject, "query").find("results").value().toObject();
-    locationCode = nextBranch(resultsObject, "place").find("woeid").value().toString();
-    if (saveLocation(locationCode))
-        searchBycode(locationCode);
+    locationCode = nextBranch(resultsObject, "channel").find("link").value().toString();
+    QRegExp reg("city-[0-9]+/");
+    locationCode.remove(0, locationCode.indexOf(reg)).remove("city-").remove("/");
+    getWeatherFromJson(jsonObject);
 }
 
 void YWeatherController::searchBycode(QString &code) {
     locationCode = code;
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     dataController->getDataFromUrl("https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=" + code +"&format=json");
 }
 
 void YWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
-    Weather *weatherPtr = nullptr;
-    SettingsController settings;
+    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     if (!jsonObject.isEmpty()) {
-        weatherPtr = new Weather;
+        SettingsController settings;
         QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
-        qint32 weatherCode = -1;
-        int temperature = 0;
-        QString location = "Undefined";
-        int windSpeed = 0;
-        int windDegree = 0;
-        qint16 humidity = 0;
         QString windSpeedUnit = "mph";
-        QString link = "www.google.ro";
-        QString description = "";
-        QDateTime sunriseTime;
-        QDateTime sunsetTime;
         QString pressureUnit = "mbar";
-        double pressure = 0.0;
-
         QJsonObject channel = nextBranch(nextBranch(nextBranch(jsonObject, "query"), "results"), "channel");
+        m_weather.m_location = nextBranch(channel, "location").find("city").value().toString().append(", ");
+        m_weather.m_location.append(nextBranch(channel, "location").find("country").value().toString());
         QJsonObject units = nextBranch(channel, "units");
+        windSpeedUnit = units.find("speed").value().toString().toLower();
+        temperatureUnit = units.find("temperature").value().toString().toLower();
         QJsonObject item = nextBranch(channel, "item");
         QJsonObject wind = nextBranch(channel, "wind");
         QJsonObject atmosphere = nextBranch(channel, "atmosphere");
         QJsonObject astronomy = nextBranch(channel, "astronomy");
-
-        weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();
-        temperature = nextBranch(item, "condition").find("temp").value().toString().toInt();
-        description = nextBranch(item, "condition").find("text").value().toString();
-        temperatureUnit = units.find("temperature").value().toString().toLower();
-        location = nextBranch(channel, "location").find("city").value().toString();
-        link = channel.find("link").value().toString().remove(QRegExp("^http.+\\*"));
-        windSpeed = wind.find("speed").value().toString().toInt();
-        windDegree = wind.find("direction").value().toString().toInt();
-        windSpeedUnit = units.find("speed").value().toString().toLower();
-        humidity = atmosphere.find("humidity").value().toString().toInt();
-        sunriseTime = QLocale().toDateTime(astronomy.find("sunrise").value().toString(), "h:m ap");
-        sunsetTime = QLocale().toDateTime(astronomy.find("sunset").value().toString(), "h:m ap");
-        pressure = atmosphere.find("pressure").value().toString().toDouble();
-
-        weatherPtr->setWeatherCode(weatherCode);
-        weatherPtr->setWeatherDescription(description);
-        weatherPtr->setTemperature(Util::calculateTemperature(temperature, temperatureUnit, settings.tempUnit()));
-        weatherPtr->setHumidity(humidity);
-        weatherPtr->setWindSpeed(Util::calculateWindSpeed(windSpeed, windSpeedUnit, settings.windSpeedUnit()));
-        weatherPtr->setWindDegree(windDegree);
-        weatherPtr->setSunrise(sunriseTime.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr->setSunset(sunsetTime.time().toString(Qt::SystemLocaleShortDate));
-        weatherPtr->setPressure(Util::calculatePressure(pressure, pressureUnit));
-        weatherPtr->setLocationLink(link);
-        weatherPtr->setLocationId(settings.currentLocationId());
-    }
-    QJsonObject resultsObject = nextBranch(jsonObject, "query").find("results").value().toObject();
-    if (saveWeather(weatherPtr))
-        getForecastFromJson(nextBranch(nextBranch(resultsObject, "channel"), "item"));
+        m_weather.m_weatherCode = nextBranch(item, "condition").find("code").value().toString().toInt();
+        m_weather.m_temperature = nextBranch(item, "condition").find("temp").value().toString().toInt();
+        m_weather.m_temperature = Util::calculateTemperature(m_weather.m_temperature, temperatureUnit, settings.tempUnit());
+        m_weather.m_weatherDescription = nextBranch(item, "condition").find("text").value().toString();
+        m_weather.m_locationLink = channel.find("link").value().toString().remove(QRegExp("^http.+\\*"));
+        m_weather.m_windSpeed = wind.find("speed").value().toString().toInt();
+        m_weather.m_windSpeed = Util::calculateWindSpeed(m_weather.m_windSpeed, windSpeedUnit, settings.windSpeedUnit());
+        m_weather.m_windDegree = wind.find("direction").value().toString().toInt();
+        m_weather.m_humidity = atmosphere.find("humidity").value().toString().toInt();
+        m_weather.m_sunrise = QLocale().toDateTime(astronomy.find("sunrise").value().toString(), "h:m ap").time().toString(Qt::SystemLocaleShortDate);
+        m_weather.m_sunset = QLocale().toDateTime(astronomy.find("sunset").value().toString(), "h:m ap").time().toString(Qt::SystemLocaleShortDate);
+        m_weather.m_pressure = atmosphere.find("pressure").value().toString().toDouble();
+        m_weather.m_pressure = Util::calculatePressure(m_weather.m_pressure, pressureUnit);
+        m_weather.m_locationId = settings.currentLocationId();
+        QJsonObject resultsObject = nextBranch(jsonObject, "query").find("results").value().toObject();
+        if (saveLocation(locationCode) && saveWeather(m_weather))
+            getForecastFromJson(nextBranch(nextBranch(resultsObject, "channel"), "item"));
+    }    
 }
 
 void YWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
@@ -129,5 +114,9 @@ void YWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
         forecast->setLocationId(settings.currentLocationId());
         forecastList.append(forecast);
     }
-    saveForecast(forecastList);
+    if (!forecastList.isEmpty()) {
+        m_weather.m_tempMax = forecastList.at(1)->tempHigh();
+        m_weather.m_tempMin = forecastList.at(1)->tempLow();
+        saveForecast(forecastList);
+    }
 }

@@ -29,10 +29,11 @@
 #include <QMap>
 #include <memory>
 #include <QRegExp>
+#include <QGeoPositionInfo>
+#include <QGeoPositionInfoSource>
 
 #include "DataController.h"
 #include "Util.h"
-#include "Weather.h"
 #include "DatabaseHelper.h"
 #include "Forecast.h"
 #include "SettingsController.h"
@@ -44,15 +45,21 @@ class AbstractWeatherController : public QObject {
 protected:
     DataController *dataController;
     QString temperatureUnit, apiKey, locationCode;
+    weather_struct m_weather;
 
     QJsonObject nextBranch(const QJsonObject &jsonObject, const QString current) const;
-    bool saveWeather(const Weather *weather);
-    void saveForecast(const QList<Forecast*> &forecastList);
+    bool saveWeather(const weather_struct &weather);
+    void saveForecast(QList<Forecast*> &forecastList);
     bool saveLocation(const QString &code);
+    bool saveLocation(const QString &code, const QString &name);
 public:
     explicit AbstractWeatherController(QObject *parent = 0);
     virtual void searchByLocation(QString &location) = 0;
     virtual void searchBycode(QString &code) = 0;
+    virtual void searchByGps(const double &lat, const double &lon) = 0;
+private slots:
+    void locationPositionInfo(const QGeoPositionInfo &posInfo);
+    void locationPositionError(const QGeoPositionInfoSource::Error &positioningError);
 protected slots:
     virtual void getLocationFromJson(const QJsonObject &jsonObject) = 0;
     virtual void getWeatherFromJson(const QJsonObject &jsonObject) = 0;
@@ -64,6 +71,7 @@ signals:
     void forecastChanged();
     void saveDataError(const QString &error);
     void networkError(const QString &error);
+    void weatherSet(const weather_struct &weather);
 };
 
 #endif // ABSTRACTWEATHERCONTROLLER_H

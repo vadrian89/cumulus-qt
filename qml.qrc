@@ -22,5 +22,11 @@
         <file>fonts/weathericons-regular-webfont.ttf</file>
         <file>main-desktop.qml</file>
         <file>other/weather_codes.json</file>
+        <file>SimpleItem.qml</file>
+        <file>MainView.qml</file>
+        <file>LocationView.qml</file>
+        <file>LocationItemDelegate.qml</file>
+        <file>ClickableItem.qml</file>
+        <file>GpsLocationItem.qml</file>
     </qresource>
 </RCC>

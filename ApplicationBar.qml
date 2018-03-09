@@ -130,6 +130,7 @@ Item {
             width: height
             color: "transparent"
             opacity: 0.8
+            visible: true
             Image {
                 anchors.centerIn: parent
                 height: parent.height
@@ -153,7 +154,6 @@ Item {
                     root.refreshButtonClicked()
                 }
             }
-
             RotationAnimation on rotation {
                 id: refreshRotateAnim
                 direction: RotationAnimation.Clockwise
@@ -171,6 +171,7 @@ Item {
             height: parent.height
             width: height
             iconColor: root.textColor
+            visible: true
             onClicked: root.menuButtonClicked()
         }
     }

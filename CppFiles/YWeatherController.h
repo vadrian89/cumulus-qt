@@ -35,6 +35,7 @@ public:
     explicit YWeatherController(QObject *parent = 0);
     void searchByLocation(QString &location);
     void searchBycode(QString &code);
+    void searchByGps(const double &lat, const double &lon);
 };
 
 #endif // YWEATHERCONTROLLER_H

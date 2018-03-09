@@ -34,8 +34,6 @@
 #include <QTime>
 #include <memory>
 
-#include "Location.h"
-#include "Weather.h"
 #include "Forecast.h"
 #include "SettingsController.h"
 
@@ -47,6 +45,21 @@ struct location_table_definition {
     LOC_ID_COLUMN = "loc_id",
     LOC_CODE_COLUMN = "loc_code",
     LOC_NAME_COLUMN = "loc_name";
+};
+
+struct location_struct {
+    int m_locationId;
+    QString m_locationCode, m_locationName;
+};
+
+struct weather_struct {
+    QString m_weatherIcon, m_weatherDescription, m_location, m_locationLink, m_tempUnit,
+    m_sunrise, m_sunset, m_speedUnit;
+    float m_pressure;
+    int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity, m_locationId,
+    m_tempMin, m_tempMax;
+    QList<QObject*> m_forecastList;
+    QList<Forecast*> *m_forecastListPtr;
 };
 
 struct weather_table_definition {
@@ -98,14 +111,16 @@ public:
     static struct weather_table_definition DB_TR_WEATHER;
     static struct forecast_table_definition DB_TR_FORECAST;
     explicit DatabaseHelper(QObject *parent = nullptr);
-    bool clearLocationCode(const int &locationId);            
-    Location* getLocation(const int &locationId);
-    bool insertLocation(const Location *locationPtr);
-    bool updateLocation(const Location *locationPtr);
+    bool clearLocationCode();
+    location_struct getLocation(const int &locationId);
+    location_struct findLocation(const QString &locationName);
+    QList<location_struct> getLocationList();
+    bool insertLocation(const location_struct &location);
+    bool updateLocation(const location_struct &location);
     bool deleteLocation(const int &locationId);
-    Weather* getWeather(const int &locationId);
-    bool insertWeather(const Weather *weatherPtr);
-    bool updateWeather(const Weather *weatherPtr);
+    int lastLocationId();
+    weather_struct getWeather(const int &locationId);
+    bool insertWeather(const weather_struct &weatherPtr);
     bool deleteWeather(const int &locationId);
     QList<QObject*> getForecast(const int &locationId);
     bool insertForecast(const QList<Forecast*> &forecastList);

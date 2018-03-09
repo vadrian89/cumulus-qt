@@ -28,7 +28,6 @@ import QtQuick.Dialogs 1.2
 Item {
     id: root
     visible: false
-    property alias searchLocationAlias: searchLocation
     property alias settingsFlickAlias: settingsFlick
     property bool trayVisible: root.trayVisible ? root.trayVisible : false
     property alias trayTheme: trayColorSwitch.state
@@ -44,6 +43,7 @@ Item {
     property string iconsFont: "Arial"
     property int switchHeight: 25
     property int switchWidth: 70
+    property bool useGps: false
     signal locationChanged()
     signal showCredits()
 
@@ -64,61 +64,11 @@ Item {
                 height: settingsFlick.height
                 color: "transparent"
 
-                //Search for location
-                SettingsOptionItem {
-                    id: locationSearchItem
-                    optionText: "Location"
-                    backgroundColor: "#ffffff"
-                    anchors.top: settingsBody.top
-                    height: root.settingsItemHeight
-                    width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "map.png"
-                    onClicked: {
-                        if (searchLocation.visible == true)
-                            searchLocation.visible = false
-                        else
-                            searchLocation.visible = true
-                        searchLocation.focus = true
-                    }
-                }
-
-                SearchLocation {
-                    id: searchLocation
-                    anchors.top: locationSearchItem.bottom
-                    height: settingsBody.height - locationSearchItem.height
-                    width: settingsBody.width
-                    visible: false
-                    backgroundColor: root.backgroundColor
-                    textColor: root.textColor
-
-                    Keys.onEscapePressed: {
-                        searchLocation.visible = false
-                    }
-                    Keys.onBackPressed: {
-                        searchLocation.visible = false
-                    }
-                    onVisibleChanged: {
-                        if(searchLocation.visible == false) {
-                            root.focus = true
-                            tempUnitItem.anchors.top = locationSearchItem.bottom
-                            locationSearchItem.bottomBorderVisibility = true
-                        }
-                        else {
-                            tempUnitItem.anchors.top = searchLocation.bottom
-                            locationSearchItem.bottomBorderVisibility = false
-                        }
-                    }
-                    onLocationSelected: {
-                        root.locationChanged()
-                        searchLocation.visible = false
-                    }
-                }
-
                 SettingsOptionItem {
                     id: tempUnitItem
                     optionText: "Temperature Unit"
                     backgroundColor: "#ffffff"
-                    anchors.top: locationSearchItem.bottom
+                    anchors.top: settingsBody.top
                     height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: util.iconPathPrefix() + "temperature_icon.png"
@@ -390,10 +340,25 @@ Item {
                 }
 
                 CustomSwitch {
-                    id: traySwitch
+                    id: gpsSwitch
                     width: settingsBody.width
                     height: 50
                     anchors.top: creditsItem.bottom
+                    anchors.left: parent.left
+                    labelColor: root.textColor
+                    switchRailWidth: root.switchWidth
+                    switchRailHeight: root.switchHeight
+                    switchLabel: qsTr("Use GPS")
+                    state: root.useGps == true ? "right" : "left"
+                    visible: true
+                    onCheckedChanged: root.useGps = checked
+                }
+
+                CustomSwitch {
+                    id: traySwitch
+                    width: settingsBody.width
+                    height: 50
+                    anchors.top: gpsSwitch.bottom
                     anchors.left: parent.left
                     labelColor: root.textColor
                     switchRailWidth: root.switchWidth

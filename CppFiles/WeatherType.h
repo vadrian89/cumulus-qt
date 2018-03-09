@@ -38,7 +38,6 @@ class WeatherType : public QObject {
     float m_pressure;
     int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity;
     int m_tempMin, m_tempMax;
-    bool m_loadFinished;
     QList<QObject*> m_forecastList;
     QThread *thread;
 
@@ -58,7 +57,6 @@ class WeatherType : public QObject {
     Q_PROPERTY(QString sunset READ sunset WRITE setSunset NOTIFY sunsetChanged)
     Q_PROPERTY(int tempMax READ tempMax WRITE setTempMax NOTIFY tempMaxChanged)
     Q_PROPERTY(int tempMin READ tempMin WRITE setTempMin NOTIFY tempMinChanged)
-    Q_PROPERTY(bool loadFinished READ loadFinished WRITE setLoadFinished NOTIFY loadFinishedChanged)
     Q_PROPERTY(QList<QObject*> forecastList READ forecastList WRITE setForecastList NOTIFY forecastListChanged)
     Q_PROPERTY(QString speedUnit READ speedUnit WRITE setSpeedUnit NOTIFY speedUnitChanged)
 
@@ -99,8 +97,6 @@ public:
     int tempMax() const;
     void setTempMin(const int &tempMin);
     int tempMin() const;
-    bool loadFinished() const;
-    void setLoadFinished(const bool &loadFinished);
     QList<QObject*> forecastList() const;
     void setForecastList(const QList<QObject*> &list);
     QString speedUnit() const;
@@ -108,6 +104,7 @@ public:
 public slots:
     void getWeatherData();
     void setWeatherData();        
+    void setWeatherData(const weather_struct &weather);
 signals:
     void weatherChanged();
     void weatherCodeChanged();
@@ -126,9 +123,7 @@ signals:
     void sunsetChanged();
     void tempMinChanged();
     void tempMaxChanged();
-    void noLocationSet();
     void dataDownloadFinished();
-    void loadFinishedChanged();
     void forecastListChanged();
     void speedUnitChanged();
     void networkError(const QString &error);
