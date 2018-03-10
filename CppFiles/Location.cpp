@@ -146,8 +146,9 @@ void Location::getGpsLocation() {
         posInfoSource->moveToThread(thread);
         connect(thread, SIGNAL(started()), posInfoSource, SLOT(startUpdates()));
         connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));
-        connect(this, SIGNAL(gpsLocationChanged()), thread, SLOT(quit()));
+        connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), thread, SLOT(quit()));
         connect(posInfoSource, SIGNAL(error(QGeoPositionInfoSource::Error)), thread, SLOT(quit()));
+        connect(thread, SIGNAL(finished()), posInfoSource, SLOT(stopUpdates()));
         connect(thread, SIGNAL(finished()), posInfoSource, SLOT(deleteLater()));
         connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
         thread->start();

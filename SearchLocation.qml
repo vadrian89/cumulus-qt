@@ -20,8 +20,8 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.4
-import QtQuick.Controls 2.1
-import QtQuick.Dialogs 1.2
+import QtQuick.Controls 2.2
+//import QtQuick.Dialogs 1.2
 
 Dialog {
     id: root    
@@ -32,7 +32,7 @@ Dialog {
     property string gpsLocation: "-"
     property alias searchListModel: searchList.model
     signal locationSelected(string locationSelected)
-    modality: Qt.ApplicationModal
+//    modality: Qt.ApplicationModal
     visible: true
 
     contentItem: Rectangle {

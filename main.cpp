@@ -36,6 +36,7 @@
 #include "CppFiles/ThreadWorker.h"
 #include "CppFiles/CustomImageProvider.h"
 #include "CppFiles/FontImageProvider.h"
+#include "CppFiles/Location.h"
 void registerQmlType();
 #else
 #include <QFile>
@@ -88,5 +89,6 @@ void registerQmlType() {
     qmlRegisterType<WeatherType>("ownTypes.weather", 1, 9, "Weather");
     qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
+    qmlRegisterType<Location>("ownTypes.LocationController", 0, 1, "LocationController");
 }
 #endif

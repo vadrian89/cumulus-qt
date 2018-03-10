@@ -128,6 +128,7 @@ Rectangle {
 
 
     TrayController {
+        //TODO; fix tray controller
         id: trayController
         trayVisibility: applicationSettingsController.trayVisibility
         trayTheme: applicationSettingsController.trayTheme

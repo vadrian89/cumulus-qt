@@ -87,28 +87,18 @@ ApplicationWindow {
             contentHeight: height
             interactive: false
             contentX: 0
-            WeatherWindow {
+            MainView {
                 id: weatherView
                 width: bodyView.width
                 height: bodyView.height
+                backgroundColor: applicationSettingsController.applicationBackground
                 textColor: applicationSettingsController.textColor
                 textFontFamily: ubuntuCondensed.name
                 iconsFont: weatherIcons.name
                 speedUnit: applicationSettingsController.windSpeedUnit
                 tempUnit: applicationSettingsController.tempUnit
                 pressureUnit: applicationSettingsController.pressureUnit
-                visible: false
-                onNoLocationDetected: {
-                    appView.push(settingsView)
-                    creditsView.forceActiveFocus()
-                    settingsView.searchLocationAlias.visible = true
-                    applicationBar.menuButtonAlias.visible = false
-                    applicationBar.refreshButtonAlias.visible = false
-                }
                 onFinishedWeatherUpdate: {
-                    visible = true
-                    applicationBar.menuButtonAlias.visible = true
-                    applicationBar.refreshButtonAlias.visible = true
                     applicationBar.animationAlias.stop()
                     timer.interval = 3600000
                 }
@@ -118,31 +108,36 @@ ApplicationWindow {
                         applicationBar.animationAlias.loops = RotationAnimation.Infinite
                     }
                 }
-            }
-            Component.onCompleted: weatherView.updateWeather()
+                onNetworkError: {
+                    timer.interval = 60000
+                }
+            }            
         }
 
         SettingsWindow {
-            id: settingsView
+            id: settingsView            
+            backgroundColor: applicationSettingsController.applicationBackground
+            onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
+            textColor: applicationSettingsController.textColor
+            onTextColorChanged: applicationSettingsController.textColor = textColor
+            onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls
+            onShowCredits: {
+                appView.push(creditsView)
+                creditsView.forceActiveFocus()
+            }
+            api: applicationSettingsController.weatherApi
+            onApiChanged: applicationSettingsController.weatherApi = api
+            temperatureUnit: applicationSettingsController.tempUnit
+            onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
+            speedUnit: applicationSettingsController.windSpeedUnit
+            onSpeedUnitChanged: applicationSettingsController.windSpeedUnit = settingsView.speedUnit
             onLocationChanged: {
                 weatherView.updateWeather()
                 appView.pop()
                 bodyView.forceActiveFocus()
             }
-            textColor: applicationSettingsController.textColor
-            onTextColorChanged: applicationSettingsController.textColor = textColor
-            backgroundColor: applicationSettingsController.applicationBackground
-            onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
-            temperatureUnit: applicationSettingsController.tempUnit
-            onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
-            speedUnit: applicationSettingsController.windSpeedUnit
-            onSpeedUnitChanged: applicationSettingsController.windSpeedUnit = settingsView.speedUnit
-            api: applicationSettingsController.weatherApi
-            onApiChanged: applicationSettingsController.weatherApi = api
-            onShowCredits: {
-                appView.push(creditsView)
-                creditsView.forceActiveFocus()
-            }
+            useGps: applicationSettingsController.useGps
+            onUseGpsChanged: applicationSettingsController.useGps = useGps
             Keys.onBackPressed: {
                 appView.pop()
                 bodyView.forceActiveFocus()
@@ -167,4 +162,5 @@ ApplicationWindow {
         repeat: true
         onTriggered: weatherView.updateWeather()
     }
+    Component.onCompleted: weatherView.updateWeather()
 }

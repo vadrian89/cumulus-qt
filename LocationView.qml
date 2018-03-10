@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.2
 
 import ownTypes.LocationController 0.1
+
 SimpleItem {
     id: root
     property string textColor: "#ffffff"
@@ -42,8 +43,8 @@ SimpleItem {
 
     ClickableItem {
         id: addLocationButton
-        width: 40
-        height: 40
+        width: 50
+        height: width
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.bottom: parent.bottom
@@ -54,9 +55,9 @@ SimpleItem {
         unhoveredBackgroundOpacity: 1.0
         borderColor: root.textColor
         borderWidth: 1
-        radius: 25
+        radius: (width / 2)
         Image {
-            anchors.centerIn: parent
+            anchors.fill: parent
             sourceSize.height: height
             sourceSize.width: width
             source: "image://fontimage/\uf067" + (root.textColor ? root.textColor : "#ffffff")
@@ -90,13 +91,13 @@ SimpleItem {
             value: root.textFontFamily
         }
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "width"
             value: (root.width < 300) ? 300 : root.width
         }
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "height"
             value: (root.height < 400) ? 400 : root.height
@@ -122,7 +123,7 @@ SimpleItem {
             id: locationSearchCon
             target: locationSearchLoader.item
             onLocationQueryChanged: locationController.searchLocation(locationSearchLoader.item.locationQuery)
-            onVisibilityChanged: locationSearchLoader.visible = locationSearchLoader.item.visible
+            onVisibleChanged: locationSearchLoader.visible = locationSearchLoader.item.visible
             onLocationSelected: {
                 locationController.insertLocation(locationSelected)
                 locationSearchLoader.visible = false                
