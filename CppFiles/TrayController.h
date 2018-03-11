@@ -52,6 +52,8 @@ class TrayController : public QObject {
     QThread *thread;
     ThreadWorker *worker;
     QAction *currentWeatherAction;
+    QImage createTrayIcon(const QString &weather, const QString &theme);
+    bool isTrayAvailable();
 public:
     explicit TrayController(QObject *parent = 0);
     QString icon() const;
@@ -65,7 +67,6 @@ public:
 private slots:
     void emitCloseApp();
     void emitShowGui();
-    void setTrayIcon(const QImage &image);
 signals:
     void iconChanged();
     void trayVisibilityChanged();

@@ -36,7 +36,6 @@ class ThreadWorker : public QObject {
     Q_OBJECT
 public:
     explicit ThreadWorker(QObject *parent = 0);
-    void createTrayIcon(const QString &weather, const QString &theme);
 public slots:
     void updaterTimerStart();
 private slots:
@@ -44,7 +43,6 @@ private slots:
 signals:
     void startUpdateTimerSignal();
     void updateSearchFinished();
-    void finishedCreatingPixmap(QImage image);
     void stopThread();
 };
 

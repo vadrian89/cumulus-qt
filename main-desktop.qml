@@ -47,6 +47,15 @@ Rectangle {
         onWeatherApiChanged: bodyView.item.updateWeather()
     }
 
+    TrayController {
+        id: trayController
+        trayVisibility: applicationSettingsController.trayVisibility
+        trayTheme: applicationSettingsController.trayTheme
+        icon: bodyView.item.tempValue
+        onCloseApp: Qt.quit()
+        onShowGui: applicationWindow.show()
+    }
+
     ApplicationBar {
         id: applicationBar
         anchors.top: parent.top
@@ -123,16 +132,6 @@ Rectangle {
             onNetworkError: timer.interval = 60000
             onLocationNameChanged: applicationBar.locationName = name
         }
-    }
-
-    TrayController {
-        //TODO; fix tray controller
-        id: trayController
-        trayVisibility: applicationSettingsController.trayVisibility
-        trayTheme: applicationSettingsController.trayTheme
-        icon: bodyView.item.tempValue
-        onCloseApp: Qt.quit()
-        onShowGui: applicationWindow.show()
     }
 
     Timer {
