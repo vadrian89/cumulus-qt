@@ -266,3 +266,8 @@ QString Util::findFontCode(const QString &branch,const QString &code) {
     QString result = jsonObject.find(branch).value().toObject().find(code).value().toString();
     return result;
 }
+
+QString Util::forecastDate(const QString &string) {
+    QDate date = QDate::fromString(string, "dd/MMM/yyyy");
+    return firstLetterUp(date.toString("dddd"));
+}

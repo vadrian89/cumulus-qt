@@ -57,7 +57,9 @@ SimpleItem {
         borderWidth: 1
         radius: (width / 2)
         Image {
-            anchors.fill: parent
+            anchors.centerIn: parent
+            height: (parent.height * 70 / 100)
+            width: height
             sourceSize.height: height
             sourceSize.width: width
             source: "image://fontimage/\uf067" + (root.textColor ? root.textColor : "#ffffff")

@@ -28,7 +28,7 @@ Forecast::Forecast(QObject *parent) : QObject(parent){
     m_weatherCode = -1;
 	m_tempHigh = 0;
 	m_tempLow  = 0;
-    m_forecastDate = QDate::currentDate().toString("ddd");
+    m_forecastDate = QDate::currentDate().toString(Qt::SystemLocaleLongDate);
 }
 
 void Forecast::setForecastIndex(const int &forecastIndex) {
@@ -64,8 +64,8 @@ void Forecast::setTempLow(const int &tempLow) {
 }
 
 void Forecast::setForecastDate(const QString &forecastDate) {
-	if ( m_forecastDate != forecastDate ) {
-		m_forecastDate = forecastDate;
+    if ( m_forecastDate != forecastDate ) {
+        m_forecastDate = forecastDate;
 		emit forecastDateChanged();
 	}
 }

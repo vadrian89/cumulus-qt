@@ -32,6 +32,7 @@ using namespace std;
 WeatherType::WeatherType(QObject *parent) : QObject(parent){}
 
 void WeatherType::getWeatherData(){
+    //TODO; add last update condition correctly
     SettingsController settings;
     DatabaseHelper dbHelper;
     if ((settings.currentLocationId() > 0 && dbHelper.lastLocationId() > 0) || settings.useGps()) {
@@ -78,8 +79,7 @@ void WeatherType::setWeatherData(const weather_struct &weather) {
         forec->setTempLow(forecast->tempLow());
         forec->setTempHigh(forecast->tempHigh());
         forec->setForecastDesc(forecast->forecastDesc());
-        QDate date = QDate::fromString(forecast->forecastDate(), "dd/MMM/yyyy");
-        forec->setForecastDate(date.toString("ddd").toUpper().remove("."));
+        forec->setForecastDate(forecast->forecastDate());
         forec->setLocationId(forecast->locationId());
         m_forecastList.append(forec);
     }

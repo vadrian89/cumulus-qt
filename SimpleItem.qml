@@ -3,7 +3,6 @@ import QtQuick 2.0
 Item {
     id: root
     property string backgroundColor: "#ffffff"
-    property bool semiTransparentBackground: false
     property double backgroundOpacity: 1.0
     property int radius: 0
     property int borderWidth: 0

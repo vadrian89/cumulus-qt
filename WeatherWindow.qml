@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
+import QtQuick 2.0
 import QtQuick.Layouts 1.3
 
 import ownTypes.weather 1.9
@@ -29,19 +29,19 @@ Item {
     visible: false
     property alias tempValue: weatherController.temperature
     property string tempUnit
-    property string iconsFont
+    property string iconsFont: ""
     property string textFontFamily
     property string textColor    
     property string speedUnit
     property string pressureUnit
+    property alias locationName: weatherController.location
     property int widthBreakPoint: 170
-    property int locationHeight: Math.round(root.height * 10 / 100)
-    property int weatherInfoHeight: Math.round(root.height * 50 / 100)
-    property int weatherIconHeight: Math.round(root.height * 35 / 100)
-    property int weatherTempHeight: Math.round(root.height * 15 / 100)
-    property int forecastHeight: Math.round(root.height * 25 / 100)
-    property int logoHeight: Math.round(root.height * 15 / 100)
-    property int tempFontSize: root.height >= 380 ? 40 : 25
+    property int descriptionHeight: 30
+    property int weatherInfoHeight: 180
+    property int weatherIconHeight: 130
+    property int weatherTempHeight: 50
+    property int forecastHeight: Math.round(root.height - descriptionHeight - weatherIconHeight - weatherTempHeight - logo.height - logo.anchors.bottomMargin - 5)
+    property int tempFontSize: 25
     signal updateWeather()
     signal setWeather()
     signal finishedWeatherUpdate()
@@ -51,15 +51,15 @@ Item {
     onLoadLogoImage: logo.source = util.getLogoImage()
     onSetWeather: weatherController.setWeatherData()
     Text {
-        id: locationText
+        id: descriptionText
         width: parent.width
-        height: locationHeight
+        height: descriptionHeight
         color: root.textColor
         anchors.top: parent.top
         anchors.left: parent.left
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        text: weatherController.location + ": " + weatherController.weatherDescription
+        text: weatherController.weatherDescription
         font.family: textFontFamily
         font.pixelSize: 20
         wrapMode: Text.WordWrap
@@ -75,19 +75,19 @@ Item {
         id: weatherIcon
         width: parent.width * 50 / 100
         height: weatherIconHeight
-        anchors.top: locationText.visible == true ? locationText.bottom : root.top
+        anchors.top: descriptionText.visible == true ? descriptionText.bottom : root.top
         anchors.left: parent.left
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.family: iconsFont
-        font.pixelSize: root.height >= 170 ? 80 : 60
+        font.pixelSize: (height * 0.6)
         color: root.textColor
         text: weatherController.weatherIcon
     }
 
     Rectangle {
         id: weatherInfo
-        anchors.top: locationText.visible == true ? locationText.bottom : root.top
+        anchors.top: descriptionText.visible == true ? descriptionText.bottom : root.top
         anchors.left: weatherIcon.right
         width: parent.width - weatherIcon.width
         height: weatherInfoHeight
@@ -201,7 +201,6 @@ Item {
             infoText: weatherController.tempMin + util.tempUnitSymbol(root.tempUnit)
         }
     }
-
     Text {
         id: weatherTemperatureIcon
         width: weatherIcon.width * 35 / 100
@@ -211,12 +210,11 @@ Item {
         anchors.left: parent.left
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.pixelSize: tempFontSize
+        font.pixelSize: (height * 0.6)
         font.family: iconsFont
         font.bold: true
         text: "\uf055"
     }
-
     Text {
         id: weatherTemperature
         width: (weatherIcon.width * 65 / 100) - 10
@@ -232,7 +230,6 @@ Item {
         font.bold: true
         text: weatherController.temperature + util.tempUnitSymbol(root.tempUnit)
     }
-
     ForecastView {
         id: forecastView
         width: root.width - 20
@@ -241,30 +238,22 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 10
         fontColor: root.textColor
-        fontFamily: textFontFamily
+        fontFamily: root.textFontFamily
+        iconsFontFamily: root.iconsFont
         viewModel: weatherController.forecastList
-        widthBreakPoint: root.widthBreakPoint
     }
-
-    ColumnLayout {
-        id: logoLayout
-        anchors.top: forecastView.visible == true ? forecastView.bottom : weatherTemperatureIcon.bottom
+    Image {
+        id: logo
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
         anchors.left: parent.left
-        height: logoHeight
-        width: parent.width
-        Image {
-            id: logo
-            Layout.fillHeight: true
-            Layout.fillWidth: false
-            Layout.preferredWidth: root.width > root.widthBreakPoint ? logoLayout.width * 60 / 100 : logoLayout.width
-            Layout.alignment: Qt.AlignCenter
-            fillMode: Image.PreserveAspectFit
-            horizontalAlignment: Image.AlignHCenter
-            verticalAlignment: Image.AlignVCenter
-            source: util.getLogoImage()
-        }
+        anchors.leftMargin: ((parent.width / 2) - (logo.width / 2))
+        width: 170
+        fillMode: Image.PreserveAspectFit
+        horizontalAlignment: Image.AlignHCenter
+        verticalAlignment: Image.AlignVCenter
+        source: util.getLogoImage()
     }
-
     Weather {
         id: weatherController
         onNetworkError: {
@@ -292,34 +281,24 @@ Item {
     }
     onHeightChanged: {
         if (height < 150) {
-            locationText.visible = false
-            logoLayout.visible = false
+            descriptionText.visible = false
+            logo.visible = false
             forecastView.visible = false
-            weatherIconHeight = Math.round(root.height * 80 / 100)
-            weatherInfoHeight = root.height
         }
         else if (height >= 150 && height < 170) {
-            locationText.visible = true
-            logoLayout.visible = false
+            descriptionText.visible = true
+            logo.visible = false
             forecastView.visible = false
-            weatherIconHeight = Math.round(root.height * 70 / 100)
-            weatherInfoHeight = Math.round(root.height * 90 / 100)
         }
         else if (height >= 170 && height < 300) {
-            locationText.visible = true
-            logoLayout.visible = true
+            descriptionText.visible = true
+            logo.visible = true
             forecastView.visible = false
-            weatherIconHeight = Math.round(root.height * 50 / 100)
-            weatherInfoHeight = Math.round(root.height * 65 / 100)
-            logoHeight = Math.round(root.height * 25 / 100)
         }
         else {
-            locationText.visible = true
-            logoLayout.visible = true
+            descriptionText.visible = true
+            logo.visible = true
             forecastView.visible = true
-            weatherIconHeight = Math.round(root.height * 35 / 100)
-            weatherInfoHeight = Math.round(root.height * 50 / 100)
-            logoHeight = Math.round(root.height * 15 / 100)
         }
     }
 }

@@ -3,9 +3,9 @@ import QtQuick 2.0
 Item {
     id: root
     property alias tempValue: weatherView.tempValue
-    property int contentWidth: (locationView.width + weatherView.width)
-    property int viewWidth: (root.width < 600) ? root.width : 300
-    property int startPoint: (root.width < 600) ? root.width : 0
+    property int contentWidth: ((root.width < 600) ? (root.width * 2) : root.width)
+    property int viewWidth: ((root.width < 600) ? root.width : (root.width / 2))
+    property int startPoint: ((root.width < 600) ? root.viewWidth : 0)
     property string textColor
     property string textFontFamily
     property string iconsFont
@@ -14,6 +14,7 @@ Item {
     property string pressureUnit
     property int widthBreakPoint
     property string backgroundColor
+    signal locationNameChanged(string name)
     signal finishedWeatherUpdate()
     signal updateWeather()
     signal networkError()
@@ -58,6 +59,7 @@ Item {
             pressureUnit: root.pressureUnit
             onFinishedWeatherUpdate: root.finishedWeatherUpdate()
             onNetworkError: root.networkError()
+            onLocationNameChanged: root.locationNameChanged(locationName)
         }
         onMovementEnded: {
             if (contentX > (root.viewWidth / 2))
@@ -67,8 +69,13 @@ Item {
         }
     }
     onWidthChanged: {
-        if (flickable.contentX != 0) {
+        if (flickable.contentX != 0)
             flickable.contentX = root.viewWidth
-        }
+    }
+    onRotationChanged: {
+        if (contentX > (root.viewWidth / 2))
+            flickable.contentX = root.startPoint
+        else
+            flickable.contentX = 0
     }
 }

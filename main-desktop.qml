@@ -54,6 +54,7 @@ Rectangle {
         height: 30
         textColor: applicationSettingsController.textColor
         iconsFont: weatherIcons.name
+        textFontFamily: ubuntuCondensed.name
         windowControlsPos: applicationSettingsController.windowControlsPos
         onRefreshButtonClicked: bodyView.item.updateWeather()
         onMenuButtonClicked: settingsViewDialog.visible = true
@@ -119,13 +120,10 @@ Rectangle {
                     applicationBar.animationAlias.loops = RotationAnimation.Infinite
                 }
             }
-            onNetworkError: {
-                timer.interval = 60000
-            }
+            onNetworkError: timer.interval = 60000
+            onLocationNameChanged: applicationBar.locationName = name
         }
     }
-
-
 
     TrayController {
         //TODO; fix tray controller
@@ -138,7 +136,6 @@ Rectangle {
     }
 
     Timer {
-        //TODO; check timer
         id: timer
         interval: 3600000
         running: true

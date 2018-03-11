@@ -19,49 +19,24 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
-import QtQuick.Layouts 1.3
+import QtQuick 2.0
 
-Item {
+ClickableItem {
     id: root
-    visible: true
-    signal clicked()
-    opacity: 0.6
-    property string iconColor: "#ffffff"
-
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-
-        Image {
-            anchors.centerIn: parent
-            height: parent.height
-            width: parent.width
-            source: "image://fontimage/\uf085" + (root.iconColor ? root.iconColor : "#ffffff")
-            sourceSize.width: width
-            sourceSize.height: height
-        }
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            acceptedButtons: Qt.LeftButton
-            onPressed: {
-                root.opacity = 1.0
-            }
-            onReleased: {
-                root.opacity = 0.8
-            }
-            onClicked: {
-                root.clicked()
-            }
-            onHoveredChanged: {
-                if (containsMouse == true) {
-                    root.opacity = 1.0
-                }
-                else {
-                    root.opacity = 0.8
-                }
-            }
-        }
+    backgroundOpacity: 0
+    property double hoveredIconOpacity: 1.0
+    property double unhoveredIconOpacity: 0.8
+    property string imageSource: ""
+    Image {
+        id: buttonIcon
+        opacity: 0.8
+        anchors.centerIn: parent
+        height: parent.height
+        width: parent.width
+        source: root.imageSource
+        sourceSize.width: width
+        sourceSize.height: height
     }
+    onEntered: buttonIcon.opacity = hoveredIconOpacity
+    onExited: buttonIcon.opacity = unhoveredIconOpacity
 }

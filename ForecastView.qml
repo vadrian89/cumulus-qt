@@ -23,36 +23,44 @@ import QtQuick 2.7
 
 Item {
     id: root
-    property string fontFamily
-    property string fontColor
-    property int fontSize
+    property string fontFamily: "Arial"
+    property string fontColor: "#ffffff"
+    property string iconsFontFamily: ""
+    property int fontSize: 20
     property alias viewModel: forecastList.model
-    property int widthBreakPoint: 170
-    property int delegateWidth: root.width >= widthBreakPoint ? root.width / 5 : root.width / 2
-
-    FontLoader {
-        id: weatherIconsFont
-        source: "fonts/weathericons-regular-webfont.ttf"
-    }
 
     ListView {
         id: forecastList
         anchors.fill: parent
-        orientation: ListView.Horizontal
+        orientation: ListView.Vertical
         clip: true
-        spacing: 0
+        spacing: 2
         snapMode: ListView.SnapToItem
-        delegate: ForecastDelegate {
-            height: forecastList.height
-            width: delegateWidth
-            stringFont: fontFamily
-            iconFont: weatherIconsFont.name
+        delegate: ForecastItemDelegate {
+            width: forecastList.width
+            height: 60
+            stringFont: root.fontFamily
+            iconFont: root.iconsFontFamily
             fontColor: root.fontColor
             forecastDay: model.modelData.forecastDate
             forecastIcon: model.modelData.weatherIcon
-            forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
+            forecastTempHigh: model.modelData.tempHigh + "°"
+            forecastTempLow: model.modelData.tempLow + "°"
             forecastDesc: model.modelData.forecastDesc
+            radius: 2
         }
+
+//        delegate: ForecastDelegate {
+//            height: forecastList.height
+//            width: delegateWidth
+//            stringFont: fontFamily
+//            iconFont: weatherIconsFont.name
+//            fontColor: root.fontColor
+//            forecastDay: model.modelData.forecastDate
+//            forecastIcon: model.modelData.weatherIcon
+//            forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
+//            forecastDesc: model.modelData.forecastDesc
+//        }
         onModelChanged: positionViewAtBeginning()
         onWidthChanged: positionViewAtBeginning()
         onHeightChanged: positionViewAtBeginning()

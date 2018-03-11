@@ -5,7 +5,6 @@
         <file>CreditsListDelegate.qml</file>
         <file>CreditsView.qml</file>
         <file>CustomSwitch.qml</file>
-        <file>ForecastDelegate.qml</file>
         <file>ForecastView.qml</file>
         <file>LinkedText.qml</file>
         <file>main-android.qml</file>
@@ -28,5 +27,6 @@
         <file>LocationItemDelegate.qml</file>
         <file>ClickableItem.qml</file>
         <file>GpsLocationItem.qml</file>
+        <file>ForecastItemDelegate.qml</file>
     </qresource>
 </RCC>
