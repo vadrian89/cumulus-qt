@@ -59,6 +59,7 @@ ApplicationWindow {
             height: parent.height * 10 / 100
             textColor: applicationSettingsController.textColor
             iconsFont: weatherIcons.name
+            textFontFamily: ubuntuCondensed.name
             onRefreshButtonClicked: weatherView.updateWeather()
             windowControlsPos: applicationSettingsController.windowControlsPos
             onMenuButtonClicked: {
@@ -108,9 +109,8 @@ ApplicationWindow {
                         applicationBar.animationAlias.loops = RotationAnimation.Infinite
                     }
                 }
-                onNetworkError: {
-                    timer.interval = 60000
-                }
+                onNetworkError: timer.interval = 60000
+                onLocationNameChanged: applicationBar.locationName = name
             }            
         }
 

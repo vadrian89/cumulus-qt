@@ -48,7 +48,6 @@ class TrayController : public QObject {
     void initialiseTray();
     void disableTray();
     void enableTray();
-    void setTrayIcon();
     QThread *thread;
     ThreadWorker *worker;
     QAction *currentWeatherAction;
@@ -67,6 +66,7 @@ public:
 private slots:
     void emitCloseApp();
     void emitShowGui();
+    void setTrayIcon();
 signals:
     void iconChanged();
     void trayVisibilityChanged();

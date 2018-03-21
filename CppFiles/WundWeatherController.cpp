@@ -22,8 +22,8 @@
 #include "WundWeatherController.h"
 
 WundWeatherController::WundWeatherController(QObject *parent) : AbstractWeatherController(parent) {
-    QString testApiKey = SettingsController::testApiKey();
-    apiKey = testApiKey.trimmed().size() > 0 ? testApiKey : "30be6723cf95f92c";
+    SettingsController settings;
+    apiKey = settings.apiKey();
     temperatureUnit = "c";
     locationCode = "";
 }

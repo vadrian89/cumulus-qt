@@ -51,7 +51,6 @@ Rectangle {
         id: trayController
         trayVisibility: applicationSettingsController.trayVisibility
         trayTheme: applicationSettingsController.trayTheme
-        icon: bodyView.item.tempValue
         onCloseApp: Qt.quit()
         onShowGui: applicationWindow.show()
     }
@@ -119,6 +118,7 @@ Rectangle {
         Connections {
             id: weatherViewCon
             target: bodyView.item
+            onTempValueChanged: trayController.icon = bodyView.item.tempValue
             onFinishedWeatherUpdate: {
                 applicationBar.animationAlias.stop()
                 timer.interval = 3600000

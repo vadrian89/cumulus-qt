@@ -27,9 +27,8 @@ TrayController::TrayController(QObject *parent) :
     trayIcon(nullptr) {}
 
 void TrayController::setIcon(const QString &icon) {
-    if (m_icon != icon && isTrayAvailable()) {
+    if (m_icon != icon) {
         m_icon = icon;
-        setTrayIcon();
         emit iconChanged();
     }
 }
@@ -54,9 +53,8 @@ bool TrayController::trayVisibility() const {
 }
 
 void TrayController::setTrayTheme(const QString &trayTheme) {
-    if (m_trayTheme != trayTheme && isTrayAvailable()) {
+    if (m_trayTheme != trayTheme) {
         m_trayTheme = trayTheme;
-        setTrayIcon();
         emit trayThemeChanged();
     }
 }
@@ -66,7 +64,7 @@ QString TrayController::trayTheme() const {
 }
 
 void TrayController::setTrayIcon() {
-    if (isTrayAvailable()) {
+    if (isTrayAvailable() && !m_trayTheme.isEmpty() && !m_icon.isEmpty()) {
         trayIcon->setIcon(QIcon(QPixmap::fromImage(createTrayIcon(m_icon + "°", m_trayTheme))));
     }
 }
@@ -85,6 +83,8 @@ void TrayController::initialiseTray() {
         trayMenu->addAction(closeAction);
         trayIcon->setContextMenu(trayMenu);
         trayIcon->show();
+        connect(this, SIGNAL(iconChanged()), this, SLOT(setTrayIcon()));
+        connect(this, SIGNAL(trayThemeChanged()), this, SLOT(setTrayIcon()));
     }
 }
 

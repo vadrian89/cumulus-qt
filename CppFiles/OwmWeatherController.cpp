@@ -22,8 +22,8 @@
 #include "OwmWeatherController.h"
 
 OwmWeatherController::OwmWeatherController(QObject *parent) : AbstractWeatherController(parent) {
-    QString testApiKey = SettingsController::testApiKey();
-    apiKey = testApiKey.trimmed().size() > 0 ? testApiKey : "15c2836a71c126524d35af1d29d563c5";
+    SettingsController settings;
+    apiKey = settings.apiKey();
     temperatureUnit = "k";
     locationCode = "";
 }

@@ -51,6 +51,7 @@ class SettingsController : public QObject {
     float m_applicationOpacity;
     int m_windowX, m_windowY, m_windowHeight, m_windowWidth, m_currentLocationId;
     static api_keys API_KEYS;
+    static QString WEATHER_SETTINGS_GROUP;
 
     Q_PROPERTY(QString applicationBackground MEMBER m_applicationBackground WRITE setApplicationBackground NOTIFY applicationBackgroundChanged)
     Q_PROPERTY(QString textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
@@ -69,10 +70,13 @@ class SettingsController : public QObject {
     Q_PROPERTY(QString tempUnit READ tempUnit WRITE setTempUnit NOTIFY tempUnitChanged)
     Q_PROPERTY(QString pressureUnit READ pressureUnit WRITE setPressureUnit NOTIFY pressureUnitChanged)
     Q_PROPERTY(bool useGps READ useGps WRITE setUseGps NOTIFY useGpsChanged)
+    Q_PROPERTY(QString apiKey READ apiKey WRITE setApiKey NOTIFY apiKeyChanged)
 
     void loginStartLinux(const bool &loginStart);
     bool clearLocationCode();
-public:    
+    void saveString(const QString &key, const QString &value, const QString &group);
+    QString loadString(const QString &key, const QString &group) const;
+public:
     explicit SettingsController(QObject *parent = nullptr);
     void setApplicationBackground(const QString &applicationBackground);
     void setTextColor(const QString &textColor);
@@ -97,9 +101,10 @@ public:
     QString tempUnit() const;
     void setPressureUnit(const QString &pressureUnit);
     QString pressureUnit() const;
-    static QString testApiKey();
     bool useGps() const;
     void setUseGps(const bool &useGps);
+    void setApiKey(const QString &apiKey);
+    QString apiKey() const;
     Q_INVOKABLE static bool loginStartCheck();
     Q_INVOKABLE static QString getWeatherApi();
 signals:
@@ -120,6 +125,7 @@ signals:
     void windSpeedUnitChanged();
     void pressureUnitChanged();
     void useGpsChanged();
+    void apiKeyChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H
