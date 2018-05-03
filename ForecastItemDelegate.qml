@@ -13,6 +13,7 @@ ClickableItem {
     unhoveredBackgroundOpacity: 0.2
     hoveredBackgroundOpacity: 0.4
     backgroundOpacity: unhoveredBackgroundOpacity
+    property int widthBreakPoint: 0
 
     Text {
         id: icon
@@ -26,13 +27,15 @@ ClickableItem {
         font.pixelSize: 20
         color: fontColor
         text: root.forecastIcon
+        visible: (parent.width > parent.widthBreakPoint)
     }
     Text {
         id: date
-        width: (parent.width - icon.width - tempHigh.width - tempLow.width)
-        height: (icon.height * 50 / 100)
+        width: (icon.visible) ? (parent.width - icon.width - tempHigh.width - tempLow.width) : (parent.width - anchors.leftMargin - tempHigh.width - tempLow.width)
+        height: (parent.height * 50 / 100)
         anchors.top: parent.top
-        anchors.left: icon.right
+        anchors.left: (icon.visible) ? icon.right : parent.left
+        anchors.leftMargin: (icon.visible) ? 0 : 10
         color: fontColor
         font.family: stringFont
         font.pixelSize: 18
@@ -45,7 +48,8 @@ ClickableItem {
         width: date.width
         height: (parent.height - date.height)
         anchors.top: date.bottom
-        anchors.left: icon.right
+        anchors.left: date.anchors.left
+        anchors.leftMargin: date.anchors.leftMargin
         color: fontColor
         font.family: stringFont
         font.pixelSize: 14

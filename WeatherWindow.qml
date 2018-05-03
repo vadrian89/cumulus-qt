@@ -69,11 +69,12 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: Qt.openUrlExternally(weatherController.locationLink)
         }
+        visible: (root.height > 140)
     }
 
     Text {
         id: weatherIcon
-        width: parent.width * 50 / 100
+        width: (weatherInfo.visible) ? parent.width * 50 / 100 : parent.width
         height: weatherIconHeight
         anchors.top: descriptionText.visible == true ? descriptionText.bottom : root.top
         anchors.left: parent.left
@@ -93,6 +94,7 @@ Item {
         height: weatherInfoHeight
         color: "transparent"
         property int weatherInfoFontSize: 16
+        visible: (root.width > root.widthBreakPoint && root.height >= 172)
 
         WeatherInfoItem {
             id: humidityData
@@ -253,6 +255,7 @@ Item {
         horizontalAlignment: Image.AlignHCenter
         verticalAlignment: Image.AlignVCenter
         source: util.getLogoImage()
+        visible: (root.height > 250)
     }
     Weather {
         id: weatherController
@@ -269,36 +272,4 @@ Item {
         }
     }
     onUpdateWeather: weatherController.getWeatherData()
-    onWidthChanged: {
-        if (width < widthBreakPoint) {
-            weatherIcon.width = root.width
-            weatherInfo.visible = false
-        }
-        else if (width >= widthBreakPoint){
-            weatherIcon.width = root.width * 50 / 100
-            weatherInfo.visible = true
-        }
-    }
-    onHeightChanged: {
-        if (height < 150) {
-            descriptionText.visible = false
-            logo.visible = false
-            forecastView.visible = false
-        }
-        else if (height >= 150 && height < 170) {
-            descriptionText.visible = true
-            logo.visible = false
-            forecastView.visible = false
-        }
-        else if (height >= 170 && height < 300) {
-            descriptionText.visible = true
-            logo.visible = true
-            forecastView.visible = false
-        }
-        else {
-            descriptionText.visible = true
-            logo.visible = true
-            forecastView.visible = true
-        }
-    }
 }

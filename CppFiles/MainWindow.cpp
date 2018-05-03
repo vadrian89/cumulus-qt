@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     loadSettings();
     setCentralWidget(view);
     setMinimumHeight(150);
-    setMinimumWidth(140);
+    setMinimumWidth(200);
     setWindowIcon(QIcon(Util::iconPathPrefix() + "cumulus.png"));
 }
 

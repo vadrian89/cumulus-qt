@@ -19,9 +19,9 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import QtQuick.Window 2.2
+import QtQuick 2.0
+import QtQuick.Controls 2.0
+import QtQuick.Window 2.0
 import QtQuick.Dialogs 1.2
 
 import ownTypes.settingsController 1.0
@@ -29,7 +29,7 @@ import ownTypes.TrayController 0.3
 
 Rectangle {
     id: mainWindow
-    property int widthBreakPoint: 170
+    property int widthBreakPoint: 200
     color: applicationSettingsController.applicationBackground
 
     FontLoader {

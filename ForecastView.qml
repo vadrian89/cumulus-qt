@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
+import QtQuick 2.0
 
 Item {
     id: root
@@ -28,6 +28,7 @@ Item {
     property string iconsFontFamily: ""
     property int fontSize: 20
     property alias viewModel: forecastList.model
+    property int widthBreakPoint: 200
 
     ListView {
         id: forecastList
@@ -48,19 +49,8 @@ Item {
             forecastTempLow: model.modelData.tempLow + "°"
             forecastDesc: model.modelData.forecastDesc
             radius: 2
+            widthBreakPoint: root.widthBreakPoint
         }
-
-//        delegate: ForecastDelegate {
-//            height: forecastList.height
-//            width: delegateWidth
-//            stringFont: fontFamily
-//            iconFont: weatherIconsFont.name
-//            fontColor: root.fontColor
-//            forecastDay: model.modelData.forecastDate
-//            forecastIcon: model.modelData.weatherIcon
-//            forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
-//            forecastDesc: model.modelData.forecastDesc
-//        }
         onModelChanged: positionViewAtBeginning()
         onWidthChanged: positionViewAtBeginning()
         onHeightChanged: positionViewAtBeginning()

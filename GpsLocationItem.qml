@@ -29,8 +29,9 @@ ClickableItem {
         anchors.left: iconImage.right
         anchors.leftMargin: 10
         anchors.top: parent.top
-        width: (parent.width - iconImage.width)
+        width: (parent.width - iconImage.width - iconImage.anchors.leftMargin - anchors.leftMargin)
         height: parent.height
         verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.Wrap
     }
 }

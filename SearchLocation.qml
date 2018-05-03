@@ -19,9 +19,8 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.4
-import QtQuick.Controls 2.2
-//import QtQuick.Dialogs 1.2
+import QtQuick 2.0
+import QtQuick.Controls 2.1
 
 Dialog {
     id: root    
@@ -32,7 +31,6 @@ Dialog {
     property string gpsLocation: "-"
     property alias searchListModel: searchList.model
     signal locationSelected(string locationSelected)
-//    modality: Qt.ApplicationModal
     visible: true
 
     contentItem: Rectangle {
@@ -106,8 +104,6 @@ Dialog {
             width: (parent.width * 80 / 100)
             height: (body.height - searchField.height - gpsLocation.height - 10)
             cacheBuffer: 0
-            displayMarginBeginning: 0
-            displayMarginEnd: 0
             clip: true
             delegate: Rectangle {
                 height: 40

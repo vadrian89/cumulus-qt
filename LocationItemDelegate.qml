@@ -35,6 +35,7 @@ ClickableItem {
         width: (parent.width - selectedImage.width - deleteButton.width)
         height: parent.height
         verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.Wrap
     }
     ClickableItem {
         id: deleteButton

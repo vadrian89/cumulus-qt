@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.0
 
 import ownTypes.LocationController 0.1
 
@@ -75,19 +75,19 @@ SimpleItem {
         id: locationSearchLoader
         visible: false
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "backgroundColor"
             value: root.backgroundColor
         }
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "textColor"
             value: root.textColor
         }
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "textFontFamily"
             value: root.textFontFamily
@@ -96,22 +96,22 @@ SimpleItem {
             when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "width"
-            value: (root.width < 300) ? 300 : root.width
+            value: root.width
         }
         Binding {
             when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "height"
-            value: (root.height < 400) ? 400 : root.height
+            value: root.height
         }
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "searchListModel"
             value: locationController.locationSearchList
         }
         Binding {
-            when: locationSearchLoader.visible
+            when: (locationSearchLoader.visible)
             target: locationSearchLoader.item
             property: "gpsLocation"
             value: locationController.gpsLocation

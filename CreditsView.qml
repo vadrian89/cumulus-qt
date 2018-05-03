@@ -19,14 +19,14 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
+import QtQuick 2.0
 import QtQuick.Controls 2.1
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.1
 
 Item {
     id: rootItem
     visible: false
-    property string appVersion: "4.0.0"
+    property string appVersion: "4.0.1"
     property string textColor
     property string backgroundColor
     property int contentWidth: rootItem.width * 90 / 100
