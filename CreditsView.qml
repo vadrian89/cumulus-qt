@@ -20,13 +20,13 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.0
-import QtQuick.Controls 2.1
-import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.0
 
 Item {
     id: rootItem
     visible: false
-    property string appVersion: "4.0.1"
+    property string appVersion: "4.0.2"
     property string textColor
     property string backgroundColor
     property int contentWidth: rootItem.width * 90 / 100

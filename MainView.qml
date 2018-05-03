@@ -42,7 +42,10 @@ Item {
             textColor: root.textColor
             textFontFamily: root.textFontFamily
             visible: true
-            onNoLocation: weatherView.visible = false
+            onNoLocation: {
+                weatherView.visible = false
+                flickable.contentX = 0
+            }
         }
         WeatherWindow {
             id: weatherView

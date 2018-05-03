@@ -45,7 +45,7 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_windSpeedUnit = settings.value("windSpeedUnit", "m/s").toString();
     m_tempUnit = settings.value("temperatureUnit", "c").toString();
     m_pressureUnit = settings.value("pressureUnit", "mbar").toString();
-    m_useGps = settings.value("useGps", true).toBool();
+    m_useGps = settings.value("useGps", false).toBool();
     settings.endGroup();
 }
 

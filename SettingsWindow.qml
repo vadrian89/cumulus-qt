@@ -19,11 +19,11 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
-import QtQuick.Controls 2.1
-import QtQuick.Window 2.2
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
+import QtQuick 2.0
+import QtQuick.Controls 2.0
+import QtQuick.Window 2.0
+import QtQuick.Layouts 1.0
+import QtQuick.Dialogs 1.0
 
 Item {
     id: root

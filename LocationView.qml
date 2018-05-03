@@ -134,7 +134,10 @@ SimpleItem {
     }
     LocationController {
         id: locationController
-        onNoLocation: root.noLocation()
+        onNoLocation: {
+            root.noLocation()
+            addLocationButton.clicked()
+        }
     }
     Component.onCompleted: locationController.getLocationList()
 }
