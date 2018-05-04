@@ -37,15 +37,17 @@ void AbstractWeatherController::getWeather() {
     connect(dataController, SIGNAL(networkError(QString)), this, SLOT(manageError(QString)));
     if (settings.useGps()) {
         QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(this);
-        posInfoSource->setUpdateInterval(10000);
-        connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));
-        connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), posInfoSource, SLOT(stopUpdates()));
-        connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), posInfoSource, SLOT(deleteLater()));
-        connect(posInfoSource, SIGNAL(error(QGeoPositionInfoSource::Error)), this, SLOT(locationPositionError(QGeoPositionInfoSource::Error)));
-        if (posInfoSource)
+        if (posInfoSource) {
+            posInfoSource->setUpdateInterval(10000);
+            connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));
+            connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), posInfoSource, SLOT(stopUpdates()));
+            connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), posInfoSource, SLOT(deleteLater()));
+            connect(posInfoSource, SIGNAL(error(QGeoPositionInfoSource::Error)), this, SLOT(locationPositionError(QGeoPositionInfoSource::Error)));
             posInfoSource->startUpdates();
-        else
+        }
+        else {
             emit networkError("Could not use GPS!");
+        }
     }
     else {
         DatabaseHelper dbHelper;

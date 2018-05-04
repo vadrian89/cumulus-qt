@@ -16,12 +16,12 @@ script:
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin
   - mkdir -p appdir/usr/share/applications
-  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps
+  - mkdir -p appdir/usr/share/icons/hicolor/512x512/apps
   - cp Cumulus appdir/usr/bin/
   - cp icons/*.png appdir/usr/share/icons/
-  - cp icons/hicolor/256x256/* appdir/usr/share/icons/
-  - cp icons/hicolor/256x256/cumulus.* appdir/
-  - cp icons/hicolor/256x256/cumulus.* appdir/usr/share/icons/hicolor/256x256/apps/
+  - cp icons/hicolor/512x512/* appdir/usr/share/icons/
+  - cp icons/hicolor/512x512/cumulus.* appdir/
+  - cp icons/hicolor/512x512/cumulus.* appdir/usr/share/icons/hicolor/512x512/apps/
   - echo "[Desktop Entry]" > appdir/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/cumulus.desktop

@@ -71,7 +71,7 @@ void TrayController::setTrayIcon() {
 
 void TrayController::initialiseTray() {
     if (!isTrayAvailable()) {
-        QIcon firstIcon(qApp->applicationDirPath() +"/icons/hicolor/512x512/cumulus.png");
+        QIcon firstIcon(Util::iconPathPrefix().remove("file:") + "cumulus.png");
         trayIcon = new QSystemTrayIcon();
         trayIcon->setIcon(firstIcon);
         QMenu *trayMenu = new QMenu();
