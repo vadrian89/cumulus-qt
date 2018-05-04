@@ -155,15 +155,13 @@ void SettingsController::loginStartLinux(const bool &loginStart) {
         out << "Type=Application" << endl;
         out << "Terminal=false" << endl;
         out << "Categories=Utility;" << endl;
-        QString appPath = qApp->applicationDirPath();
+        QString appPath = qApp->applicationDirPath() + "/Cumulus";
         if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
             appPath = QProcessEnvironment::systemEnvironment().value("APPIMAGE");
-        if (appName != "Cumulus") {
-            out << "Exec=" + appPath + "/Cumulus -i " << appName.remove("Cumulus-") << endl;
-        }
-        else {
-            out << "Exec=" + appPath + "/Cumulus" << endl;
-        }
+        if (appName != "Cumulus")
+            out << "Exec=" + appPath + " -i " << appName.remove("Cumulus-") << endl;
+        else
+            out << "Exec=" + appPath << endl;
         out << "Name=Cumulus" << endl;
         out << "Icon=" + qApp->applicationDirPath() + "/cumulus.svg";
         out.flush();
@@ -180,10 +178,7 @@ void SettingsController::loginStartLinux(const bool &loginStart) {
 
 bool SettingsController::loginStartCheck() {
     QString appName = QApplication::applicationName();
-    QString filePath = QDir::homePath() + "/.config/autostart/cumulus.desktop";
-    if (appName != "Cumulus") {
-        filePath = QDir::homePath() + "/.config/autostart/cumulus-" + appName + ".desktop";
-    }    
+    QString filePath = QDir::homePath() + "/.config/autostart/" + appName + ".desktop";
     return QFile::exists(filePath);
 }
 
