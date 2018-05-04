@@ -131,7 +131,7 @@ bool DatabaseHelper::databaseInit(QSqlDatabase *db) {
 }
 
 QString DatabaseHelper::databaseName(const QString &appName) {
-    QString databaseName = appName + "-local.db";
+    QString databaseName = appName + "-local-v" + QString::number(SettingsController::SETTINGS_VERSION) + ".db";
     if (QSysInfo::kernelType() == "linux" && QSysInfo::productType() == "android")
         return databaseName;
     else

@@ -107,6 +107,7 @@ public:
     QString apiKey() const;
     Q_INVOKABLE static bool loginStartCheck();
     Q_INVOKABLE static QString getWeatherApi();
+    static short unsigned int SETTINGS_VERSION;
 signals:
     void applicationBackgroundChanged();
     void textColorChanged();

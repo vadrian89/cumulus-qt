@@ -19,10 +19,12 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <QProcessEnvironment>
 #include "SettingsController.h"
 
 api_keys SettingsController::API_KEYS;
 QString SettingsController::WEATHER_SETTINGS_GROUP = "weather-settings";
+short unsigned int SettingsController::SETTINGS_VERSION = 0;
 
 SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     QSettings settings;
@@ -40,7 +42,7 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_windowWidth = settings.value("windowWidth", 300).toInt();    
     settings.endGroup();
     settings.beginGroup(WEATHER_SETTINGS_GROUP);
-    m_currentLocationId = settings.value("currentLocationId", -1).toInt();
+    m_currentLocationId = settings.value("currentLocationId" + QString::number(SETTINGS_VERSION), -1).toInt();
     m_weatherApi = settings.value("api", "owm").toString();
     m_windSpeedUnit = settings.value("windSpeedUnit", "m/s").toString();
     m_tempUnit = settings.value("temperatureUnit", "c").toString();
@@ -137,10 +139,7 @@ void SettingsController::setLoginStart(const bool &loginStart) {
 void SettingsController::loginStartLinux(const bool &loginStart) {
     QString appName = QApplication::applicationName();
     QString loginStartDirPath = QDir::homePath() + "/.config/autostart";
-    QString loginStartFilePath = loginStartDirPath + "/cumulus.desktop";    
-    if (appName != "Cumulus") {
-        loginStartFilePath = loginStartDirPath + "/cumulus-" + appName + ".desktop";
-    }
+    QString loginStartFilePath = loginStartDirPath + "/" + appName + ".desktop";
     QDir dir(loginStartDirPath);
     QFile file(loginStartFilePath);
     if (loginStart == true) {
@@ -151,17 +150,19 @@ void SettingsController::loginStartLinux(const bool &loginStart) {
             qDebug() << "SettingsController::loginStartLinux: could not open file " + file.fileName();
             return;
         }
-
         QTextStream out(&file);
         out << "[Desktop Entry]" << endl;
         out << "Type=Application" << endl;
         out << "Terminal=false" << endl;
         out << "Categories=Utility;" << endl;
+        QString appPath = qApp->applicationDirPath();
+        if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
+            appPath = QProcessEnvironment::systemEnvironment().value("APPIMAGE");
         if (appName != "Cumulus") {
-            out << "Exec=" + qApp->applicationDirPath() + "/Cumulus -i " << appName.remove("Cumulus") << endl;
+            out << "Exec=" + appPath + "/Cumulus -i " << appName.remove("Cumulus-") << endl;
         }
         else {
-            out << "Exec=" + qApp->applicationDirPath() + "/Cumulus" << endl;
+            out << "Exec=" + appPath + "/Cumulus" << endl;
         }
         out << "Name=Cumulus" << endl;
         out << "Icon=" + qApp->applicationDirPath() + "/cumulus.svg";
@@ -235,7 +236,7 @@ void SettingsController::setCurrentLocationId(const int &locationId) {
         m_currentLocationId = locationId;
         QSettings settings;
         settings.beginGroup(WEATHER_SETTINGS_GROUP);
-        settings.setValue("currentLocationId", m_currentLocationId);
+        settings.setValue("currentLocationId" + QString::number(SETTINGS_VERSION), m_currentLocationId);
         settings.endGroup();
         emit currentLocationIdChanged();
     }
