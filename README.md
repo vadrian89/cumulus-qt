@@ -1,13 +1,18 @@
 # News
 Hello everybody,  
 I have managed to work a bit on Cumulus, have been working on refactoring the code a bit because it was turning
-into one big pile of \"mom's spaghetti\".
-I haven't managed to make a snap out of Cumulus because it is a bit hard, because the
-Qt version used in snap packaging is lower than what I am using so I am going to take a step back and focus on
-application development.
-I mentioned I wanted to focus on Ubuntu Touch development, but after taking a look at the bigger picture I saw that
-I cannot focus to much on it because of all the other things I am working on.
-That's about for this commit update.
+into one big pile of \"mom's spaghetti\".    
+Added:  
+- Positioning support for location search, it automatically searches for your location when you want to add a new location.  
+- Positioning support for automatic location, opt-in if you want the application to detect your location and update the weather based of your actual position.  
+*These 2 are tied to services based on platform, it uses GeoClue on Linux, if it isn't installed it won't find your location.  
+- Multiple locations can be saved from inside the application.   
+- AppImage package "Start on login" support, enabling the option from an AppImage should correctly detect the package's location and add it to ~/.config/autostart  
+
+
+Changed:  
+- Layout of forecast from Left -> Right, to Top -> Bottom.  
+- Whole lot of refactoring which can be seen in the commit logs.      
 
 
 # Info  
@@ -47,23 +52,25 @@ Example: /home/user/Cumulus/Cumulus -i NewInstance
 
 # In case you want to build it yourself:
 
-- recommended Qt version: 5.9
-- remove the following line from Cumulus.pro file: QMAKE_LFLAGS += "-Wl,-rpath,'$$ORIGIN/lib'"
-- remove the following entry from qml.qrc file: "qt/etc/qt.conf"
+- recommended Qt version: 5.9  
 
 # Major Thanks
 - [Daryl Bennett](https://github.com/kd8bny)
 - [Archisman Panigrahi](https://github.com/apandada1)
 - [Erik Flowers](https://github.com/erikflowers) for his [weather icons](https://github.com/erikflowers/weather-icons),
-which sadly has discontinued support for them
+which sadly has discontinued support for them  
+- People working on [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) and [AppImage](https://github.com/AppImage)    
 
 # Known Issues
-- The resizing is implemented, but it's a bit haotic on Linux-based OSes, looking into it and hopefully I will find a solution soon.
+
+- [Yahoo search might not work](https://github.com/vadrian89/cumulus-qt/issues/3) on non-Ubuntu distros, depends on ssl library used in the system  
+- AppImage seems highly unstable on Deepin Linux, might also be the case for other distros.  
 
 # TODO
-- Code refactoring
-- Multiple locations from same instance
-- Add possibility for translations
-- Automatic location search
-- Improve UI
-
+- Code refactoring  
+- Add possibility for translations  
+- Improve UI  
+- Rename application   
+- Support for custom API keys, for OpenWeatherMap and Weather Underground     
+- Snap package  
+- Ubuntu Touch support   
