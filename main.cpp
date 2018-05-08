@@ -32,11 +32,11 @@
 #include "CppFiles/Forecast.h"
 #include "CppFiles/Util.h"
 #include "CppFiles/SettingsController.h"
-#include "CppFiles/SearchLocation.h"
 #include "CppFiles/TrayController.h"
 #include "CppFiles/ThreadWorker.h"
 #include "CppFiles/CustomImageProvider.h"
 #include "CppFiles/FontImageProvider.h"
+#include "CppFiles/Location.h"
 void registerQmlType();
 #else
 #include <QFile>
@@ -45,15 +45,18 @@ void registerQmlType();
 #include "CppFiles/ThreadWorker.h"
 #endif
 
+#include "CppFiles/DatabaseHelper.h"
 int main(int argc, char *argv[]) {
     QString applicationName = "Cumulus";
     if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
-        applicationName = argv[2];
+        applicationName = applicationName + "-" + argv[2];
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+    qRegisterMetaType<QList<location_struct>>("QList<location_struct>");
+    qRegisterMetaType<weather_struct>("weather_struct");
 #if defined(Q_OS_ANDROID)
     Util util;
     SettingsController settingsController;
@@ -83,9 +86,9 @@ int main(int argc, char *argv[]) {
 
 #if defined(Q_OS_ANDROID)
 void registerQmlType() {
-    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
+    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 9, "Weather");
     qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
-    qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
+    qmlRegisterType<Location>("ownTypes.LocationController", 0, 1, "LocationController");
 }
 #endif
