@@ -28,15 +28,15 @@
 #include <QFont>
 #include <QTimer>
 
-ThreadWorker::ThreadWorker(QObject *parent) : QObject(parent) {    
+ThreadWorker::ThreadWorker(QObject *parent) : QObject(parent) {
+    connect(this, SIGNAL(startUpdateTimerSignal()), this, SLOT(updaterTimerStart()));
 }
 
-void ThreadWorker::updaterTimerStart() {    
+void ThreadWorker::updaterTimerStart() {
     QTimer::singleShot(60000, this, SLOT(startLookingForUpdates()));
 }
 
 void ThreadWorker::startLookingForUpdates() {
-    connect(this, SIGNAL(startUpdateTimerSignal()), this, SLOT(updaterTimerStart()));
     qDebug() << "Updater started.";
     QString maintenancetoolPath = QCoreApplication::applicationDirPath() + "/maintenancetool";
     if (!QFile::exists(maintenancetoolPath)) {
@@ -72,4 +72,21 @@ void ThreadWorker::startLookingForUpdates() {
             emit updateSearchFinished();
         }
     }
+}
+
+void ThreadWorker::createTrayIcon(const QString &weather, const QString &theme) {
+    QString color = theme == "light" ? "white" : "black";
+    QImage image(22, 22, QImage::Format_ARGB32_Premultiplied);
+    QFont font;
+    font.setPixelSize(14);
+    font.setFamily("Arial");
+    font.setBold(true);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    painter.setFont(font);
+    painter.setPen(QColor(color));
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.drawText(image.rect(), Qt::AlignCenter, weather);
+    emit finishedCreatingPixmap(image);
+    emit stopThread();
 }

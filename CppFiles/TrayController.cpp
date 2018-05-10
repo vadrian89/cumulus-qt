@@ -22,29 +22,20 @@
 #include "TrayController.h"
 #include "Util.h"
 
-TrayController::TrayController(QObject *parent) :
-    QObject(parent),
-    trayIcon(nullptr) {}
-
-void TrayController::setIcon(const QString &icon) {
-    if (m_icon != icon) {
-        m_icon = icon;
-        emit iconChanged();
-    }
+TrayController::TrayController(QObject *parent) : QObject(parent) {
+    trayIcon = NULL;
+    m_trayVisibility = false;
 }
 
 QString TrayController::icon() const {
     return m_icon;
 }
 
-void TrayController::setTrayVisibility(const bool &trayVisibility) {
-    if (m_trayVisibility != trayVisibility) {
-        if (trayVisibility)
-            enableTray();
-        else
-            disableTray();
-        m_trayVisibility = trayVisibility;
-        emit trayVisibilityChanged();
+void TrayController::setIcon(const QString &icon) {
+    if (m_icon != icon && icon.trimmed().size() > 0) {
+        m_icon = icon;
+        setTrayIcon();
+        emit iconChanged();
     }
 }
 
@@ -52,26 +43,44 @@ bool TrayController::trayVisibility() const {
     return m_trayVisibility;
 }
 
-void TrayController::setTrayTheme(const QString &trayTheme) {
-    if (m_trayTheme != trayTheme) {
-        m_trayTheme = trayTheme;
-        emit trayThemeChanged();
+void TrayController::setTrayVisibility(const bool &trayVisibility) {
+    if (m_trayVisibility != trayVisibility) {        
+        if (trayVisibility == true) {
+            if (trayIcon == NULL)
+                initialiseTray();
+            enableTray();
+        }
+        else {
+            if (trayIcon != NULL)
+                disableTray();
+        }
+        m_trayVisibility = trayVisibility;
+        emit trayVisibilityChanged();
     }
-}
-
-QString TrayController::trayTheme() const {
-    return m_trayTheme;
 }
 
 void TrayController::setTrayIcon() {
-    if (isTrayAvailable() && !m_trayTheme.isEmpty() && !m_icon.isEmpty()) {
-        trayIcon->setIcon(QIcon(QPixmap::fromImage(createTrayIcon(m_icon + "°", m_trayTheme))));
+    if (QSystemTrayIcon::isSystemTrayAvailable() && trayIcon != NULL) {
+        worker = new ThreadWorker();
+        thread = new QThread(this);
+        connect(worker, SIGNAL(finishedCreatingPixmap(QImage)), this, SLOT(setTrayIcon(QImage)));
+        connect(thread, SIGNAL(finished()), worker, SLOT(deleteLater()));
+        worker->moveToThread(thread);
+        thread->start();
+        worker->createTrayIcon(m_icon + "°", m_trayTheme);
     }
 }
 
+void TrayController::setTrayIcon(const QImage &image) {
+    if (trayIcon != NULL)
+        trayIcon->setIcon(QIcon(QPixmap::fromImage(image)));
+    thread->quit();
+    thread->wait();
+}
+
 void TrayController::initialiseTray() {
-    if (!isTrayAvailable()) {
-        QIcon firstIcon(Util::iconPathPrefix().remove("file:") + "cumulus.png");
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        QIcon firstIcon(qApp->applicationDirPath() +"/cumulus.svg");
         trayIcon = new QSystemTrayIcon();
         trayIcon->setIcon(firstIcon);
         QMenu *trayMenu = new QMenu();
@@ -82,23 +91,21 @@ void TrayController::initialiseTray() {
         trayMenu->addAction(showAction);
         trayMenu->addAction(closeAction);
         trayIcon->setContextMenu(trayMenu);
-        trayIcon->show();
-        connect(this, SIGNAL(iconChanged()), this, SLOT(setTrayIcon()));
-        connect(this, SIGNAL(trayThemeChanged()), this, SLOT(setTrayIcon()));
     }
 }
 
 void TrayController::enableTray() {
-    initialiseTray();
-    if (isTrayAvailable())
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        trayIcon->show();
         setTrayIcon();
+    }
 }
 
 void TrayController::disableTray() {
-    if (isTrayAvailable()) {
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
         trayIcon->hide();
         delete trayIcon;
-        trayIcon = nullptr;
+        trayIcon = NULL;
     }
 }
 
@@ -110,23 +117,14 @@ void TrayController::emitShowGui() {
     emit showGui();
 }
 
-QImage TrayController::createTrayIcon(const QString &weather, const QString &theme) {
-    QString color = theme == "light" ? "white" : "black";
-    QImage image(44, 44, QImage::Format_ARGB32_Premultiplied);
-    QFont font;
-    font.setPixelSize(26);
-    font.setBold(true);
-    image.fill(Qt::transparent);
-    QPainter painter(&image);
-    painter.setFont(font);
-    painter.setPen(QColor(color));
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawText(image.rect(), Qt::AlignCenter, weather);
-    return image;
+QString TrayController::trayTheme() const {
+    return m_trayTheme;
 }
 
-bool TrayController::isTrayAvailable() {
-    return (QSystemTrayIcon::isSystemTrayAvailable()
-            && trayIcon != nullptr
-            && trayIcon->isVisible());
+void TrayController::setTrayTheme(const QString &trayTheme) {
+    if (m_trayTheme != trayTheme && trayTheme.trimmed().size() > 0) {
+        m_trayTheme = trayTheme;
+        setTrayIcon();
+        emit trayThemeChanged();
+    }
 }

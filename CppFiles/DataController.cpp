@@ -21,30 +21,32 @@
 */
 #include "DataController.h"
 
-DataController::DataController(QObject *parent) : QObject(parent) {}
-
-void DataController::getDataFromUrl(QString urlString) {
+DataController::DataController(QObject *parent) : QObject(parent) {
     networkManager = new QNetworkAccessManager(this);
-    if (networkManager->networkAccessible() == QNetworkAccessManager::Accessible) {
-        connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(readFinished(QNetworkReply*)));
-        QNetworkRequest networkRequest;
-        networkRequest.setUrl(QUrl(urlString));
-        networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-        networkManager->get(networkRequest);
-    }
-    else {
-        emit networkError("Network not accessible!");
-    }
 }
 
-void DataController::readFinished(QNetworkReply *reply) {
-    if (reply->error() == QNetworkReply::NoError) {
-        QString dataRead = (QString)reply->readAll();
+void DataController::getDataFromUrl(QString urlString) {
+    networkRequest.setUrl(QUrl(urlString));
+    networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    networkReply = networkManager->get(networkRequest);
+    connect(networkReply, SIGNAL(finished()), this, SLOT(readFinished()));
+    connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
+}
+
+void DataController::readFinished() {
+    if (networkReply->error() == QNetworkReply::NoError) {
+        QString dataRead = (QString)networkReply->readAll();
         QJsonDocument jsonResponse = QJsonDocument::fromJson(dataRead.toUtf8());
         QJsonObject jsonObject = jsonResponse.object();
         emit jsonObjectReady(jsonObject);
     }
-    else {
-        emit networkError(reply->errorString());
-    }
+}
+
+void DataController::networkError(QNetworkReply::NetworkError) {
+    qDebug() << "Network Error: " << networkReply->errorString();
+    emit networkError();
+}
+
+QString DataController::managerError() const {
+    return networkReply->errorString();
 }

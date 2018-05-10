@@ -19,19 +19,26 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef YWEATHERCONTROLLER_H
-#define YWEATHERCONTROLLER_H
+#ifndef DBCONNECTION_H
+#define DBCONNECTION_H
 
-#include "AbstractWeatherController.h"
-class YWeatherController : public AbstractWeatherController {
+#include <QObject>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+
+class DbConnection : public QObject {
     Q_OBJECT
-    void saveWeatherToDb(const QJsonObject &jsonObject);
-    void saveForecastToDb(const QJsonObject &jsonObject);
-    void readJsonData(QJsonObject jsonObject);
+    QSqlDatabase db;
+    QString databaseName(const QString &appName);
+    void moveDatabaseFile(const QString &fileName);
 public:
-    explicit YWeatherController(QObject *parent = 0);
-    void searchByLocation(QString &location);
-    void searchBycode(QString &code);
+    explicit DbConnection(QObject *parent = 0);
+    QSqlDatabase getDatabase();
+    bool startCon();
+    bool stopCon();
+    QString getError();
+    bool databaseInit();
 };
 
-#endif // YWEATHERCONTROLLER_H
+#endif // DBCONNECTION_H

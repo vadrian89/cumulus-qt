@@ -22,130 +22,202 @@
 #include "WundWeatherController.h"
 
 WundWeatherController::WundWeatherController(QObject *parent) : AbstractWeatherController(parent) {
-    SettingsController settings;
-    apiKey = settings.apiKey();
+    apiKey = "30be6723cf95f92c";
+    locationId = 1;
     temperatureUnit = "c";
     locationCode = "";
-}
-
-void WundWeatherController::searchByGps(const double &lat, const double &lon) {
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
-    systemLang.resize(2);
-    dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/conditions/lang:" + systemLang + "/q/" + QString::number(lat) + "," + QString::number(lon) + ".json");
+    wundIconsCodes = new QMap<QString, int>();
+    mapWundIconsCodes();
 }
 
 void WundWeatherController::searchByLocation(QString &location) {
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
+    operationData = OperationData::GetLocationId;
     dataController->getDataFromUrl("http://autocomplete.wunderground.com/aq?query=" + location);
 }
 
-void WundWeatherController::getLocationFromJson(const QJsonObject &jsonObject) {
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
-    QJsonArray array = jsonObject.find("RESULTS").value().toArray();
-    locationCode = array.at(0).toObject().find("zmw").value().toString();
-    searchBycode(locationCode);
-}
-
 void WundWeatherController::searchBycode(QString &code) {
+    operationData = OperationData::GetWeather;
     locationCode = code;
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/conditions/lang:" + systemLang + "/q/zmw:" + code + ".json");
 }
 
-void WundWeatherController::getWeatherFromJson(const QJsonObject &jsonObject) {
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
-    if (!jsonObject.isEmpty()) {
-        SettingsController settings;
-        QString windSpeedUnit = "kph";
-        QString pressureUnit = "mbar";
-        QJsonObject weatherData = nextBranch(jsonObject, "current_observation");
-        m_weather.m_location = nextBranch(weatherData, "display_location").find("full").value().toString();
-        if (locationCode.isEmpty()) {
-            locationCode = nextBranch(weatherData, "display_location").find("zip").value().toString()
-                    .append(".")
-                    .append(nextBranch(weatherData, "display_location").find("magic").value().toString())
-                    .append(".")
-                    .append(nextBranch(weatherData, "display_location").find("wmo").value().toString());
-        }        
-        m_weather.m_weatherCode = Util::findFontCode("wund-map", weatherData.find("icon").value().toString()).toInt();
-        m_weather.m_temperature = weatherData.find("temp_c").value().toDouble();
-        m_weather.m_temperature = Util::calculateTemperature(m_weather.m_temperature, temperatureUnit, settings.tempUnit());
-        m_weather.m_weatherDescription = weatherData.find("weather").value().toString();
-        m_weather.m_windSpeed = weatherData.find("wind_kph").value().toDouble();
-        m_weather.m_windSpeed = Util::calculateWindSpeed(m_weather.m_windSpeed, windSpeedUnit, settings.windSpeedUnit());
-        m_weather.m_windDegree = weatherData.find("wind_degrees").value().toInt();
-        m_weather.m_humidity = weatherData.find("relative_humidity").value().toString().remove("%").toInt();
-        m_weather.m_pressure = weatherData.find("pressure_mb").value().toString().toDouble();
-        m_weather.m_pressure = Util::calculatePressure(m_weather.m_pressure, pressureUnit);
-        m_weather.m_locationLink = weatherData.find("ob_url").value().toString();
-        m_weather.m_locationId = settings.currentLocationId();
-        getAstronomy(locationCode);
-    }    
-}
-
 void WundWeatherController::getAstronomy(const QString &code) {
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getAstronomyFromJson(QJsonObject)));
+    operationData = OperationData::GetAstronomy;
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:" + systemLang + "/q/zmw:" + code + ".json");
 }
 
-void WundWeatherController::getAstronomyFromJson(const QJsonObject &jsonObject) {
-    disconnect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getAstronomyFromJson(QJsonObject)));
-    QJsonObject sunriseData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunrise");
-    QJsonObject sunsetData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunset");
-    QDateTime sunrise = QDateTime::fromString(sunriseData.find("hour").value().toString() + ":" +
-            sunriseData.find("minute").value().toString(), "h:mm");
-    QDateTime sunset = QDateTime::fromString(sunsetData.find("hour").value().toString() + ":" +
-            sunsetData.find("minute").value().toString(), "h:mm");
-    m_weather.m_sunrise = sunrise.time().toString(Qt::SystemLocaleShortDate);
-    m_weather.m_sunset = sunset.time().toString(Qt::SystemLocaleShortDate);
-    if (saveLocation(locationCode) && saveWeather(m_weather))
-        getForecast(locationCode);
-}
-
 void WundWeatherController::getForecast(const QString &code) {
-    connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getForecastFromJson(QJsonObject)));
+    operationData = OperationData::GetForecast;
     QString systemLang = QLocale::languageToString(QLocale::system().language()).toUpper();
     systemLang.resize(2);
     dataController->getDataFromUrl("http://api.wunderground.com/api/" + apiKey + "/forecast10day/lang:" + systemLang + "/q/zmw:" + code + ".json");
 }
 
-void WundWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
+void WundWeatherController::readJsonData(QJsonObject jsonObject) {
+    if (operationData == OperationData::GetLocationId) {
+        QJsonArray array = jsonObject.find("RESULTS").value().toArray();
+        locationCode = array.at(0).toObject().find("zmw").value().toString();
+        searchBycode(locationCode);
+    }
+    else if (operationData == OperationData::GetWeather) {
+        weatherObject = jsonObject;
+        getAstronomy(locationCode);
+    }
+    else if (operationData == OperationData::GetAstronomy) {
+        QJsonObject sunriseData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunrise");
+        QJsonObject sunsetData = nextBranch(nextBranch(jsonObject, "sun_phase"), "sunset");
+        sunrise = QDateTime::fromString(sunriseData.find("hour").value().toString() + ":" +
+                sunriseData.find("minute").value().toString(), "h:mm");
+        sunset = QDateTime::fromString(sunsetData.find("hour").value().toString() + ":" +
+                sunsetData.find("minute").value().toString(), "h:mm");
+        getForecast(locationCode);
+    }
+    else {
+        forecastObject = jsonObject;
+        emit dataDownloaded();
+    }
+}
+
+void WundWeatherController::saveWeatherToDb(const QJsonObject &jsonObject) {
+    qDebug() << "In WundWeatherController::saveWeatherToDb";
+    int weatherCode = -1;
+    float temperature = 0;
+    int windSpeed = 0;
+    int windDegree = 0;
+    int humidity = 0;
+    QString windSpeedUnit = "kph";
+    QString description = "";
+    QString pressureUnit = "mbar";
+    QString link = "http://www.wunderground.com/q/zmw:" + locationCode;
+    double pressure = 0.0;
+
+    QJsonObject weatherData = nextBranch(jsonObject, "current_observation");    
+
+    weatherCode = wundIconsCodes->find(weatherData.find("icon").value().toString()).value();
+    temperature = weatherData.find("temp_c").value().toDouble();
+    description = weatherData.find("weather").value().toString();
+    windSpeed = weatherData.find("wind_kph").value().toDouble();
+    windDegree = weatherData.find("wind_degrees").value().toInt();
+    humidity = weatherData.find("relative_humidity").value().toString().remove("%").toInt();
+    pressure = weatherData.find("pressure_mb").value().toString().toDouble();
+    if (clearWeather()) {
+        if (db->startCon())  {
+            QString str = "insert into sw_tr_weather(w_weather_id, w_weather_code, w_description, "
+                          "w_temperature, w_humidity, w_wind_speed, w_wind_degree, w_sunrise, w_sunset, w_loc_id, "
+                          "w_pressure, w_link) values (:id, :code, :description, :temperature, "
+                          ":humidity, :wind_speed, :wind_degree, :sunrise, :sunset, :loc_id, :pressure, :link)";
+            QSqlQuery query;
+            query.prepare(str);
+            query.bindValue(":id", 1);
+            query.bindValue(":code", weatherCode);
+            query.bindValue(":description", description);
+            query.bindValue(":temperature", Util::calculateTemperature(temperature, temperatureUnit));
+            query.bindValue(":humidity", humidity);
+            query.bindValue(":wind_speed", Util::calculateWindSpeed(windSpeed, windSpeedUnit));
+            query.bindValue(":wind_degree", windDegree);
+            query.bindValue(":sunrise", sunrise.time().toString(Qt::SystemLocaleShortDate));
+            query.bindValue(":sunset", sunset.time().toString(Qt::SystemLocaleShortDate));
+            query.bindValue(":pressure", Util::calculatePressure(pressure, pressureUnit));
+            query.bindValue(":link", link);
+            query.bindValue(":loc_id", locationId);
+            if (!query.exec()) {
+                qDebug() << "WundWeatherController::saveWeatherToDb query error: " << query.lastError().text();
+                emit saveDataError(query.lastError().text());
+            }
+        }
+        else {
+            qDebug() << "WundWeatherController::saveWeatherToDb database error: " << db->getError();
+            emit saveDataError(db->getError());
+        }
+        db->stopCon();
+    }
+}
+
+void WundWeatherController::saveForecastToDb(const QJsonObject &jsonObject) {
     QJsonArray forecastArray = nextBranch(nextBranch(jsonObject, "forecast"), "simpleforecast").find("forecastday").value().toArray();
-    SettingsController settings;
     int weatherCode = -1;
     int tempHigh = 0;
     int tempLow = 0;
     QDate date = QDate::currentDate();
     QString description = "";
-    QList<Forecast*> forecastList;
-    for (QJsonValue forecastJson : forecastArray) {
-        Forecast *forecast = new Forecast();
-        weatherCode = Util::findFontCode("wund-map", forecastJson.toObject().find("icon").value().toString()).toInt();
-        tempHigh = nextBranch(forecastJson.toObject(), "high").find("celsius").value().toString().toInt();
-        tempLow = nextBranch(forecastJson.toObject(), "low").find("celsius").value().toString().toInt();
-        date = dateFromJson(nextBranch(forecastJson.toObject(), "date"));
-        description = forecastJson.toObject().find("conditions").value().toString();
-        forecast->setWeatherCode(weatherCode);
-        forecast->setTempLow(Util::calculateTemperature(tempLow, temperatureUnit, settings.tempUnit()));
-        forecast->setTempHigh(Util::calculateTemperature(tempHigh, temperatureUnit, settings.tempUnit()));
-        forecast->setForecastDesc(description);
-        forecast->setForecastDate(date.toString("dd/MMM/yyyy"));
-        forecast->setLocationId(settings.currentLocationId());
-        forecastList.append(forecast);
-    }
-    if (!forecastList.isEmpty()) {
-        m_weather.m_tempMax = forecastList.at(1)->tempHigh();
-        m_weather.m_tempMin = forecastList.at(1)->tempLow();
-        saveForecast(forecastList);
+    int idCounter = 0;
+    if (clearForecastData()) {
+        if (db->startCon()) {
+            QString str = "insert into sw_tr_forecast(forec_id, forec_date, forec_weather_code, "
+                          "forec_weather_description, forec_temp_min, forec_temp_max, forec_loc_id) "
+                          "values "
+                          "(:id, :date ,:code, :description, :temp_min, :temp_max, :loc_id)";
+            QSqlQuery query;
+            query.prepare(str);
+            if ( db->getDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
+                db->getDatabase().transaction();
+            }
+            foreach (QJsonValue val, forecastArray) {
+                if (wundIconsCodes->constFind(val.toObject().find("icon").value().toString()) != wundIconsCodes->constEnd())
+                    weatherCode = wundIconsCodes->constFind(val.toObject().find("icon").value().toString()).value();
+                tempHigh = nextBranch(val.toObject(), "high").find("celsius").value().toString().toInt();
+                tempLow = nextBranch(val.toObject(), "low").find("celsius").value().toString().toInt();
+                date = dateFromJson(nextBranch(val.toObject(), "date"));
+                description = val.toObject().find("conditions").value().toString();
+                query.bindValue(":id", ++idCounter);
+                query.bindValue(":date", date);
+                query.bindValue(":code", weatherCode);
+                query.bindValue(":description", description);
+                query.bindValue(":temp_max", Util::calculateTemperature(tempHigh, temperatureUnit));
+                query.bindValue(":temp_min", Util::calculateTemperature(tempLow, temperatureUnit));
+                query.bindValue(":loc_id", locationId);                
+                if (!query.exec()) {
+                    qDebug() << "WundWeatherController::saveForecastToDb query error: " << query.lastError().text();
+                    qDebug() << "WundWeatherController::saveForecastToDb db error: " << db->getError();
+                    emit saveDataError(query.lastError().text());
+                    if (db->getDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
+                        db->getDatabase().rollback();
+                    }
+                    break;
+                }
+            }
+            if (db->getDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
+                db->getDatabase().commit();
+            }
+            emit forecastChanged();
+        }
+        else {
+            qDebug() << "WundWeatherController::saveForecastToDb database error: " << db->getError();
+            emit saveDataError(db->getError());
+        }
+        db->stopCon();
     }
 }
 
-QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {
+void WundWeatherController::mapWundIconsCodes() {
+    wundIconsCodes->insert("chanceflurries", 1);
+    wundIconsCodes->insert("chancerain", 2);
+    wundIconsCodes->insert("chancesleet", 3);
+    wundIconsCodes->insert("chancesnow", 4);
+    wundIconsCodes->insert("chancetstorms", 5);
+    wundIconsCodes->insert("clear", 6);
+    wundIconsCodes->insert("cloudy", 7);
+    wundIconsCodes->insert("flurries", 8);
+    wundIconsCodes->insert("fog", 9);
+    wundIconsCodes->insert("hazy", 10);
+    wundIconsCodes->insert("mostlycloudy", 11);
+    wundIconsCodes->insert("mostlysunny", 12);
+    wundIconsCodes->insert("partlycloudy", 13);
+    wundIconsCodes->insert("partlysunny", 14);
+    wundIconsCodes->insert("sleet", 15);
+    wundIconsCodes->insert("rain", 16);
+    wundIconsCodes->insert("snow", 17);
+    wundIconsCodes->insert("sunny", 18);
+    wundIconsCodes->insert("tstorms", 19);
+    wundIconsCodes->insert("unknown", 20);
+    wundIconsCodes->insert("-1", -1);
+}
+
+QDate WundWeatherController::dateFromJson(const QJsonObject &jsonObject) {    
     QDate date(jsonObject.find("year").value().toInt(),
                jsonObject.find("month").value().toInt(),
                jsonObject.find("day").value().toInt());
