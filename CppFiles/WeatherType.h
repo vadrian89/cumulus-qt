@@ -19,13 +19,15 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef WEATHERTYPE_H
-#define WEATHERTYPE_H
+#ifndef WEATHER_H
+#define WEATHER_H
 
 #include <QObject>
 #include <QMap>
 #include <QThread>
+#include <QTime>
 
+#include "DbConnection.h"
 #include "Util.h"
 #include "YWeatherController.h"
 #include "OwmWeatherController.h"
@@ -34,12 +36,14 @@
 class WeatherType : public QObject {
     Q_OBJECT
     QString m_weather, m_weatherIcon, m_weatherDescription, m_location, m_locationLink, m_tempUnit,
-    m_sunrise, m_sunset, m_speedUnit;
+    m_sunrise, m_sunset, m_speedUnit, m_weatherApi;
     float m_pressure;
     int m_weatherCode, m_temperature, m_windSpeed, m_windDegree, m_humidity;
+    QMap<int, QString> *yahooIcons, *owmIcons, *wundIcons;
+    QMap<QString, QString> *nightFonts;
     int m_tempMin, m_tempMax;
+    bool m_loadFinished;
     QList<QObject*> m_forecastList;
-    QThread *thread;
 
     Q_PROPERTY(QString weather READ weather WRITE setWeather NOTIFY weatherChanged)
     Q_PROPERTY(int weatherCode READ weatherCode WRITE setWeatherCode NOTIFY weatherCodeChanged)
@@ -57,12 +61,27 @@ class WeatherType : public QObject {
     Q_PROPERTY(QString sunset READ sunset WRITE setSunset NOTIFY sunsetChanged)
     Q_PROPERTY(int tempMax READ tempMax WRITE setTempMax NOTIFY tempMaxChanged)
     Q_PROPERTY(int tempMin READ tempMin WRITE setTempMin NOTIFY tempMinChanged)
+    Q_PROPERTY(bool loadFinished READ loadFinished WRITE setLoadFinished NOTIFY loadFinishedChanged)
     Q_PROPERTY(QList<QObject*> forecastList READ forecastList WRITE setForecastList NOTIFY forecastListChanged)
     Q_PROPERTY(QString speedUnit READ speedUnit WRITE setSpeedUnit NOTIFY speedUnitChanged)
+    Q_PROPERTY(QString weatherApi READ weatherApi WRITE setWeatherApi NOTIFY weatherApiChanged)
 
-    void updateTemperature(const QString &tempUnit);
-    void updateForecastTemp(const QString &newUnit);
-    AbstractWeatherController *weatherController;
+    int locationId();
+    void loadData();
+    void loadData(QSqlQuery &query);
+    void mapYahooIcon();
+    void mapOwmIcons();
+    void mapNightIcons();
+    void mapWundIcons();
+    QString findIcon(int weatherCode);
+    QString findNightIcon(const QString fontCode) const;
+    QMap<QString,QString> searchCriteria();
+    void updateForecastTemp(const QString &oldUnit);
+    YWeatherController *yweather;
+    OwmWeatherController *owmWeather;
+    WundWeatherController *wundWeather;
+    QThread workerThread;
+    bool clearLocationCode();
 public:
     explicit WeatherType(QObject *parent = 0);
     void setWeather(const QString &weather);
@@ -97,14 +116,20 @@ public:
     int tempMax() const;
     void setTempMin(const int &tempMin);
     int tempMin() const;
+    bool loadFinished() const;
+    void setLoadFinished(const bool &loadFinished);
     QList<QObject*> forecastList() const;
     void setForecastList(const QList<QObject*> &list);
     QString speedUnit() const;
     void setSpeedUnit(const QString &unit);
+    QString weatherApi() const;
+    void setWeatherApi(const QString &weatherApi);
 public slots:
     void getWeatherData();
-    void setWeatherData();        
-    void setWeatherData(const weather_struct &weather);
+    void setWeatherData();    
+    QList<QObject*> getForecastData();
+    void changeTempUnit(const QString &unit);
+    void changeSpeedUnit(const QString &unit);
 signals:
     void weatherChanged();
     void weatherCodeChanged();
@@ -123,10 +148,13 @@ signals:
     void sunsetChanged();
     void tempMinChanged();
     void tempMaxChanged();
+    void noLocationSet();
     void dataDownloadFinished();
+    void loadFinishedChanged();
     void forecastListChanged();
     void speedUnitChanged();
+    void weatherApiChanged();
     void networkError(const QString &error);
 };
 
-#endif // WEATHERTYPE_H
+#endif // WEATHER_H

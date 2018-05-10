@@ -34,16 +34,20 @@
 class DataController : public QObject {
     Q_OBJECT
     QNetworkAccessManager *networkManager;
+    QNetworkReply *networkReply;
+    QNetworkRequest networkRequest;
     QJsonObject receivedData;
 public:
     explicit DataController(QObject *parent = 0);
     void getDataFromUrl(QString urlString);
     QString managerError() const;
+public slots:    
 private slots:
-    void readFinished(QNetworkReply *reply);
+    void readFinished();
+    void networkError(QNetworkReply::NetworkError);
 signals:
     void jsonObjectReady(QJsonObject);
-    void networkError(const QString &error);
+    void networkError();
 };
 
 #endif // DATACONTROLLER_H

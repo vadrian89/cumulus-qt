@@ -1,10 +1,12 @@
 <RCC>
     <qresource prefix="/">
+        <file>qt/etc/qt.conf</file>
         <file>ApplicationBar.qml</file>
         <file>ColorPalleteButton.qml</file>
         <file>CreditsListDelegate.qml</file>
         <file>CreditsView.qml</file>
         <file>CustomSwitch.qml</file>
+        <file>ForecastDelegate.qml</file>
         <file>ForecastView.qml</file>
         <file>LinkedText.qml</file>
         <file>main-android.qml</file>
@@ -20,13 +22,5 @@
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
         <file>main-desktop.qml</file>
-        <file>other/weather_codes.json</file>
-        <file>SimpleItem.qml</file>
-        <file>MainView.qml</file>
-        <file>LocationView.qml</file>
-        <file>LocationItemDelegate.qml</file>
-        <file>ClickableItem.qml</file>
-        <file>GpsLocationItem.qml</file>
-        <file>ForecastItemDelegate.qml</file>
     </qresource>
 </RCC>

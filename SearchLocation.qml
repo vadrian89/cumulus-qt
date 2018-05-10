@@ -19,31 +19,35 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.0
+import QtQuick 2.7
+import QtQuick.Window 2.2
 import QtQuick.Controls 2.1
+import QtQuick.Dialogs 1.2
 
-Dialog {
-    id: root    
-    property string backgroundColor
-    property string textColor
-    property string textFontFamily
-    property string locationQuery    
-    property string gpsLocation: "-"
-    property alias searchListModel: searchList.model
-    signal locationSelected(string locationSelected)
-    visible: true
+import ownTypes.searchLocation 0.4
 
-    contentItem: Rectangle {
+Item {
+    id: root
+    signal locationSelected()
+    property string backgroundColor: util.backgroundColor()
+    property string textColor: util.textColor()
+
+    FontLoader {
+        id: ubuntuCondensed
+        source: "fonts/Ubuntu-C.ttf"
+    }
+
+    Rectangle {
         id: body
         anchors.fill: parent
-        color: root.backgroundColor.length > 7 ? ("#" + root.backgroundColor.substring(3)) : root.backgroundColor
+        color: root.backgroundColor
 
         TextField {
             id: searchField
-            placeholderText: qsTr("Search")
+            placeholderText: "Search"
             maximumLength: 120
             font.pixelSize: 22
-            font.family: root.textFontFamily
+            font.family: ubuntuCondensed.name
             width: (parent.width * 80 / 100) - loadingIcon.width
             anchors.top: parent.top
             anchors.topMargin: 10
@@ -54,16 +58,13 @@ Dialog {
                 border.width: 0
                 color: "transparent"
             }
-            onTextChanged: {
-                if (text.trim().length > 0) {
-                    searchTimer.restart()
-                }
-            }
+
+            onTextChanged: locationSearcher.locationName = text
         }
 
         Image {
             id: loadingIcon
-            source: "image://fontimage/\uf013" + (root.textColor ? root.textColor : "#ffffff")
+            source: "image://fontimage/\uf013" + root.textColor
             height: searchField.height
             width: loadingIcon.height
             sourceSize.width: loadingIcon.width
@@ -102,8 +103,10 @@ Dialog {
             anchors.left: parent.left
             anchors.leftMargin: (parent.width - searchList.width) / 2
             width: (parent.width * 80 / 100)
-            height: (body.height - searchField.height - gpsLocation.height - 10)
+            height: (body.height - searchField.height - 30)
             cacheBuffer: 0
+            displayMarginBeginning: 0
+            displayMarginEnd: 0
             clip: true
             delegate: Rectangle {
                 height: 40
@@ -121,33 +124,34 @@ Dialog {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.locationSelected(delegateText.text);
+                    onClicked: {
+                        locationSearcher.setLocation(delegateText.text);
+                    }
                 }
             }
-            onModelChanged: loadingIcon.visible = false
-        }
-        GpsLocationItem {
-            id: gpsLocation
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: searchList.anchors.leftMargin
-            width: searchList.width
-            height: 60
-            textColor: root.textColor
-            textFontFamily: root.textFontFamily
-            text: root.gpsLocation
-            onClicked: root.locationSelected(text);
-            fontSize: 16
         }
     }
-    Timer {
-        id: searchTimer
-        interval: 3000
-        running: false
-        repeat: false
-        onTriggered: {
-            loadingIcon.visible = true
-            root.locationQuery = searchField.text.trim()
+
+    LocationSearchController {
+        id: locationSearcher
+        onLocationResultChanged: {
+            searchList.model = locationSearcher.locationResult
+            loadingIcon.visible = false
         }
+        onErrorChanged: {
+            errorDialog.text = locationSearcher.error
+            errorDialog.visible = true
+            loadingIcon.visible = false
+        }
+        onSearchStarted: loadingIcon.visible = true
+        onLocationChanged: root.locationSelected();
+    }
+
+    MessageDialog {
+        id: errorDialog
+        title: "Error"
+        icon: StandardIcon.Critical
+        visible: false
+        standardButtons: StandardButton.Ok
     }
 }

@@ -19,37 +19,39 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.0
+import QtQuick 2.7
 
 Item {
     id: root
-    property string fontFamily: "Arial"
-    property string fontColor: "#ffffff"
-    property string iconsFontFamily: ""
-    property int fontSize: 20
+    property string fontFamily
+    property string fontColor
+    property int fontSize
     property alias viewModel: forecastList.model
-    property int widthBreakPoint: 200
+    property int widthBreakPoint: 170
+    property int delegateWidth: root.width >= widthBreakPoint ? root.width / 5 : root.width / 2
+
+    FontLoader {
+        id: weatherIconsFont
+        source: "fonts/weathericons-regular-webfont.ttf"
+    }
 
     ListView {
         id: forecastList
         anchors.fill: parent
-        orientation: ListView.Vertical
+        orientation: ListView.Horizontal
         clip: true
-        spacing: 2
+        spacing: 0
         snapMode: ListView.SnapToItem
-        delegate: ForecastItemDelegate {
-            width: forecastList.width
-            height: 60
-            stringFont: root.fontFamily
-            iconFont: root.iconsFontFamily
+        delegate: ForecastDelegate {
+            height: forecastList.height
+            width: delegateWidth
+            stringFont: fontFamily
+            iconFont: weatherIconsFont.name
             fontColor: root.fontColor
             forecastDay: model.modelData.forecastDate
-            forecastIcon: model.modelData.weatherIcon
-            forecastTempHigh: model.modelData.tempHigh + "°"
-            forecastTempLow: model.modelData.tempLow + "°"
+            forecastIcon: model.modelData.weatherCode
+            forecastTemperature: model.modelData.tempHigh + "° / " + model.modelData.tempLow + "°"
             forecastDesc: model.modelData.forecastDesc
-            radius: 2
-            widthBreakPoint: root.widthBreakPoint
         }
         onModelChanged: positionViewAtBeginning()
         onWidthChanged: positionViewAtBeginning()

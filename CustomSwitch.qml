@@ -1,6 +1,6 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtGraphicalEffects 1.0
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.3
 
 Item {
     id: root
@@ -12,7 +12,7 @@ Item {
     property int borderRadius: 0
     property string rightText: ""
     property string leftText: ""
-    property string state: root.leftStateValue
+    property alias state: switchButton.state
     property bool checked: root.state == rightStateValue ? true : false
     property string leftStateValue: "left"
     property string rightStateValue: "right"
@@ -21,11 +21,13 @@ Item {
     property string font: "Arial"
     property int switchRailWidth: 100
     property int switchRailHeight: 30
-    property string switchLabel: ""
+    property string switchLabel: qsTr("")
+
     RowLayout {
         id: switchLayout
         anchors.fill: parent
         spacing: 5
+
         Text {
             id: labelText
             Layout.fillWidth: true
@@ -36,6 +38,7 @@ Item {
             color: root.labelColor
             text: root.switchLabel
         }
+
         Rectangle {
             id: switchRail
             Layout.fillWidth: false
@@ -47,6 +50,7 @@ Item {
             color: root.railColor
             radius: root.borderRadius
             antialiasing: true
+
             Rectangle {
                 id: switchRailBorder
                 anchors.top: parent.top
@@ -70,6 +74,7 @@ Item {
                     color: root.leftTextColor
                     font.family: root.font
                 }
+
                 Text {
                     id: rightText
                     anchors.right: parent.right
@@ -82,6 +87,7 @@ Item {
                     color: root.rightTextColor
                     font.family: root.font
                 }
+
                 Rectangle {
                     id: switchButton
                     anchors.top: switchRailBorder.top
@@ -90,7 +96,6 @@ Item {
                     width: (switchRailBorder.width / 2)
                     border.width: 1
                     border.color: "#BBBBBB"
-                    state: root.state
                     states: [
                         State {
                             name: root.rightStateValue
@@ -122,11 +127,13 @@ Item {
                         }
                     }
                 }
+
                 MouseArea {
                     id: mouse
                     anchors.fill: parent
-                    onClicked: root.state = ((root.state == root.leftStateValue) ? root.rightStateValue : root.leftStateValue)
+                    onClicked: root.state = root.state == root.leftStateValue ? root.rightStateValue : root.leftStateValue
                 }
+
             }
         }
     }
