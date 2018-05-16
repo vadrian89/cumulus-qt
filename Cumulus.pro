@@ -1,13 +1,15 @@
-QT += qml quick sql widgets quickwidgets concurrent positioning
+QT += qml quick sql widgets quickwidgets concurrent
 
 CONFIG += c++11
 
 SOURCES += main.cpp \
     CppFiles/Util.cpp \
+    CppFiles/DbConnection.cpp \
     CppFiles/DataController.cpp \
     CppFiles/YWeatherController.cpp \
     CppFiles/Forecast.cpp \
     CppFiles/SettingsController.cpp \
+    CppFiles/SearchLocation.cpp \
     CppFiles/OwmWeatherController.cpp \
     CppFiles/ThreadWorker.cpp \
     CppFiles/WeatherType.cpp \
@@ -17,10 +19,7 @@ SOURCES += main.cpp \
     CppFiles/CustomImageProvider.cpp \
     CppFiles/FontImageProvider.cpp \
     CppFiles/WundWeatherController.cpp \
-    CppFiles/MainWindow.cpp \
-    CppFiles/DatabaseHelper.cpp \
-    CppFiles/Location.cpp \
-    CppFiles/LocationController.cpp
+    CppFiles/MainWindow.cpp
 
 RESOURCES += qml.qrc
 
@@ -32,10 +31,12 @@ include(deployment.pri)
 
 HEADERS += \
     CppFiles/Util.h \
+    CppFiles/DbConnection.h \
     CppFiles/DataController.h \
     CppFiles/YWeatherController.h \
     CppFiles/Forecast.h \
     CppFiles/SettingsController.h \
+    CppFiles/SearchLocation.h \
     CppFiles/OwmWeatherController.h \
     CppFiles/ThreadWorker.h \
     CppFiles/WeatherType.h \
@@ -45,12 +46,9 @@ HEADERS += \
     CppFiles/CustomImageProvider.h \
     CppFiles/FontImageProvider.h \
     CppFiles/WundWeatherController.h \
-    CppFiles/MainWindow.h \
-    CppFiles/DatabaseHelper.h \
-    CppFiles/Location.h \
-    CppFiles/LocationController.h
+    CppFiles/MainWindow.h
 
-#QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
+QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 DISTFILES += \
     README.md \

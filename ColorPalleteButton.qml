@@ -19,14 +19,14 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.0
-import QtQuick.Layouts 1.0
+import QtQuick 2.7
+import QtQuick.Layouts 1.3
 
 Item {
     id: root
     property string text
-    property string textColor
-    property string backgroundColor
+    property string textColor: util.textColor()
+    property string backgroundColor: util.backgroundColor()
     property string buttonBorderColor: "#FFFFFF"
     signal clicked()
 

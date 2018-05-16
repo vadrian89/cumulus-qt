@@ -22,56 +22,126 @@
 #include <QProcessEnvironment>
 #include "Util.h"
 #include "CreditsAuthor.h"
-#include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
 
 Util::Util(QObject *parent) : QObject(parent){}
 
-double Util::calculateTemperature(const double &temperature, const QString &oldUnit, const QString &newUnit) {
+QString Util::getTemperatureUnit() {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    QString unit = settings.value("temperatureUnit", "c").toString();
+    settings.endGroup();
+    return unit.toUpper();
+}
+
+void Util::setTemperatureUnit(QString unit) {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    settings.setValue("temperatureUnit", unit);
+    settings.endGroup();
+}
+
+QString Util::getWindSpeedUnit() {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    QString unit = settings.value("windSpeedUnit", "m/s").toString();
+    settings.endGroup();
+    return unit;
+}
+
+void Util::setWindSpeedUnit(QString unit) {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    settings.setValue("windSpeedUnit", unit);
+    settings.endGroup();
+}
+
+QString Util::getPressureUnit() {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    QString unit = settings.value("pressureUnit", "mbar").toString();
+    settings.endGroup();
+    return unit;
+}
+
+QString Util::backgroundColor() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    QString color = settings.value("applicationBackground", "#ff0099ff").toString();
+    settings.endGroup();
+    return color;
+}
+
+QString Util::textColor() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    QString color = settings.value("textColor", "#ffffff").toString();
+    settings.endGroup();
+    return color;
+}
+
+QString Util::getWeatherApi() {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    QString api = settings.value("api", "owm").toString();
+    settings.endGroup();
+    return api;
+}
+
+void Util::setWeatherApi(const QString &weatherApi) {
+    QSettings settings;
+    settings.beginGroup("weather-settings");
+    settings.setValue("api", weatherApi);
+    settings.endGroup();
+}
+
+//Calculate temperature based on local selection of measurement
+double Util::calculateTemperature(const double &temperature, const QString &unit) {
+    QString localUnit = getTemperatureUnit().toLower();
     double finalValue = 0;
-    if (newUnit.toLower() == "c" && oldUnit.toLower() == "f") {
+    if (localUnit == "c" && unit == "f") {
         finalValue = fahrenheitToCelsiu(temperature);
     }
-    else if (newUnit.toLower() == "c" && oldUnit.toLower() == "k") {
+    else if (localUnit == "c" && unit == "k") {
         finalValue = kelvinToCelsiu(temperature);
     }
-    else if (newUnit.toLower() == "k" && oldUnit.toLower() == "f") {
+    else if (localUnit == "k" && unit == "f") {
         finalValue = fahrenheitToKelvin(temperature);
     }
-    else if (newUnit.toLower() == "k" && oldUnit.toLower() == "c") {
+    else if (localUnit == "k" && unit == "c") {
         finalValue = celsiusToKelvin(temperature);
     }
-    else if (newUnit.toLower() == "f" && oldUnit.toLower() == "c") {
+    else if (localUnit == "f" && unit == "c") {
         finalValue = celsiusToFahrenheit(temperature);
     }
-    else if (newUnit.toLower() == "f" && oldUnit.toLower() == "k") {
+    else if (localUnit == "f" && unit == "k") {
         finalValue = kelvinToFahrenheit(temperature);
     }
-    else {
+    else {        
         finalValue = temperature;
     }
     return roundToInt(finalValue);
 }
 
-double Util::calculateWindSpeed(double speed, const QString &oldUnit, const QString &newUnit) {
+//Calculate speed based on local selection of speed unit
+double Util::calculateWindSpeed(double speed, const QString &unit) {
+    QString localUnit = getWindSpeedUnit().toLower();
     double finalSpeed = 0;
-    if (newUnit.toLower() == "m/s" && oldUnit.toLower() == "kph") {        
+    if (localUnit == "m/s" && unit == "kph") {
         finalSpeed = kphToMs(speed);
     }
-    else if (newUnit.toLower() == "m/s" && oldUnit.toLower() == "mph") {
+    else if (localUnit == "m/s" && unit == "mph") {
         finalSpeed = mphToMs(speed);
     }
-    else if (newUnit.toLower() == "kph" && oldUnit.toLower() == "m/s") {
+    else if (localUnit == "kph" && unit == "m/s") {
         finalSpeed = msToKph(speed);
     }
-    else if (newUnit.toLower() == "kph" && oldUnit.toLower() == "mph") {
+    else if (localUnit == "kph" && unit == "mph") {
         finalSpeed = mphToKph(speed);
     }
-    else if (newUnit.toLower() == "mph" && oldUnit.toLower() == "m/s") {
+    else if (localUnit == "mph" && unit == "m/s") {
         finalSpeed = msToMph(speed);
     }
-    else if (newUnit.toLower() == "mph" && oldUnit.toLower() == "kph") {
+    else if (localUnit == "mph" && unit == "kph") {
         finalSpeed = kphToMph(speed);
     }
     else {
@@ -129,8 +199,7 @@ double Util::kphToMs(double speed) {
 }
 
 double Util::calculatePressure(double pressure, const QString &unit) {
-    SettingsController settings;
-    QString str = settings.pressureUnit().toLower();
+    QString str = getPressureUnit().toLower();
     double finalValue = pressure;
 
     if (str == "mbar" && unit == "mmhg") {
@@ -143,8 +212,8 @@ double Util::calculatePressure(double pressure, const QString &unit) {
     return QString::number(finalValue, 'd', 1).toDouble();
 }
 
-QString Util::tempUnitSymbol(const QString &unit) {
-    QString str = unit.toLower();
+QString Util::temperatureUnitSymbol() {
+    QString str = getTemperatureUnit().toLower();
     if (str == "c") {
         return " °C";
     }
@@ -156,8 +225,8 @@ QString Util::tempUnitSymbol(const QString &unit) {
     }
 }
 
-QString Util::speedUnitSymbol(const QString &unit) {
-    QString str = unit.toLower();
+QString Util::speedUnitSymbol() {
+    QString str = getWindSpeedUnit().toLower();
     if (str == "mph") {
         return " MPH";
     }
@@ -169,8 +238,8 @@ QString Util::speedUnitSymbol(const QString &unit) {
     }
 }
 
-QString Util::pressureUnitSymbol(const QString &unit) {
-    QString str = unit.toLower();
+QString Util::pressureUnitSymbol() {
+    QString str = getPressureUnit().toLower();
     if (str == "mbar") {
         return " mbar";
     }
@@ -206,21 +275,28 @@ int Util::roundToInt(const double &unit) {
 
 QString Util::getLogoImage() const {
     QString prefix = "file:" + QApplication::applicationDirPath() + "/icons/";
-    SettingsController settings;
     if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
         prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/icons/";
 #if defined(Q_OS_ANDROID)
     prefix = "assets:/";
 #endif
-    if (settings.weatherApi().toLower() == "y") {
+    if (getWeatherApi() == "y") {
         return prefix + "yw_logo.png";
     }
-    else if (settings.weatherApi().toLower() == "wund") {
+    else if (getWeatherApi() == "wund") {
         return prefix + "wund_logo_light.png";
     }
-    else {        
-        return "image://customimage/Powered by:#OpenWeatherMap" + settings.textColor();
+    else {
+        return "image://customimage/Powered by:#OpenWeatherMap" + textColor();
     }
+}
+
+bool Util::trayVisibility() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    bool visible = settings.value("tray", false).toBool();
+    settings.endGroup();
+    return visible;
 }
 
 QList<QObject*> Util::creditsList() {
@@ -242,6 +318,22 @@ QList<QObject*> Util::creditsList() {
     return list;
 }
 
+QString Util::trayTheme() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    QString string = settings.value("trayTheme", "light").toString();
+    settings.endGroup();
+    return string;
+}
+
+QString Util::windowControlsPos() {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    QString string = settings.value("windowControlsPos", "left").toString();
+    settings.endGroup();
+    return string;
+}
+
 QString Util::iconPathPrefix() {
     QString prefix = "file:" + QApplication::applicationDirPath() + "/icons/hicolor/512x512/";
     if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
@@ -250,24 +342,4 @@ QString Util::iconPathPrefix() {
     prefix = "assets:/";
 #endif
     return prefix;
-}
-
-QString Util::findFontCode(const QString &branch,const QString &code) {
-    QFile fontCodesFile(":/other/weather_codes.json");
-    QByteArray baJsonData;
-    if (!fontCodesFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Util::findFontCode cannot open file " + fontCodesFile.fileName();
-        return "";
-    }
-    while (!fontCodesFile.atEnd()) {
-        baJsonData.append(fontCodesFile.readLine());
-    }
-    QJsonObject jsonObject = QJsonDocument::fromJson(baJsonData).object();
-    QString result = jsonObject.find(branch).value().toObject().find(code).value().toString();
-    return result;
-}
-
-QString Util::forecastDate(const QString &string) {
-    QDate date = QDate::fromString(string, "dd/MMM/yyyy");
-    return firstLetterUp(date.toString("dddd"));
 }
