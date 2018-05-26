@@ -27,7 +27,9 @@ location_table_definition DatabaseHelper::DB_MA_LOCATION;
 weather_table_definition DatabaseHelper::DB_TR_WEATHER;
 forecast_table_definition DatabaseHelper::DB_TR_FORECAST;
 
-DatabaseHelper::DatabaseHelper(QObject *parent) : QObject(parent) {}
+DatabaseHelper::DatabaseHelper(QObject *parent) : QObject(parent) {
+    databaseInit();
+}
 
 QString DatabaseHelper::locationTableCreationQuery() {
     QString def = "create table if not exists ";
@@ -80,26 +82,26 @@ QSqlDatabase DatabaseHelper::getDatabase() {
     return db;
 }
 
-bool DatabaseHelper::startCon(QSqlDatabase *db) {
-    if (db->open()) {
-        databaseInit(db);
+bool DatabaseHelper::startCon(QSqlDatabase &db) {
+    if (db.open()) {
         return true;
     }
     else {
-        emitQueryError("DatabaseHelper::startCon database error!", db->lastError().text());
+        emitQueryError("DatabaseHelper::startCon database error!", db.lastError().text());
         return false;
     }
 }
-bool DatabaseHelper::stopCon(QSqlDatabase *db) {
-    db->close();
-    if (!db->isOpen())
+bool DatabaseHelper::stopCon(QSqlDatabase &db) {
+    db.close();
+    if (!db.isOpen())
         return true;
     else
         return false;
 }
 
-bool DatabaseHelper::databaseInit(QSqlDatabase *db) {
-    if (db->isOpen()) {
+bool DatabaseHelper::databaseInit() {
+    QSqlDatabase db = getDatabase();
+    if (startCon(db) && db.isOpen()) {
         QSqlQuery q(getDatabase());
         q.prepare(locationTableCreationQuery());
         if(q.exec()) {
@@ -107,6 +109,7 @@ bool DatabaseHelper::databaseInit(QSqlDatabase *db) {
             if (q.exec()) {
                 q.prepare(forecastTableCreationQuery());
                 if (q.exec() ) {
+                    stopCon(db);
                     return true;
                 }
                 else {
@@ -125,7 +128,7 @@ bool DatabaseHelper::databaseInit(QSqlDatabase *db) {
         }
     }
     else {
-        emitQueryError("DatabaseHelper::databaseInit database error", db->lastError().text());
+        emitQueryError("DatabaseHelper::databaseInit database error", db.lastError().text());
         return false;
     }
 }
@@ -140,7 +143,7 @@ QString DatabaseHelper::databaseName(const QString &appName) {
 
 void DatabaseHelper::emitQueryError(const QString &method, const QString &errorString) {
     QSqlDatabase db = getDatabase();
-    stopCon(&db);
+    stopCon(db);
     qDebug() << method + " query failed: " << errorString;
     emit queryError(errorString);
 }
@@ -148,14 +151,14 @@ void DatabaseHelper::emitQueryError(const QString &method, const QString &errorS
 bool DatabaseHelper::clearLocationCode() {
     QSqlDatabase db = getDatabase();
     bool result = false;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "update " + DB_MA_LOCATION.TABLE_NAME +" set " + DB_MA_LOCATION.LOC_CODE_COLUMN
                 + " = ''";
         q.prepare(queryString);
         if (q.exec()) {
             emit querySuccessful();
-            stopCon(&db);
+            stopCon(db);
             result = true;
         }
         else {
@@ -169,7 +172,7 @@ location_struct DatabaseHelper::getLocation(const int &locationId) {
     QSqlDatabase db = getDatabase();
     location_struct location;
     location.m_locationId = -1;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "select "
                 + DB_MA_LOCATION.LOC_ID_COLUMN + " as id, "
@@ -190,7 +193,7 @@ location_struct DatabaseHelper::getLocation(const int &locationId) {
             emitQueryError("DatabaseHelper::getLocation", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return location;
 }
 
@@ -198,7 +201,7 @@ location_struct DatabaseHelper::findLocation(const QString &locationName) {
     QSqlDatabase db = getDatabase();
     location_struct location;
     location.m_locationId = -1;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "select "
                 + DB_MA_LOCATION.LOC_ID_COLUMN + " as id, "
@@ -219,14 +222,14 @@ location_struct DatabaseHelper::findLocation(const QString &locationName) {
             emitQueryError("DatabaseHelper::getLocation", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return location;
 }
 
 QList<location_struct> DatabaseHelper::getLocationList() {
     QSqlDatabase db = getDatabase();
     QList<location_struct> list;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "select "
                 + DB_MA_LOCATION.LOC_ID_COLUMN + " as id, "
@@ -248,14 +251,14 @@ QList<location_struct> DatabaseHelper::getLocationList() {
             emitQueryError("DatabaseHelper::getLocationList", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return list;
 }
 
 int DatabaseHelper::lastLocationId() {
     int result = -1;
     QSqlDatabase db = getDatabase();
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "select "
                 + DB_MA_LOCATION.LOC_ID_COLUMN + "+1 as loc_id"
@@ -267,7 +270,7 @@ int DatabaseHelper::lastLocationId() {
         if (q.next())
             result = q.value("loc_id").toInt();
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }
 
@@ -276,7 +279,7 @@ bool DatabaseHelper::insertLocation(const location_struct &location) {
     QSqlDatabase db = getDatabase();
     int id = lastLocationId();
     if (id == -1) id = 1;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "insert into " + DB_MA_LOCATION.TABLE_NAME
                 + "("
@@ -300,14 +303,14 @@ bool DatabaseHelper::insertLocation(const location_struct &location) {
             emitQueryError("DatabaseHelper::insertLocation", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }
 
 bool DatabaseHelper::updateLocation(const location_struct &location) {
     bool result = false;
     QSqlDatabase db = getDatabase();
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "update "
                 + DB_MA_LOCATION.TABLE_NAME + " set "
@@ -327,14 +330,14 @@ bool DatabaseHelper::updateLocation(const location_struct &location) {
             emitQueryError("DatabaseHelper::updateLocation", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }
 
 bool DatabaseHelper::deleteLocation(const int &locationId) {
     bool result = false;
     QSqlDatabase db = getDatabase();
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "delete from " + DB_MA_LOCATION.TABLE_NAME +
                 " where " + DB_MA_LOCATION.LOC_ID_COLUMN + " = :id";
@@ -349,14 +352,14 @@ bool DatabaseHelper::deleteLocation(const int &locationId) {
             emitQueryError("DatabaseHelper::deleteLocation", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }
 
 weather_struct DatabaseHelper::getWeather(const int &locationId) {
     QSqlDatabase db = getDatabase();
     weather_struct weather;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "select "
                 + DB_TR_WEATHER.WEATHER_ID_COLUMN + " as weather_id, "
@@ -408,14 +411,14 @@ weather_struct DatabaseHelper::getWeather(const int &locationId) {
             emitQueryError("DatabaseHelper::getWeather", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return weather;
 }
 
 bool DatabaseHelper::insertWeather(const weather_struct &weather) {
     bool result = false;
     QSqlDatabase db = getDatabase();
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "insert into "
                 + DB_TR_WEATHER.TABLE_NAME + " ("
@@ -454,14 +457,14 @@ bool DatabaseHelper::insertWeather(const weather_struct &weather) {
             emitQueryError("DatabaseHelper::insertWeather", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }
 
 bool DatabaseHelper::deleteWeather(const int &locationId) {
     bool result = false;
     QSqlDatabase db = getDatabase();
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "delete from " + DB_TR_WEATHER.TABLE_NAME + " where " + DB_TR_WEATHER.WEATHER_LOC_ID_COLUMN + " = :id";
         q.prepare(queryString);
@@ -474,14 +477,14 @@ bool DatabaseHelper::deleteWeather(const int &locationId) {
             emitQueryError("DatabaseHelper::deleteWeather", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }
 
 QList<QObject*> DatabaseHelper::getForecast(const int &locationId) {
     QSqlDatabase db = getDatabase();
     QList<QObject*> list;
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "select "
                 + DB_TR_FORECAST.FOREC_ID_COLUMN + " as forec_id, "
@@ -512,7 +515,7 @@ QList<QObject*> DatabaseHelper::getForecast(const int &locationId) {
             emitQueryError("DatabaseHelper::getForecast", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return list;
 }
 
@@ -521,14 +524,14 @@ bool DatabaseHelper::insertForecast(const QList<Forecast*> &forecastList) {
     if (!forecastList.isEmpty()) {
         if (deleteForecast(forecastList.at(0)->locationId())) {
             QSqlDatabase db = getDatabase();
-            if (startCon(&db)) {
+            if (startCon(db)) {
                 if (db.driver()->hasFeature(QSqlDriver::Transactions)) {
                     db.driver()->beginTransaction();
                 }
                 for (Forecast *forecast : forecastList) {
                     if (!insertForecast(forecast, db)) {
                         emitQueryError("DatabaseHelper::insertForecast", db.lastError().text());
-                        stopCon(&db);
+                        stopCon(db);
                         return false;
                     }
                 }
@@ -538,7 +541,7 @@ bool DatabaseHelper::insertForecast(const QList<Forecast*> &forecastList) {
                     db.driver()->commitTransaction();
                 }
             }
-            stopCon(&db);
+            stopCon(db);
         }
     }
     return result;
@@ -574,7 +577,7 @@ bool DatabaseHelper::insertForecast(const Forecast *forecast, const QSqlDatabase
 bool DatabaseHelper::deleteForecast(const int &locationId) {
     bool result = false;
     QSqlDatabase db = getDatabase();
-    if (startCon(&db)) {
+    if (startCon(db)) {
         QSqlQuery q(db);
         QString queryString = "delete from "
                 + DB_TR_FORECAST.TABLE_NAME + " where " + DB_TR_FORECAST.FOREC_LOC_ID_COLUMN + " = :id";
@@ -588,6 +591,6 @@ bool DatabaseHelper::deleteForecast(const int &locationId) {
             emitQueryError("DatabaseHelper::deleteForecast", q.lastError().text());
         }
     }
-    stopCon(&db);
+    stopCon(db);
     return result;
 }

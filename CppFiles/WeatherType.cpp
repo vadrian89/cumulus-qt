@@ -70,9 +70,9 @@ void WeatherType::setWeatherData(const weather_struct &weather) {
     setTempMax(weather.m_tempMax);
     setTempMin(weather.m_tempMin);
     setLocationLink(weather.m_locationLink);
-    setLocation(weather.m_location);
-    m_forecastList.clear();
+    setLocation(weather.m_location);    
     SettingsController settings;
+    clearForecastList();
     for (Forecast *forecast : *weather.m_forecastListPtr) {
         Forecast *forec = new Forecast();
         forec->setWeatherIcon(Util::findFontCode(settings.weatherApi(), QString::number(forecast->weatherCode())));
@@ -82,6 +82,7 @@ void WeatherType::setWeatherData(const weather_struct &weather) {
         forec->setForecastDate(forecast->forecastDate());
         forec->setLocationId(forecast->locationId());
         m_forecastList.append(forec);
+        delete forecast;
     }
     emit forecastListChanged();
     emit weatherDataChanged();
@@ -321,7 +322,7 @@ QList<QObject*> WeatherType::forecastList() const {
 }
 
 void WeatherType::setForecastList(const QList<QObject*> &list) {
-    if (m_forecastList != list) {
+    if (m_forecastList != list) {        
         m_forecastList = list;
         emit forecastListChanged();
     }
@@ -338,4 +339,11 @@ void WeatherType::setSpeedUnit(const QString &speedUnit) {
         m_speedUnit = speedUnit;
         emit speedUnitChanged();
     }
+}
+
+void WeatherType::clearForecastList() {
+    for (QObject *obj : m_forecastList) {
+        delete obj;
+    }
+    m_forecastList.clear();
 }

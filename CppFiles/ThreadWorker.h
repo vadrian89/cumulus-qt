@@ -42,8 +42,7 @@ private slots:
     void startLookingForUpdates();
 signals:
     void startUpdateTimerSignal();
-    void updateSearchFinished();
-    void stopThread();
+    void stopUpdatesSearch();
 };
 
 #endif // THREADWORKER_H

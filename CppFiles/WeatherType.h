@@ -62,6 +62,7 @@ class WeatherType : public QObject {
 
     void updateTemperature(const QString &tempUnit);
     void updateForecastTemp(const QString &newUnit);
+    void clearForecastList();
     AbstractWeatherController *weatherController;
 public:
     explicit WeatherType(QObject *parent = 0);

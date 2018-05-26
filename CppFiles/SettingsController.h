@@ -26,7 +26,6 @@
 #include <QSettings>
 #include <QPoint>
 #include <QSize>
-#include <memory>
 #include <QDir>
 #include <QFile>
 #include <QApplication>

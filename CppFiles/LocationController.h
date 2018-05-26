@@ -11,12 +11,10 @@
 class LocationController : public QObject {
     Q_OBJECT
     QString m_locationName;
-    int m_locationId;    
 public:
     double m_lon, m_lat;
-    explicit LocationController(QObject *parent = nullptr);    
+    explicit LocationController(QObject *parent = nullptr);
     void setLocationQuery(const QString &locationQuery);
-    void setLocationId(const int &locationId);    
 private slots:
     void getLocationFromJson(const QJsonObject &jsonObject);
     void getLocationFromYahoo(const QJsonObject &jsonObject);
@@ -24,8 +22,8 @@ public slots:
     void getLocationList();
     void searchByLocation();
     void searchByCoordinates();
-    void insertLocation();
-    void deleteLocation();
+    bool insertLocation(const QString &locationName);
+    bool deleteLocation(const int &locationId);
 signals:
     void locationList(const QList<location_struct> &locationList);
     void locationSearchList(const QStringList &locationList);

@@ -37,7 +37,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_closeApp = false;
-    QQuickWidget *view = new QQuickWidget();
+    QQuickWidget *view = new QQuickWidget(parent);
     QQmlEngine *engine = view->engine();
     connect(engine, SIGNAL(quit()), this, SLOT(closeApp()));
     QQmlContext *context = engine->rootContext();

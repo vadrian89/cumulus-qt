@@ -8,12 +8,6 @@ void LocationController::setLocationQuery(const QString &locationName) {
     }
 }
 
-void LocationController::setLocationId(const int &locationId) {
-    if (m_locationId != locationId) {
-        m_locationId = locationId;
-    }
-}
-
 void LocationController::getLocationList() {
     DatabaseHelper dbHelper;
     QList<location_struct> list;
@@ -54,24 +48,20 @@ void LocationController::getLocationFromJson(const QJsonObject &jsonObject) {
     emit locationSearchList(stringList);
 }
 
-void LocationController::insertLocation() {
+bool LocationController::insertLocation(const QString &locationName) {
     DatabaseHelper dbHelper;
-    location_struct loc = dbHelper.findLocation(this->m_locationName);
-    if (loc.m_locationName.trimmed().toLower() == this->m_locationName.trimmed().toLower()) {
-        emit duplicateLocation(this->m_locationName);
+    location_struct loc = dbHelper.findLocation(locationName);
+    if (loc.m_locationId > 0) {
+        return false;
     }
     else {
-        location_struct location;
-        location.m_locationCode = "";
-        location.m_locationName = this->m_locationName;
-        if (dbHelper.insertLocation(location)) {
-            getLocationList();
-        }
+        loc.m_locationCode = "";
+        loc.m_locationName = locationName;
+        return dbHelper.insertLocation(loc);
     }
 }
 
-void LocationController::deleteLocation() {
+bool LocationController::deleteLocation(const int &locationId) {
     DatabaseHelper dbHelper;
-    if (dbHelper.deleteLocation(m_locationId))
-        getLocationList();
+    return dbHelper.deleteLocation(locationId);
 }

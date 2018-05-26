@@ -100,11 +100,11 @@ class DatabaseHelper : public QObject {
     QString locationTableCreationQuery();
     QString weatherTableCreationQuery();
     QString forecastTableCreationQuery();
-    bool startCon(QSqlDatabase *db);
-    bool stopCon(QSqlDatabase *db);
+    bool startCon(QSqlDatabase &db);
+    bool stopCon(QSqlDatabase &db);
     QSqlDatabase getDatabase();
     QString databaseName(const QString &appName);
-    bool databaseInit(QSqlDatabase *db);
+    bool databaseInit();
     void emitQueryError(const QString &method, const QString &errorString);
 public:    
     static struct location_table_definition DB_MA_LOCATION;

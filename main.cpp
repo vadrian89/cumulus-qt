@@ -20,6 +20,7 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QApplication>
+#include "CppFiles/DatabaseHelper.h"
 #if defined(Q_OS_ANDROID)
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -41,20 +42,25 @@ void registerQmlType();
 #else
 #include <QFile>
 #include <QThread>
+#include <QCoreApplication>
+#include <QLibraryInfo>
+
 #include "CppFiles/MainWindow.h"
 #include "CppFiles/ThreadWorker.h"
 #endif
 
-#include "CppFiles/DatabaseHelper.h"
 int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    QCoreApplication::addLibraryPath(QLibraryInfo::location(QLibraryInfo::LibrariesPath));
     QString applicationName = "Cumulus";
     if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
         applicationName = applicationName + "-" + argv[2];
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 2))
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication app(argc, argv);
+#endif
     qRegisterMetaType<QList<location_struct>>("QList<location_struct>");
     qRegisterMetaType<weather_struct>("weather_struct");
 #if defined(Q_OS_ANDROID)
@@ -70,14 +76,17 @@ int main(int argc, char *argv[]) {
     registerQmlType();
     engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
 #else
-    MainWindow w;
+    MainWindow w;    
     w.launchApp();
     if (QFile::exists(QApplication::applicationDirPath() + "/maintenancetool")) {
         ThreadWorker *threadWorker = new ThreadWorker();
-        QThread *thread = new QThread;
+        QThread *thread = new QThread();
         threadWorker->moveToThread(thread);
         QObject::connect(thread, SIGNAL(started()), threadWorker, SLOT(updaterTimerStart()));
+        QObject::connect(threadWorker, SIGNAL(startUpdateTimerSignal()), threadWorker, SLOT(updaterTimerStart()));
+        QObject::connect(threadWorker, SIGNAL(stopUpdatesSearch()), thread, SLOT(quit()));
         QObject::connect(thread, SIGNAL(finished()), threadWorker, SLOT(deleteLater()));
+        QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
         thread->start();
     }
 #endif

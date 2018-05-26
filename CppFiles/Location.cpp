@@ -29,36 +29,18 @@ Location::Location(QObject *parent) : QObject(parent) {}
 
 void Location::insertLocation(const QString &location) {
     if (location.trimmed().size() > 0) {
-        QThread *thread = new QThread();
-        LocationController *controller = new LocationController();
-        controller->setLocationQuery(location);
-        controller->moveToThread(thread);
-        connect(thread, SIGNAL(started()), controller, SLOT(insertLocation()));
-        connect(controller, SIGNAL(locationList(QList<location_struct>)), this, SLOT(readLocationList(QList<location_struct>)));
-        connect(controller, SIGNAL(duplicateLocation(QString)), this, SIGNAL(duplicateLocation(QString)));
-        connect(controller, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-        connect(thread, SIGNAL(finished()), controller, SLOT(deleteLater()));
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-        connect(this, SIGNAL(locationListChanged()), thread, SLOT(quit()));
-        connect(this, SIGNAL(duplicateLocation(QString)), thread, SLOT(quit()));
-        connect(this, SIGNAL(networkError(QString)), thread, SLOT(quit()));
-        thread->start();
+        LocationController controller;
+        if (controller.insertLocation(location))
+            getLocationList();
     }
 }
 
 void Location::deleteLocation(const int &locationId) {
-    QThread *thread = new QThread();
-    LocationController *controller = new LocationController();
-    controller->setLocationId(locationId);
-    controller->moveToThread(thread);
-    connect(thread, SIGNAL(started()), controller, SLOT(deleteLocation()));
-    connect(controller, SIGNAL(locationList(QList<location_struct>)), this, SLOT(readLocationList(QList<location_struct>)));
-    connect(controller, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-    connect(thread, SIGNAL(finished()), controller, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(this, SIGNAL(locationListChanged()), thread, SLOT(quit()));
-    connect(this, SIGNAL(networkError(QString)), thread, SLOT(quit()));
-    thread->start();
+    if (locationId > 0) {
+        LocationController controller;
+        if (controller.deleteLocation(locationId))
+            getLocationList();
+    }
 }
 
 void Location::getLocationList() {
@@ -91,7 +73,7 @@ void Location::readLocationList(const QList<location_struct> &locationList) {
     if (locationList.isEmpty() && !settings.useGps()) {
         emit noLocation();
     }
-    else {
+    else {        
         QList<QObject*> list;
         for (const location_struct &loc : locationList) {
             Location *location = new Location();
@@ -107,6 +89,10 @@ void Location::readLocationList(const QList<location_struct> &locationList) {
 
 void Location::setLocationList(const QList<QObject*> &locationList) {
     if (m_locationList != locationList) {
+        for (QObject *locationObject : m_locationList) {
+            delete locationObject;
+        }
+        m_locationList.clear();
         m_locationList = locationList;
         emit locationListChanged();        
     }
@@ -143,6 +129,7 @@ void Location::getGpsLocation() {
     QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(0);
     if (posInfoSource) {
         QThread *thread = new QThread();
+        posInfoSource->setUpdateInterval(2000);
         posInfoSource->moveToThread(thread);
         connect(thread, SIGNAL(started()), posInfoSource, SLOT(startUpdates()));
         connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));
@@ -159,8 +146,8 @@ void Location::getGpsLocation() {
 }
 
 void Location::locationPositionInfo(const QGeoPositionInfo &posInfo) {
+    LocationController *controller = new LocationController(0);
     QThread *thread = new QThread();
-    LocationController *controller = new LocationController();
     controller->m_lat = posInfo.coordinate().latitude();
     controller->m_lon = posInfo.coordinate().longitude();
     controller->moveToThread(thread);
