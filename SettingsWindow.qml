@@ -20,7 +20,7 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick.Controls 1.4
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.0
@@ -92,16 +92,16 @@ Item {
                     anchors.leftMargin: width / 2
                     visible: false
                     model: [ "°F", "°C" ]
-                    delegate: ItemDelegate {
-                        width: tempUnitSelect.width
-                        height: tempUnitSelect.height
-                        contentItem: Text {
-                            text: modelData
-                            font.pixelSize: root.textFontSize
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignLeft
-                        }
-                    }
+//                    delegate: ItemDelegate {
+//                        width: tempUnitSelect.width
+//                        height: tempUnitSelect.height
+//                        contentItem: Text {
+//                            text: modelData
+//                            font.pixelSize: root.textFontSize
+//                            verticalAlignment: Text.AlignVCenter
+//                            horizontalAlignment: Text.AlignLeft
+//                        }
+//                    }
                     onVisibleChanged: {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom

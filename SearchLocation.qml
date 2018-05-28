@@ -20,7 +20,9 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.0
-import QtQuick.Controls 2.1
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 
 Dialog {
     id: root    
@@ -49,10 +51,13 @@ Dialog {
             anchors.topMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: ((parent.width * 90 / 100) - width) / 2
-            color: root.textColor
-            background: Rectangle {
-                border.width: 0
-                color: "transparent"
+            textColor: root.textColor
+            style: TextFieldStyle {
+                background: Rectangle {
+                    border.width: 0
+                    color: "transparent"
+                }
+                placeholderTextColor: root.textColor
             }
             onTextChanged: {
                 if (text.trim().length > 0) {
