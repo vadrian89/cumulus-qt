@@ -34,12 +34,12 @@ Rectangle {
 
     FontLoader {
         id: ubuntuCondensed
-        source: "fonts/Ubuntu-C.ttf"
+        source: "../fonts/Ubuntu-C.ttf"
     }
 
     FontLoader {
         id: weatherIcons
-        source: "fonts/weathericons-regular-webfont.ttf"
+        source: "../fonts/weathericons-regular-webfont.ttf"
     }
 
     SettingsController {

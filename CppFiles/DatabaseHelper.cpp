@@ -27,9 +27,7 @@ location_table_definition DatabaseHelper::DB_MA_LOCATION;
 weather_table_definition DatabaseHelper::DB_TR_WEATHER;
 forecast_table_definition DatabaseHelper::DB_TR_FORECAST;
 
-DatabaseHelper::DatabaseHelper(QObject *parent) : QObject(parent) {
-    databaseInit();
-}
+DatabaseHelper::DatabaseHelper(QObject *parent) : QObject(parent) {}
 
 QString DatabaseHelper::locationTableCreationQuery() {
     QString def = "create table if not exists ";
@@ -75,7 +73,7 @@ QString DatabaseHelper::forecastTableCreationQuery() {
     return def;
 }
 
-QSqlDatabase DatabaseHelper::getDatabase() {
+QSqlDatabase DatabaseHelper::getDatabase() {    
     QSqlDatabase db = QSqlDatabase::database();
     if (!db.isValid()) db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(databaseName(QApplication::applicationName()));
@@ -101,7 +99,7 @@ bool DatabaseHelper::stopCon(QSqlDatabase &db) {
 
 bool DatabaseHelper::databaseInit() {
     QSqlDatabase db = getDatabase();
-    if (startCon(db) && db.isOpen()) {
+    if (startCon(db)) {
         QSqlQuery q(getDatabase());
         q.prepare(locationTableCreationQuery());
         if(q.exec()) {

@@ -63,6 +63,9 @@ int main(int argc, char *argv[]) {
 #endif
     qRegisterMetaType<QList<location_struct>>("QList<location_struct>");
     qRegisterMetaType<weather_struct>("weather_struct");
+    DatabaseHelper *dbHelper = new DatabaseHelper;
+    dbHelper->databaseInit();
+    delete(dbHelper);
 #if defined(Q_OS_ANDROID)
     Util util;
     SettingsController settingsController;

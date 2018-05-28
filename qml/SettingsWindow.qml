@@ -92,16 +92,6 @@ Item {
                     anchors.leftMargin: width / 2
                     visible: false
                     model: [ "°F", "°C" ]
-//                    delegate: ItemDelegate {
-//                        width: tempUnitSelect.width
-//                        height: tempUnitSelect.height
-//                        contentItem: Text {
-//                            text: modelData
-//                            font.pixelSize: root.textFontSize
-//                            verticalAlignment: Text.AlignVCenter
-//                            horizontalAlignment: Text.AlignLeft
-//                        }
-//                    }
                     onVisibleChanged: {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom

@@ -42,7 +42,7 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_windowWidth = settings.value("windowWidth", 300).toInt();    
     settings.endGroup();
     settings.beginGroup(WEATHER_SETTINGS_GROUP);
-    m_currentLocationId = settings.value("currentLocationId" + QString::number(SETTINGS_VERSION), -1).toInt();
+    m_currentLocationId = settings.value("currentLocationId", -1).toInt();
     m_weatherApi = settings.value("api", "owm").toString();
     m_windSpeedUnit = settings.value("windSpeedUnit", "m/s").toString();
     m_tempUnit = settings.value("temperatureUnit", "c").toString();
@@ -231,7 +231,7 @@ void SettingsController::setCurrentLocationId(const int &locationId) {
         m_currentLocationId = locationId;
         QSettings settings;
         settings.beginGroup(WEATHER_SETTINGS_GROUP);
-        settings.setValue("currentLocationId" + QString::number(SETTINGS_VERSION), m_currentLocationId);
+        settings.setValue("currentLocationId", m_currentLocationId);
         settings.endGroup();
         emit currentLocationIdChanged();
     }

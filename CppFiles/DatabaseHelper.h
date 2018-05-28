@@ -103,10 +103,10 @@ class DatabaseHelper : public QObject {
     bool startCon(QSqlDatabase &db);
     bool stopCon(QSqlDatabase &db);
     QSqlDatabase getDatabase();
-    QString databaseName(const QString &appName);
-    bool databaseInit();
+    QString databaseName(const QString &appName);    
     void emitQueryError(const QString &method, const QString &errorString);
 public:    
+    bool databaseInit();
     static struct location_table_definition DB_MA_LOCATION;
     static struct weather_table_definition DB_TR_WEATHER;
     static struct forecast_table_definition DB_TR_FORECAST;

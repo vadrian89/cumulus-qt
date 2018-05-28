@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     context->setContextProperty("applicationWindow", this);
     registerQmlType();
-    view->setSource(QUrl(QLatin1String("qrc:/main-desktop.qml")));
+    view->setSource(QUrl(QLatin1String("qrc:/qml/main-desktop.qml")));
     view->show();
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
     view->setClearColor(Qt::transparent);
