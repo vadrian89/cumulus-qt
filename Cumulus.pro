@@ -50,7 +50,7 @@ HEADERS += \
     CppFiles/Location.h \
     CppFiles/LocationController.h
 
-QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
+#QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
 DISTFILES += \
     README.md \

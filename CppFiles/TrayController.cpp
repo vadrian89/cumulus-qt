@@ -23,18 +23,13 @@
 #include "Util.h"
 
 TrayController::TrayController(QObject *parent) :
-    QObject(parent),
-    trayIcon(nullptr) {}
+    QObject(parent), trayIcon(nullptr), m_temperature(300) {}
 
-void TrayController::setIcon(const QString &icon) {
-    if (m_icon != icon) {
-        m_icon = icon;
-        emit iconChanged();
+void TrayController::setTemperature(const int &temperature) {
+    if (m_temperature != temperature) {
+        m_temperature = temperature;
+        emit temperatureChanged();
     }
-}
-
-QString TrayController::icon() const {
-    return m_icon;
 }
 
 void TrayController::setTrayVisibility(const bool &trayVisibility) {
@@ -64,8 +59,8 @@ QString TrayController::trayTheme() const {
 }
 
 void TrayController::setTrayIcon() {
-    if (isTrayAvailable() && !m_trayTheme.isEmpty() && !m_icon.isEmpty()) {
-        trayIcon->setIcon(QIcon(QPixmap::fromImage(createTrayIcon(m_icon + "°", m_trayTheme))));
+    if (isTrayAvailable() && !m_trayTheme.isEmpty() && m_temperature < 300) {
+        trayIcon->setIcon(QIcon(QPixmap::fromImage(createTrayIcon(m_temperature, m_trayTheme))));
     }
 }
 
@@ -83,7 +78,7 @@ void TrayController::initialiseTray() {
         trayMenu->addAction(closeAction);
         trayIcon->setContextMenu(trayMenu);
         trayIcon->show();
-        connect(this, SIGNAL(iconChanged()), this, SLOT(setTrayIcon()));
+        connect(this, SIGNAL(temperatureChanged()), this, SLOT(setTrayIcon()));
         connect(this, SIGNAL(trayThemeChanged()), this, SLOT(setTrayIcon()));
     }
 }
@@ -110,18 +105,25 @@ void TrayController::emitShowGui() {
     emit showGui();
 }
 
-QImage TrayController::createTrayIcon(const QString &weather, const QString &theme) {
+QImage TrayController::createTrayIcon(const int &temperature, const QString &theme) {
     QString color = theme == "light" ? "white" : "black";
-    QImage image(44, 44, QImage::Format_ARGB32_Premultiplied);
+    QString temperatureString = QString::number(temperature) + "°";
+    int imageSize = 44;
+    int pixelSize = 24;
+    if (temperature >= 100) {
+        imageSize = 66;
+        pixelSize = 28;
+    }
+    QImage image(imageSize, imageSize, QImage::Format_ARGB32_Premultiplied);
     QFont font;
-    font.setPixelSize(26);
+    font.setPixelSize(pixelSize);
     font.setBold(true);
     image.fill(Qt::transparent);
     QPainter painter(&image);
     painter.setFont(font);
     painter.setPen(QColor(color));
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawText(image.rect(), Qt::AlignCenter, weather);
+    painter.drawText(image.rect(), Qt::AlignCenter, temperatureString);
     return image;
 }
 

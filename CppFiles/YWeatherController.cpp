@@ -24,6 +24,7 @@
 YWeatherController::YWeatherController(QObject *parent) : AbstractWeatherController(parent) {
     temperatureUnit = "f";
     locationCode = "";
+    name = "y";
 }
 
 void YWeatherController::searchByGps(const double &lat, const double &lon) {

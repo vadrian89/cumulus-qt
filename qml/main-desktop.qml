@@ -118,7 +118,7 @@ Rectangle {
         Connections {
             id: weatherViewCon
             target: bodyView.item
-            onTempValueChanged: trayController.icon = bodyView.item.tempValue
+            onTempValueChanged: trayController.temperature = bodyView.item.tempValue
             onFinishedWeatherUpdate: {
                 applicationBar.animationAlias.stop()
                 timer.interval = 3600000

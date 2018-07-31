@@ -26,6 +26,7 @@ OwmWeatherController::OwmWeatherController(QObject *parent) : AbstractWeatherCon
     apiKey = settings.apiKey();
     temperatureUnit = "k";
     locationCode = "";
+    name = "owm";
 }
 
 void OwmWeatherController::searchByGps(const double &lat, const double &lon) {

@@ -53,7 +53,8 @@ protected:
     bool saveLocation(const QString &code);
     bool saveLocation(const QString &code, const QString &name);
 public:
-    explicit AbstractWeatherController(QObject *parent = 0);
+    QString name;
+    explicit AbstractWeatherController(QObject *parent = nullptr);
     virtual void searchByLocation(QString &location) = 0;
     virtual void searchBycode(QString &code) = 0;
     virtual void searchByGps(const double &lat, const double &lon) = 0;

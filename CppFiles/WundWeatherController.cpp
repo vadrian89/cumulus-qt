@@ -26,6 +26,7 @@ WundWeatherController::WundWeatherController(QObject *parent) : AbstractWeatherC
     apiKey = settings.apiKey();
     temperatureUnit = "c";
     locationCode = "";
+    name = "wund";
 }
 
 void WundWeatherController::searchByGps(const double &lat, const double &lon) {

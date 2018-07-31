@@ -25,35 +25,36 @@
 #include "DatabaseHelper.h"
 
 #include <QDebug>
-#include <memory>
 
-using namespace std;
+WeatherType::WeatherType(QObject *parent) : QObject(parent) {
+    thread = nullptr;
+}
 
-WeatherType::WeatherType(QObject *parent) : QObject(parent){}
-
-void WeatherType::getWeatherData(){
+void WeatherType::getWeatherData() {
     //TODO; add last update condition correctly
-    SettingsController settings;
-    DatabaseHelper dbHelper;
-    if ((settings.currentLocationId() > 0 && dbHelper.lastLocationId() > 0) || settings.useGps()) {
-        if (settings.weatherApi() == "y") {
-            weatherController = new YWeatherController();
+    if (!weatherController) {
+        SettingsController settings;
+        DatabaseHelper dbHelper;
+        if ((settings.currentLocationId() > 0 && dbHelper.lastLocationId() > 0) || settings.useGps()) {
+            if (settings.weatherApi() == "y") {
+                weatherController = new YWeatherController;
+            }
+            else if (settings.weatherApi() == "wund") {
+                weatherController = new WundWeatherController;
+            }
+            else {
+                weatherController = new OwmWeatherController;
+            }
+            if (thread == nullptr) {
+                thread = new QThread();
+            }
+            weatherController->moveToThread(thread);
+            connect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
+            connect(weatherController, SIGNAL(weatherSet(weather_struct)), this, SLOT(setWeatherData(weather_struct)));
+            connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+            connect(thread, SIGNAL(finished()), weatherController, SLOT(deleteLater()));
+            thread->start();
         }
-        else if (settings.weatherApi() == "wund") {
-            weatherController = new WundWeatherController();
-        }
-        else {
-            weatherController = new OwmWeatherController();
-        }
-        thread = new QThread();
-        weatherController->moveToThread(thread);
-        connect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
-        connect(weatherController, SIGNAL(weatherSet(weather_struct)), this, SLOT(setWeatherData(weather_struct)));
-        connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-        connect(this, SIGNAL(weatherChanged()), thread, SLOT(quit()));
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-        connect(thread, SIGNAL(finished()), weatherController, SLOT(deleteLater()));
-        thread->start();
     }
 }
 
@@ -84,6 +85,8 @@ void WeatherType::setWeatherData(const weather_struct &weather) {
         m_forecastList.append(forec);
         delete forecast;
     }
+    thread->quit();
+    thread->wait();
     emit forecastListChanged();
     emit weatherDataChanged();
 }

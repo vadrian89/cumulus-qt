@@ -37,11 +37,11 @@
 #include "ThreadWorker.h"
 class TrayController : public QObject {
     Q_OBJECT
-    QString m_icon, m_trayTheme;
+    QString m_trayTheme;
     bool m_trayVisibility;
     QSystemTrayIcon *trayIcon;
-
-    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
+    int m_temperature;
+    Q_PROPERTY(int temperature MEMBER m_temperature WRITE setTemperature NOTIFY temperatureChanged)
     Q_PROPERTY(bool trayVisibility READ trayVisibility WRITE setTrayVisibility NOTIFY trayVisibilityChanged)
     Q_PROPERTY(QString trayTheme READ trayTheme WRITE setTrayTheme NOTIFY trayThemeChanged)
 
@@ -51,28 +51,27 @@ class TrayController : public QObject {
     QThread *thread;
     ThreadWorker *worker;
     QAction *currentWeatherAction;
-    QImage createTrayIcon(const QString &weather, const QString &theme);
+    QImage createTrayIcon(const int &temperature, const QString &theme);
     bool isTrayAvailable();
 public:
-    explicit TrayController(QObject *parent = 0);
-    QString icon() const;
-    void setIcon(const QString &icon);
+    explicit TrayController(QObject *parent = nullptr);
     bool startUp() const;
     void setStartUp(const bool &startUp);
     bool trayVisibility() const;
     void setTrayVisibility(const bool &trayVisibility);
     QString trayTheme() const;
     void setTrayTheme(const QString &trayTheme);
+    void setTemperature(const int &temperature);
 private slots:
     void emitCloseApp();
     void emitShowGui();
     void setTrayIcon();
 signals:
-    void iconChanged();
     void trayVisibilityChanged();
     void closeApp();
     void showGui();
     void trayThemeChanged();
+    void temperatureChanged();
 };
 
 #endif // TRAYCONTROLLER_H

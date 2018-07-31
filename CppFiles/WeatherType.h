@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QMap>
 #include <QThread>
+#include <QPointer>
 
 #include "Util.h"
 #include "YWeatherController.h"
@@ -63,8 +64,8 @@ class WeatherType : public QObject {
     void updateTemperature(const QString &tempUnit);
     void updateForecastTemp(const QString &newUnit);
     void clearForecastList();
-    AbstractWeatherController *weatherController;
-public:
+    QPointer<AbstractWeatherController> weatherController;
+public:    
     explicit WeatherType(QObject *parent = 0);
     void setWeather(const QString &weather);
     QString weather() const;

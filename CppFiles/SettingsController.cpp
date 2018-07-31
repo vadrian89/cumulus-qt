@@ -155,7 +155,10 @@ void SettingsController::loginStartLinux(const bool &loginStart) {
         out << "Type=Application" << endl;
         out << "Terminal=false" << endl;
         out << "Categories=Utility;" << endl;
-        QString appPath = qApp->applicationDirPath() + "/Cumulus";
+        QString appPath = qApp->applicationDirPath() + "/Cumulus.sh";
+        if (!QFile::exists(appPath)) {
+            appPath = qApp->applicationDirPath() + "/Cumulus";
+        }
         if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
             appPath = QProcessEnvironment::systemEnvironment().value("APPIMAGE");
         if (appName != "Cumulus")

@@ -21,7 +21,8 @@
 */
 #include "AbstractWeatherController.h"
 
-AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent) {}
+AbstractWeatherController::AbstractWeatherController(QObject *parent) : QObject(parent)
+  , name("abstract") {}
 
 QJsonObject AbstractWeatherController::nextBranch(const QJsonObject &jsonObject, const QString current) const {
     return jsonObject.find(current).value().toObject();

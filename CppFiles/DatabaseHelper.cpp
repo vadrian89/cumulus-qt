@@ -81,7 +81,7 @@ QSqlDatabase DatabaseHelper::getDatabase() {
 }
 
 bool DatabaseHelper::startCon(QSqlDatabase &db) {
-    if (db.open()) {
+    if (db.isOpen() || db.open()) {
         return true;
     }
     else {
