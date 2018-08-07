@@ -33,7 +33,10 @@ Dialog {
     property string gpsLocation: "-"
     property alias searchListModel: searchList.model
     signal locationSelected(string locationSelected)
+    signal locationVisibilityChanged(bool locationVisibility)
     visible: true
+
+    onVisibleChanged: locationVisibilityChanged(visible)
 
     contentItem: Rectangle {
         id: body

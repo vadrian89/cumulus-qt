@@ -67,6 +67,7 @@ SimpleItem {
         onClicked: {
             locationSearchLoader.source = "SearchLocation.qml"
             locationSearchLoader.visible = true
+            locationSearchLoader.item.visible = true
             locationController.getGpsLocation()
         }
     }
@@ -116,16 +117,10 @@ SimpleItem {
             property: "gpsLocation"
             value: locationController.gpsLocation
         }
-        Binding {
-            target: locationSearchLoader.item
-            property: "visible"
-            value: locationSearchLoader.visible
-        }
         Connections {
             id: locationSearchCon
             target: locationSearchLoader.item
             onLocationQueryChanged: locationController.searchLocation(locationSearchLoader.item.locationQuery)
-            onVisibleChanged: locationSearchLoader.visible = locationSearchLoader.item.visible
             onLocationSelected: {
                 locationController.insertLocation(locationSelected)
                 locationSearchLoader.visible = false                
