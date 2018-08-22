@@ -26,14 +26,15 @@
 
 class OwmWeatherController : public AbstractWeatherController {
     Q_OBJECT
-    void saveWeatherToDb(const QJsonObject &jsonObject);
-    void saveForecastToDb(const QJsonObject &jsonObject);
-    void readJsonData(QJsonObject jsonObject);
+    void getWeatherFromJson(const QJsonObject &jsonObject);
+    void getForecastFromJson(const QJsonObject &jsonObject);
+    void getLocationFromJson(const QJsonObject &jsonObject);
     void getForecast(const QString &code);
 public:
     explicit OwmWeatherController(QObject *parent = 0);
     void searchByLocation(QString &location);
     void searchBycode(QString &code);
+    void searchByGps(const double &lat, const double &lon);
 };
 
 #endif // OWMWEATHERCONTROLLER_H

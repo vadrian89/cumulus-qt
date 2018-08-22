@@ -32,13 +32,16 @@
 #include <QFont>
 #include <QApplication>
 #include <QSysInfo>
+#include <QFile>
+
+#include "SettingsController.h"
 
 class Util : public QObject {
     Q_OBJECT    
 public:
     explicit Util(QObject *parent = nullptr);
-    static double calculateTemperature(const double &temperature, const QString &unit);
-    static double calculateWindSpeed(double speed, const QString &unit);
+    static double calculateTemperature(const double &temperature, const QString &oldUnit, const QString &newUnit);
+    static double calculateWindSpeed(double speed, const QString &oldUnit, const QString &newUnit);
     static double calculatePressure(double pressure, const QString &unit);
     static double kelvinToCelsiu(const double &temperature);
     static double fahrenheitToCelsiu(const double &temperature);
@@ -53,26 +56,16 @@ public:
     static double kphToMph(double speed);
     static double kphToMs(double speed);
     static int roundToInt(const double &unit);
+    static QString findFontCode(const QString &branch,const QString &code);
 
-    Q_INVOKABLE static QString getWeatherApi();
-    Q_INVOKABLE static void setWeatherApi(const QString &weatherApi);
-    Q_INVOKABLE static QString getTemperatureUnit();
-    Q_INVOKABLE static void setTemperatureUnit(QString unit);
-    Q_INVOKABLE static QString getWindSpeedUnit();
-    Q_INVOKABLE static void setWindSpeedUnit(QString unit);
-    Q_INVOKABLE static QString getPressureUnit();
-    Q_INVOKABLE static QString backgroundColor();
-    Q_INVOKABLE static QString textColor();
-    Q_INVOKABLE static QString temperatureUnitSymbol();
-    Q_INVOKABLE static QString speedUnitSymbol();
-    Q_INVOKABLE static QString pressureUnitSymbol();
+    Q_INVOKABLE static QString tempUnitSymbol(const QString &unit);
+    Q_INVOKABLE static QString speedUnitSymbol(const QString &unit);
+    Q_INVOKABLE static QString pressureUnitSymbol(const QString &unit);
     Q_INVOKABLE static QString osType();
-    Q_INVOKABLE static QString firstLetterUp(const QString &string);    
-    Q_INVOKABLE static bool trayVisibility();
+    Q_INVOKABLE static QString firstLetterUp(const QString &string);
     Q_INVOKABLE static QList<QObject*> creditsList();
-    Q_INVOKABLE static QString trayTheme();
-    Q_INVOKABLE static QString windowControlsPos();
     Q_INVOKABLE static QString iconPathPrefix();
+    Q_INVOKABLE static QString forecastDate(const QString &string);
 public slots:
     QString getLogoImage() const;
 

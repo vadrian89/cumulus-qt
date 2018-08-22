@@ -19,43 +19,41 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
-import QtQuick.Controls 2.1
+import QtQuick 2.0
+import QtQuick.Layouts 1.0
 
 Item {
-    id: rootItem
-    signal clicked();
-    property alias buttonText: buttonText.text
-    property alias backgroundColor: buttonRectangle.color
+    id: root
+    property string text
+    property string textColor
+    property string backgroundColor
+    property string buttonBorderColor: "#FFFFFF"
+    signal clicked()
 
-    Rectangle {
-        id: buttonRectangle
+    RowLayout {
         anchors.fill: parent
-        color: "#333333";
-        border.width: 2
-        border.color: "#222222"
+        spacing: 10
         Text {
-            id: buttonText
-            color: "#ffffff"
-            horizontalAlignment: Text.AlignHCenter
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            color: root.textColor
+            text: root.text
+            horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 14
-            anchors.centerIn: parent
         }
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onHoveredChanged: {
-                if (containsMouse == true) {
-                    parent.color = "#555555";
-                }
-                else {
-                    parent.color = "#333333";
-                }
-            }
-            onClicked: {
-                rootItem.clicked()
+        Rectangle {
+            Layout.fillHeight: false
+            Layout.fillWidth: false
+            Layout.preferredHeight: 30
+            Layout.preferredWidth: 30
+            color: root.backgroundColor
+            radius: 15
+            border.width: 2
+            border.color: root.buttonBorderColor
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.clicked()
             }
         }
     }

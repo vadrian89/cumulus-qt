@@ -26,45 +26,53 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QLocale>
-#include <QSqlDriver>
+#include <QMap>
+#include <memory>
+#include <QRegExp>
+#include <QGeoPositionInfo>
+#include <QGeoPositionInfoSource>
 
 #include "DataController.h"
-#include "DbConnection.h"
 #include "Util.h"
+#include "DatabaseHelper.h"
+#include "Forecast.h"
+#include "SettingsController.h"
+
+using namespace std;
+
 class AbstractWeatherController : public QObject {
     Q_OBJECT
 protected:
     DataController *dataController;
-    DbConnection *db;
-    enum OperationData { GetLocationId, GetWeather, GetForecast, GetAstronomy };
-    int operationData;
-    int locationId;
-    QString temperatureUnit;
-    QString apiKey;
-    QJsonObject weatherObject, forecastObject;
-    QString locationCode, locationName;
+    QString temperatureUnit, apiKey, locationCode;
+    weather_struct m_weather;
 
     QJsonObject nextBranch(const QJsonObject &jsonObject, const QString current) const;
-    virtual void saveWeatherToDb(const QJsonObject &jsonObject) = 0;
-    virtual void saveForecastToDb(const QJsonObject &jsonObject) = 0;
-    bool clearWeather();
-    bool clearForecastData();
+    bool saveWeather(const weather_struct &weather);
+    void saveForecast(QList<Forecast*> &forecastList);
     bool saveLocation(const QString &code);
+    bool saveLocation(const QString &code, const QString &name);
 public:
-    explicit AbstractWeatherController(QObject *parent = 0);
+    QString name;
+    explicit AbstractWeatherController(QObject *parent = nullptr);
     virtual void searchByLocation(QString &location) = 0;
     virtual void searchBycode(QString &code) = 0;
+    virtual void searchByGps(const double &lat, const double &lon) = 0;
+private slots:
+    void locationPositionInfo(const QGeoPositionInfo &posInfo);
+    void locationPositionError(const QGeoPositionInfoSource::Error &positioningError);
 protected slots:
-    virtual void readJsonData(QJsonObject jsonObject) = 0;
-    void manageError();
+    virtual void getLocationFromJson(const QJsonObject &jsonObject) = 0;
+    virtual void getWeatherFromJson(const QJsonObject &jsonObject) = 0;
+    virtual void getForecastFromJson(const QJsonObject &jsonObject) = 0;
+    void manageError(const QString &error);
 public slots:
-    void saveDataToDb();
+    void getWeather();
 signals:
-    void dataChanged();
     void forecastChanged();
-    void saveDataError(QString error);
-    void networkError(QString error);
-    void dataDownloaded();
+    void saveDataError(const QString &error);
+    void networkError(const QString &error);
+    void weatherSet(const weather_struct &weather);
 };
 
 #endif // ABSTRACTWEATHERCONTROLLER_H

@@ -1,26 +1,32 @@
 <RCC>
     <qresource prefix="/">
-        <file>qt/etc/qt.conf</file>
-        <file>ApplicationBar.qml</file>
-        <file>ColorPalleteButton.qml</file>
-        <file>CreditsListDelegate.qml</file>
-        <file>CreditsView.qml</file>
-        <file>CustomSwitch.qml</file>
-        <file>ForecastDelegate.qml</file>
-        <file>ForecastView.qml</file>
-        <file>LinkedText.qml</file>
-        <file>main-android.qml</file>
-        <file>MenuButton.qml</file>
-        <file>ResizeController.qml</file>
-        <file>SearchLocation.qml</file>
-        <file>SelectionButton.qml</file>
-        <file>SettingsOptionItem.qml</file>
-        <file>SettingsWindow.qml</file>
-        <file>WeatherInfoItem.qml</file>
-        <file>WeatherWindow.qml</file>
+        <file>qml/ApplicationBar.qml</file>
+        <file>qml/ColorPalleteButton.qml</file>
+        <file>qml/CreditsListDelegate.qml</file>
+        <file>qml/CreditsView.qml</file>
+        <file>qml/CustomSwitch.qml</file>
+        <file>qml/ForecastView.qml</file>
+        <file>qml/LinkedText.qml</file>
+        <file>qml/main-android.qml</file>
+        <file>qml/MenuButton.qml</file>
+        <file>qml/ResizeController.qml</file>
+        <file>qml/SearchLocation.qml</file>
+        <file>qml/SelectionButton.qml</file>
+        <file>qml/SettingsOptionItem.qml</file>
+        <file>qml/SettingsWindow.qml</file>
+        <file>qml/WeatherInfoItem.qml</file>
+        <file>qml/WeatherWindow.qml</file>
         <file>fonts/fontawesome.ttf</file>
         <file>fonts/Ubuntu-C.ttf</file>
         <file>fonts/weathericons-regular-webfont.ttf</file>
-        <file>main-desktop.qml</file>
+        <file>qml/main-desktop.qml</file>
+        <file>other/weather_codes.json</file>
+        <file>qml/SimpleItem.qml</file>
+        <file>qml/MainView.qml</file>
+        <file>qml/LocationView.qml</file>
+        <file>qml/LocationItemDelegate.qml</file>
+        <file>qml/ClickableItem.qml</file>
+        <file>qml/GpsLocationItem.qml</file>
+        <file>qml/ForecastItemDelegate.qml</file>
     </qresource>
 </RCC>

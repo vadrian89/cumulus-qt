@@ -19,26 +19,24 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DBCONNECTION_H
-#define DBCONNECTION_H
+import QtQuick 2.0
 
-#include <QObject>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-
-class DbConnection : public QObject {
-    Q_OBJECT
-    QSqlDatabase db;
-    QString databaseName(const QString &appName);
-    void moveDatabaseFile(const QString &fileName);
-public:
-    explicit DbConnection(QObject *parent = 0);
-    QSqlDatabase getDatabase();
-    bool startCon();
-    bool stopCon();
-    QString getError();
-    bool databaseInit();
-};
-
-#endif // DBCONNECTION_H
+ClickableItem {
+    id: root
+    backgroundOpacity: 0
+    property double hoveredIconOpacity: 1.0
+    property double unhoveredIconOpacity: 0.8
+    property string imageSource: ""
+    Image {
+        id: buttonIcon
+        opacity: 0.8
+        anchors.centerIn: parent
+        height: parent.height
+        width: parent.width
+        source: root.imageSource
+        sourceSize.width: width
+        sourceSize.height: height
+    }
+    onEntered: buttonIcon.opacity = hoveredIconOpacity
+    onExited: buttonIcon.opacity = unhoveredIconOpacity
+}

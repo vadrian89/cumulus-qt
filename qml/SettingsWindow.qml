@@ -19,38 +19,38 @@
 * You should have received a copy of the GNU General Public License
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
-import QtQuick 2.7
-import QtQuick.Controls 2.1
-import QtQuick.Window 2.2
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
+import QtQuick 2.0
+import QtQuick.Controls 1.4
+import QtQuick.Window 2.0
+import QtQuick.Layouts 1.0
+import QtQuick.Dialogs 1.0
 
 Item {
     id: root
     visible: false
-    property alias searchLocationAlias: searchLocation
     property alias settingsFlickAlias: settingsFlick
-    property alias trayVisible: traySwitch.checked
+    property bool trayVisible: root.trayVisible ? root.trayVisible : false
     property alias trayTheme: trayColorSwitch.state
     property alias windowControls: winControlSwitch.state
     property alias loginStart: startUpSwitch.checked
-    property string backgroundColor: util.backgroundColor()
-    property string textColor: util.textColor()
-    property string speedUnit: util.getWindSpeedUnit()
-    property string temperatureUnit: util.getTemperatureUnit()
-    property string api: util.getWeatherApi()
+    property string backgroundColor: backgroundColor ? backgroundColor : "#ffffff"
+    property string textColor: textColor ? textColor : "#ffffff"
+    property string speedUnit
+    property string temperatureUnit
+    property string api
     property int settingsItemHeight: 64
     property int textFontSize: 14
     property string iconsFont: "Arial"
     property int switchHeight: 25
     property int switchWidth: 70
+    property bool useGps: false
     signal locationChanged()
     signal showCredits()
 
     Rectangle {
         id: settingsOptionsView
         anchors.fill: parent
-        color: root.backgroundColor.length > 7 ? "#" + root.backgroundColor.substring(3) : root.backgroundColor
+        color: root.backgroundColor.length > 7 ? ("#" + root.backgroundColor.substring(3)) : root.backgroundColor
 
         Flickable {
             id: settingsFlick
@@ -64,67 +64,17 @@ Item {
                 height: settingsFlick.height
                 color: "transparent"
 
-                //Search for location
-                SettingsOptionItem {
-                    id: locationSearchItem
-                    optionText: "Location"
-                    backgroundColor: "#ffffff"
-                    anchors.top: settingsBody.top
-                    height: root.settingsItemHeight
-                    width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "map.png"
-                    onClicked: {
-                        if (searchLocation.visible == true)
-                            searchLocation.visible = false
-                        else
-                            searchLocation.visible = true
-                        searchLocation.focus = true
-                    }
-                }
-
-                SearchLocation {
-                    id: searchLocation
-                    anchors.top: locationSearchItem.bottom
-                    height: settingsBody.height - locationSearchItem.height
-                    width: settingsBody.width
-                    visible: false
-                    backgroundColor: root.backgroundColor
-                    textColor: root.textColor
-
-                    Keys.onEscapePressed: {
-                        searchLocation.visible = false
-                    }
-                    Keys.onBackPressed: {
-                        searchLocation.visible = false
-                    }
-                    onVisibleChanged: {
-                        if(searchLocation.visible == false) {
-                            root.focus = true
-                            tempUnitItem.anchors.top = locationSearchItem.bottom
-                            locationSearchItem.bottomBorderVisibility = true
-                        }
-                        else {
-                            tempUnitItem.anchors.top = searchLocation.bottom
-                            locationSearchItem.bottomBorderVisibility = false
-                        }
-                    }
-                    onLocationSelected: {
-                        root.locationChanged()
-                        searchLocation.visible = false
-                    }
-                }
-
                 SettingsOptionItem {
                     id: tempUnitItem
                     optionText: "Temperature Unit"
                     backgroundColor: "#ffffff"
-                    anchors.top: locationSearchItem.bottom
+                    anchors.top: settingsBody.top
                     height: root.settingsItemHeight
                     width: settingsBody.width
                     iconUrl: util.iconPathPrefix() + "temperature_icon.png"
                     onClicked: {
                         if (tempUnitSelect.visible == false) {
-                            tempUnitSelect.currentIndex = tempUnitSelect.find(util.temperatureUnitSymbol().trim())
+                            tempUnitSelect.currentIndex = tempUnitSelect.find(util.tempUnitSymbol(root.temperatureUnit).trim())
                             tempUnitSelect.visible = true
                         }
                         else {
@@ -142,17 +92,6 @@ Item {
                     anchors.leftMargin: width / 2
                     visible: false
                     model: [ "°F", "°C" ]
-                    delegate: ItemDelegate {
-                        width: tempUnitSelect.width
-                        height: tempUnitSelect.height
-                        contentItem: Text {
-                            text: modelData
-                            font.pixelSize: root.textFontSize
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignLeft
-                        }
-                    }
-
                     onVisibleChanged: {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom
@@ -192,7 +131,7 @@ Item {
                     iconUrl: util.iconPathPrefix() + "speed_icon.png"
                     onClicked: {
                         if (speedUnitSelect.visible == false) {
-                            speedUnitSelect.currentIndex = speedUnitSelect.find(util.speedUnitSymbol().trim())
+                            speedUnitSelect.currentIndex = speedUnitSelect.find(util.speedUnitSymbol(root.speedUnit).trim())
                             speedUnitSelect.visible = true
                         }
                         else {
@@ -278,7 +217,7 @@ Item {
                         onClicked: {
                             colorDialog.purpose = "background"
                             colorDialog.showAlphaChannel = true
-                            colorDialog.color = util.backgroundColor()
+                            colorDialog.color = root.backgroundColor
                             colorDialog.visible = true
                         }
                     }
@@ -293,7 +232,7 @@ Item {
                         backgroundColor: root.textColor
                         onClicked: {
                             colorDialog.purpose = "text"
-                            colorDialog.color = util.textColor()
+                            colorDialog.color = root.textColor
                             colorDialog.visible = true
                         }
                     }
@@ -367,10 +306,10 @@ Item {
                     }
                 }
                 Component.onCompleted: {
-                    if (util.getWeatherApi() == "y") {
+                    if (settingsController.getWeatherApi() == "y") {
                         apiSelect.currentIndex = 1
                     }
-                    else if (util.getWeatherApi() == "wund") {
+                    else if (settingsController.getWeatherApi() == "wund") {
                         apiSelect.currentIndex = 2
                     }
                     else {
@@ -391,7 +330,7 @@ Item {
                 }
 
                 CustomSwitch {
-                    id: traySwitch
+                    id: gpsSwitch
                     width: settingsBody.width
                     height: 50
                     anchors.top: creditsItem.bottom
@@ -399,9 +338,25 @@ Item {
                     labelColor: root.textColor
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
+                    switchLabel: qsTr("Use GPS")
+                    state: root.useGps == true ? "right" : "left"
+                    visible: true
+                    onCheckedChanged: root.useGps = checked
+                }
+
+                CustomSwitch {
+                    id: traySwitch
+                    width: settingsBody.width
+                    height: 50
+                    anchors.top: gpsSwitch.bottom
+                    anchors.left: parent.left
+                    labelColor: root.textColor
+                    switchRailWidth: root.switchWidth
+                    switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Close To Tray")
-                    state: util.trayVisibility() == true ? "right" : "left"
+                    state: root.trayVisible == true ? "right" : "left"
                     visible: util.osType() === "android" ? false : true
+                    onCheckedChanged: root.trayVisible = checked
                 }
 
                 CustomSwitch {
@@ -414,7 +369,6 @@ Item {
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Tray theme")
-                    state: util.trayTheme()
                     visible: util.osType() === "android" ? false : true
                     leftText: "\uf002"
                     leftTextColor: "black"
@@ -437,7 +391,6 @@ Item {
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Window controls position")
-                    state: util.windowControlsPos()
                     visible: util.osType() === "android" ? false : true
                     leftText: "\uf04d"
                     rightText: "\uf048"
@@ -469,7 +422,15 @@ Item {
         showAlphaChannel: purpose == "background" ? true : false
         modality: Qt.WindowModal
         property string purpose
-        onVisibleChanged: visible == false ? root.focus = true : root.focus = false
+        onVisibleChanged: {
+            if(visible == false) {
+                root.focus = true
+                root.forceActiveFocus()
+            }
+            else {
+                root.focus = false
+            }
+        }
         onAccepted: {
             if (purpose == "background") {
                 root.backgroundColor = currentColor

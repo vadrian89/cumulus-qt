@@ -1,14 +1,18 @@
-# Announcement  
+# News
 Hello everybody,  
-The journey to Cumulus-Qt was a blast, met people, learned stuff and enjoyed seeing Cumulus-Qt articles here and there but I don't want it to stop here.    
-I know I haven't updated the application in a while now but this wasn't because I didn't want to, it's just September was a full month for me(even though I have made some updates then) because I got married then and in October til now I simply couldn't handle myself to do any programming because of work schedule and my mind simply being tired.   
-Going further and December right around the corner(with it's winter holidays) Cumulus-Qt might not get updated til January, the app isn't getting abandoned and I will monitory any issues which might arise in the issue tracker, it's just I want to focus on some other endeavors, such as:   
+I have managed to work a bit on Cumulus, have been working on refactoring the code a bit because it was turning
+into one big pile of \"mom's spaghetti\".    
+Added:  
+- Positioning support for location search, it automatically searches for your location when you want to add a new location.  
+- Positioning support for automatic location, opt-in if you want the application to detect your location and update the weather based of your actual position.  
+*These 2 are tied to services based on platform, it uses GeoClue on Linux, if it isn't installed it won't find your location.  
+- Multiple locations can be saved from inside the application.   
+- AppImage package "Start on login" support, enabling the option from an AppImage should correctly detect the package's location and add it to ~/.config/autostart  
 
-- working on a feature I promised to do for [linuxdeployqt](https://github.com/probonopd/linuxdeployqt), because it's a great tool for deploying on Linux(which it is used for AppImages, also used for Cumulus-Qt), maybe I will go further and create a front-end for it...who knows    
-- learn snap to package Cumulus and any future projects I will get myself into         
-- focus on Ubuntu Touch development; I loved UT and finally managing to get my hands on a Nexus 5 I want to focus my development into making applications and scopes for the platform, I hope something good will come from this  
 
-Besides those mentioned above, I will also try to make Cumulus-Qt better, add more features, making a better UI aswell finishing making it a true cross-platform application, because it is my first open-source project.
+Changed:  
+- Layout of forecast from Left -> Right, to Top -> Bottom.  
+- Whole lot of refactoring which can be seen in the commit logs.      
 
 
 # Info  
@@ -48,21 +52,25 @@ Example: /home/user/Cumulus/Cumulus -i NewInstance
 
 # In case you want to build it yourself:
 
-- recommended Qt version: 5.9
-- remove the following line from Cumulus.pro file: QMAKE_LFLAGS += "-Wl,-rpath,'$$ORIGIN/lib'"
-- remove the following entry from qml.qrc file: "qt/etc/qt.conf"
+- recommended Qt version: 5.9  
 
 # Major Thanks
 - [Daryl Bennett](https://github.com/kd8bny)
 - [Archisman Panigrahi](https://github.com/apandada1)
 - [Erik Flowers](https://github.com/erikflowers) for his [weather icons](https://github.com/erikflowers/weather-icons),
-which sadly has discontinued support for them
+which sadly has discontinued support for them  
+- People working on [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) and [AppImage](https://github.com/AppImage)    
 
 # Known Issues
-- The resizing is implemented, but it's a bit haotic on Linux-based OSes, looking into it and hopefully I will find a solution soon.
+
+- [Yahoo search might not work](https://github.com/vadrian89/cumulus-qt/issues/3) on non-Ubuntu distros, depends on ssl library used in the system  
+- AppImage seems highly unstable on Deepin Linux, might also be the case for other distros.  
 
 # TODO
-- Add another API
-- Code refactoring
-- Improve application resizing
-
+- Code refactoring  
+- Add possibility for translations  
+- Improve UI  
+- Rename application   
+- Support for custom API keys, for OpenWeatherMap and Weather Underground     
+- Snap package  
+- Ubuntu Touch support   

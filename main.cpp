@@ -20,6 +20,7 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QApplication>
+#include "CppFiles/DatabaseHelper.h"
 #if defined(Q_OS_ANDROID)
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -32,28 +33,39 @@
 #include "CppFiles/Forecast.h"
 #include "CppFiles/Util.h"
 #include "CppFiles/SettingsController.h"
-#include "CppFiles/SearchLocation.h"
 #include "CppFiles/TrayController.h"
 #include "CppFiles/ThreadWorker.h"
 #include "CppFiles/CustomImageProvider.h"
 #include "CppFiles/FontImageProvider.h"
+#include "CppFiles/Location.h"
 void registerQmlType();
 #else
 #include <QFile>
 #include <QThread>
+#include <QCoreApplication>
+#include <QLibraryInfo>
+
 #include "CppFiles/MainWindow.h"
 #include "CppFiles/ThreadWorker.h"
 #endif
 
 int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    QCoreApplication::addLibraryPath(QLibraryInfo::location(QLibraryInfo::LibrariesPath));
     QString applicationName = "Cumulus";
     if (argc > 2 && QString::fromLatin1(argv[1]) == "-i") {
-        applicationName = argv[2];
+        applicationName = applicationName + "-" + argv[2];
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 2))
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication app(argc, argv);
+#endif
+    qRegisterMetaType<QList<location_struct>>("QList<location_struct>");
+    qRegisterMetaType<weather_struct>("weather_struct");
+    DatabaseHelper *dbHelper = new DatabaseHelper;
+    dbHelper->databaseInit();
+    delete(dbHelper);
 #if defined(Q_OS_ANDROID)
     Util util;
     SettingsController settingsController;
@@ -67,14 +79,17 @@ int main(int argc, char *argv[]) {
     registerQmlType();
     engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
 #else
-    MainWindow w;
+    MainWindow w;    
     w.launchApp();
     if (QFile::exists(QApplication::applicationDirPath() + "/maintenancetool")) {
         ThreadWorker *threadWorker = new ThreadWorker();
-        QThread *thread = new QThread;
+        QThread *thread = new QThread();
         threadWorker->moveToThread(thread);
         QObject::connect(thread, SIGNAL(started()), threadWorker, SLOT(updaterTimerStart()));
+        QObject::connect(threadWorker, SIGNAL(startUpdateTimerSignal()), threadWorker, SLOT(updaterTimerStart()));
+        QObject::connect(threadWorker, SIGNAL(stopUpdatesSearch()), thread, SLOT(quit()));
         QObject::connect(thread, SIGNAL(finished()), threadWorker, SLOT(deleteLater()));
+        QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
         thread->start();
     }
 #endif
@@ -83,9 +98,9 @@ int main(int argc, char *argv[]) {
 
 #if defined(Q_OS_ANDROID)
 void registerQmlType() {
-    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 8, "Weather");
+    qmlRegisterType<WeatherType>("ownTypes.weather", 1, 9, "Weather");
     qmlRegisterType<SettingsController>("ownTypes.settingsController", 1, 0, "SettingsController");
-    qmlRegisterType<SearchLocation>("ownTypes.searchLocation", 0, 4, "LocationSearchController");
     qmlRegisterType<TrayController>("ownTypes.TrayController", 0, 3, "TrayController");
+    qmlRegisterType<Location>("ownTypes.LocationController", 0, 1, "LocationController");
 }
 #endif

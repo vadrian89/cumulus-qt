@@ -2,23 +2,22 @@
 #define WUNDWEATHERCONTROLLER_H
 
 #include "AbstractWeatherController.h"
-#include <QMap>
 
 class WundWeatherController : public AbstractWeatherController {
-    Q_OBJECT
-    QMap<QString, int> *wundIconsCodes;
-    QDateTime sunrise, sunset;
-    void saveWeatherToDb(const QJsonObject &jsonObject);
-    void saveForecastToDb(const QJsonObject &jsonObject);
-    void readJsonData(QJsonObject jsonObject);
+    Q_OBJECT    
+    void getWeatherFromJson(const QJsonObject &jsonObject);
+    void getForecastFromJson(const QJsonObject &jsonObject);
+    void getLocationFromJson(const QJsonObject &jsonObject);
     void getForecast(const QString &code);
-    void getAstronomy(const QString &code);    
-    void mapWundIconsCodes();    
+    void getAstronomy(const QString &code);
     QDate dateFromJson(const QJsonObject &jsonObject);
 public:
-    explicit WundWeatherController(QObject *parent = nullptr);
-    void searchByLocation(QString &location);
+    explicit WundWeatherController(QObject *parent = nullptr);    
     void searchBycode(QString &code);
+    void searchByGps(const double &lat, const double &lon);
+private slots:
+    void searchByLocation(QString &location);
+    void getAstronomyFromJson(const QJsonObject &jsonObject);
 };
 
 #endif // WUNDWEATHERCONTROLLER_H
