@@ -26,7 +26,7 @@ import QtQuick.Layouts 1.0
 Item {
     id: rootItem
     visible: false
-    property string appVersion: "4.0.7"
+    property string appVersion: "4.1.0"
     property string textColor
     property string backgroundColor
     property int contentWidth: rootItem.width * 90 / 100
