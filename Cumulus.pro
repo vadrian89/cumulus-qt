@@ -130,7 +130,12 @@ DISTFILES += \
     android/gradlew.bat \
     android/gradle.properties \
     icons/hicolor/128x128/temperature_icon.png \
-    icons/hicolor/scalable/cumulus.svg
+    icons/hicolor/scalable/cumulus.svg \
+    other/weather_codes.json \
+    other/screens/location-search.png \
+    other/screens/locations-screen.png \
+    other/screens/main-screen-forecast.png \
+    other/screens/toggle-screens.png
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
