@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(engine, SIGNAL(quit()), this, SLOT(closeApp()));
     QQmlContext *context = engine->rootContext();
     Util *util = new Util(view);
-    SettingsController *settingsController = new SettingsController(view);
+    settingsController = new SettingsController(view);
     engine->addImageProvider(QLatin1String("customimage"), new CustomImageProvider());
     engine->addImageProvider(QLatin1String("fontimage"), new FontImageProvider());
     context->setContextProperty("util", util);
@@ -64,11 +64,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 MainWindow::~MainWindow() {}
 
-void MainWindow::loadSettings(){
+void MainWindow::loadSettings() {
     QSettings settings;
     settings.beginGroup("app-settings");
     if (!restoreGeometry(settings.value("geo").toByteArray()) && Util::osType() != "android")
         resize(300, 500);
+    if (settingsController->firstUse())
+        resize(300, 600);
     restoreState(settings.value("state").toByteArray());
     settings.endGroup();
 }

@@ -23,19 +23,21 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "SettingsController.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
     void saveSettings();
-    void loadSettings();
     void registerQmlType();
     bool m_closeApp;
+    SettingsController *settingsController;
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void closeEvent(QCloseEvent *event);
     void launchApp();
 public slots:
+    void loadSettings();
     void closeApp();
 };
 

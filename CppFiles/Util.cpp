@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDate>
 
 Util::Util(QObject *parent) : QObject(parent){}
 
@@ -188,7 +189,7 @@ QString Util::osType() {
 
 QString Util::firstLetterUp(const QString &string) {
     QString finalString = "";
-    if (string != NULL && string.trimmed().size() > 0) {
+    if (string != nullptr && string.trimmed().size() > 0) {
         QString firstLetter = string;
         firstLetter.remove(1, string.size());
         finalString = string;
@@ -198,10 +199,10 @@ QString Util::firstLetterUp(const QString &string) {
 }
 
 int Util::roundToInt(const double &unit) {
-    if (unit >= 0)
-        return unit + 0.5;
+    if (unit >= 0.0)
+        return static_cast<int>(unit + 0.5);
     else
-        return unit - 0.5;
+        return static_cast<int>(unit - 0.5);
 }
 
 QString Util::getLogoImage() const {
@@ -225,13 +226,13 @@ QString Util::getLogoImage() const {
 
 QList<QObject*> Util::creditsList() {
     QList<QObject*> list;
-    CreditsAuthor *vectorsMarket = new CreditsAuthor(0, "Vectors Market", "http://www.flaticon.com/authors/vectors-market", "map.png", "CC 3.0 BY");
-    CreditsAuthor *madebyoliver2 = new CreditsAuthor(0, "Madebyoliver", "http://www.flaticon.com/authors/madebyoliver", "speed_icon.png", "CC 3.0 BY");
-    CreditsAuthor *pixelBuddha = new CreditsAuthor(0, "Pixel Buddha", "http://www.flaticon.com/authors/pixel-buddha", "temperature_icon.png", "CC 3.0 BY");
-    CreditsAuthor *baianat = new CreditsAuthor(0, "Baianat", "http://www.flaticon.com/authors/baianat", "palette.png", "CC 3.0 BY");
-    CreditsAuthor *popcornsArts = new CreditsAuthor(0, "Popcorns Arts", "http://www.flaticon.com/authors/popcorns-arts", "api.png", "CC 3.0 BY");
-    CreditsAuthor *vectorsMarket2 = new CreditsAuthor(0, "Vectors Market", "https://www.flaticon.com/authors/vectors-market", "credits.png", "CC 3.0 BY");
-    CreditsAuthor *freepikLogo = new CreditsAuthor(0, "Freepik", "http://www.freepik.com", "cumulus.png", "CC 3.0 BY");
+    CreditsAuthor *vectorsMarket = new CreditsAuthor(nullptr, "Vectors Market", "http://www.flaticon.com/authors/vectors-market", "map.png", "CC 3.0 BY");
+    CreditsAuthor *madebyoliver2 = new CreditsAuthor(nullptr, "Madebyoliver", "http://www.flaticon.com/authors/madebyoliver", "speed_icon.png", "CC 3.0 BY");
+    CreditsAuthor *pixelBuddha = new CreditsAuthor(nullptr, "Pixel Buddha", "http://www.flaticon.com/authors/pixel-buddha", "temperature_icon.png", "CC 3.0 BY");
+    CreditsAuthor *baianat = new CreditsAuthor(nullptr, "Baianat", "http://www.flaticon.com/authors/baianat", "palette.png", "CC 3.0 BY");
+    CreditsAuthor *popcornsArts = new CreditsAuthor(nullptr, "Popcorns Arts", "http://www.flaticon.com/authors/popcorns-arts", "api.png", "CC 3.0 BY");
+    CreditsAuthor *vectorsMarket2 = new CreditsAuthor(nullptr, "Vectors Market", "https://www.flaticon.com/authors/vectors-market", "credits.png", "CC 3.0 BY");
+    CreditsAuthor *freepikLogo = new CreditsAuthor(nullptr, "Freepik", "http://www.freepik.com", "cumulus.png", "CC 3.0 BY");
     list.append(vectorsMarket);
     list.append(madebyoliver2);
     list.append(pixelBuddha);

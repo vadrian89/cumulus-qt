@@ -21,6 +21,7 @@
 */
 #include <QProcessEnvironment>
 #include "SettingsController.h"
+#include "DatabaseHelper.h"
 
 api_keys SettingsController::API_KEYS;
 QString SettingsController::WEATHER_SETTINGS_GROUP = "weather-settings";
@@ -39,7 +40,7 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     m_windowX = settings.value("windowX", 0).toInt();
     m_windowY = settings.value("windowY", 0).toInt();
     m_windowHeight = settings.value("windowHeight", 500).toInt();
-    m_windowWidth = settings.value("windowWidth", 300).toInt();    
+    m_windowWidth = settings.value("windowWidth", 300).toInt();
     settings.endGroup();
     settings.beginGroup(WEATHER_SETTINGS_GROUP);
     m_currentLocationId = settings.value("currentLocationId", -1).toInt();
@@ -378,4 +379,24 @@ QString SettingsController::loadString(const QString &key, const QString &group)
     QString value = settings.value(key, "").toString();
     settings.endGroup();
     return value;
+}
+
+bool SettingsController::firstUse() const {
+    QSettings settings;
+    settings.beginGroup("app-settings");
+    int value = settings.value("firstUse", 0).toInt();
+    settings.endGroup();
+    return value == 0 ? true : false;
+}
+
+void SettingsController::setFirstUse(const bool &firstUse) {
+    const bool l_firstUse = this->firstUse();
+    if (l_firstUse != firstUse) {
+        int firstUseInt = firstUse ? 0 : 1;
+        QSettings settings;
+        settings.beginGroup("app-settings");
+        settings.setValue("firstUse", firstUseInt);
+        settings.endGroup();
+        emit firstUseChanged();
+    }
 }

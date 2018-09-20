@@ -32,8 +32,8 @@ class CreditsAuthor : public QObject {
     Q_PROPERTY(QString icon MEMBER m_icon NOTIFY iconChanged)
     Q_PROPERTY(QString license MEMBER m_license NOTIFY licenseChanged)
 public:
-    explicit CreditsAuthor(QObject *parent = 0);
-    explicit CreditsAuthor(QObject *parent = 0, QString author = "", QString authorUrl = "", QString icon = "", QString license = "");
+    explicit CreditsAuthor(QObject *parent = nullptr);
+    explicit CreditsAuthor(QObject *parent = nullptr, QString author = "", QString authorUrl = "", QString icon = "", QString license = "");
 signals:
     void authorChanged();
     void authorUrlChanged();

@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
     registerQmlType();
     engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
 #else
-    MainWindow w;    
+    MainWindow w;
     w.launchApp();
     if (QFile::exists(QApplication::applicationDirPath() + "/maintenancetool")) {
         ThreadWorker *threadWorker = new ThreadWorker();

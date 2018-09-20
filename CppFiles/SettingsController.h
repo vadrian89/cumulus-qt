@@ -33,7 +33,6 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include "DatabaseHelper.h"
 
 using namespace std;
 
@@ -70,6 +69,7 @@ class SettingsController : public QObject {
     Q_PROPERTY(QString pressureUnit READ pressureUnit WRITE setPressureUnit NOTIFY pressureUnitChanged)
     Q_PROPERTY(bool useGps READ useGps WRITE setUseGps NOTIFY useGpsChanged)
     Q_PROPERTY(QString apiKey READ apiKey WRITE setApiKey NOTIFY apiKeyChanged)
+    Q_PROPERTY(bool firstUse READ firstUse WRITE setFirstUse NOTIFY firstUseChanged)
 
     void loginStartLinux(const bool &loginStart);
     bool clearLocationCode();
@@ -107,6 +107,8 @@ public:
     Q_INVOKABLE static bool loginStartCheck();
     Q_INVOKABLE static QString getWeatherApi();
     static short unsigned int SETTINGS_VERSION;
+    bool firstUse() const;
+    void setFirstUse(const bool &firstUse);
 signals:
     void applicationBackgroundChanged();
     void textColorChanged();
@@ -126,6 +128,7 @@ signals:
     void pressureUnitChanged();
     void useGpsChanged();
     void apiKeyChanged();
+    void firstUseChanged();
 };
 
 #endif // SETTINGSCONTROLLER_H

@@ -45,6 +45,14 @@ Rectangle {
     SettingsController {
         id: applicationSettingsController
         onWeatherApiChanged: bodyView.item.updateWeather()
+        onFirstUseChanged: {
+            if (!firstUse) {
+                bodyView.source = "MainView.qml"
+                bodyView.visible = true
+                bodyView.item.updateWeather()
+                applicationWindow.loadSettings()
+            }
+        }
     }
 
     TrayController {
@@ -203,9 +211,17 @@ Rectangle {
                 creditsView.forceActiveFocus()
         }
     }
-    Component.onCompleted: {
-        bodyView.source = "MainView.qml"
-        bodyView.visible = true
-        bodyView.item.updateWeather()
+    WelcomeView {
+        anchors.fill: parent
+        color: applicationSettingsController.applicationBackground
+        visible: applicationSettingsController.firstUse
+        onFinished: applicationSettingsController.firstUse = false
     }
+    Component.onCompleted: {
+        if (!settingsController.firstUse) {
+            bodyView.source = "MainView.qml"
+            bodyView.visible = true
+            bodyView.item.updateWeather()
+        }
+    }        
 }
