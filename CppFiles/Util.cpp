@@ -206,22 +206,18 @@ int Util::roundToInt(const double &unit) {
 }
 
 QString Util::getLogoImage() const {
-    QString prefix = "file:" + QApplication::applicationDirPath() + "/icons/";
+    QString prefix = assetsPath() + "icons/";
     SettingsController settings;
     if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
-        prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/icons/";
-#if defined(Q_OS_ANDROID)
-    prefix = "assets:/";
-#endif
-    if (settings.weatherApi().toLower() == "y") {
+        prefix = "file:" + QApplication::applicationDirPath().replace("/usr/bin", "/usr/share/icons/");
+    else if (QSysInfo::productType() == "android")
+        prefix = assetsPath();
+    if (settings.weatherApi().toLower() == "y")
         return prefix + "yw_logo.png";
-    }
-    else if (settings.weatherApi().toLower() == "wund") {
+    else if (settings.weatherApi().toLower() == "wund")
         return prefix + "wund_logo_light.png";
-    }
-    else {        
+    else
         return "image://customimage/Powered by:#OpenWeatherMap" + settings.textColor();
-    }
 }
 
 QList<QObject*> Util::creditsList() {
@@ -244,17 +240,16 @@ QList<QObject*> Util::creditsList() {
 }
 
 QString Util::iconPathPrefix() {
-    QString prefix = "file:" + QApplication::applicationDirPath() + "/icons/hicolor/512x512/";
+    QString prefix = assetsPath() + "icons/hicolor/512x512/";
     if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
-        prefix = "file:" + QApplication::applicationDirPath().remove("/usr/bin") + "/usr/share/icons/";
-#if defined(Q_OS_ANDROID)
-    prefix = "assets:/";
-#endif
+        prefix = "file:" + QApplication::applicationDirPath().replace("/usr/bin", "/usr/share/icons/");
+    else if (QSysInfo::productType() == "android")
+        prefix = assetsPath();
     return prefix;
 }
 
 QString Util::findFontCode(const QString &branch,const QString &code) {
-    QFile fontCodesFile(":/other/weather_codes.json");
+    QFile fontCodesFile(":/assets/weather_codes.json");
     QByteArray baJsonData;
     if (!fontCodesFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Util::findFontCode cannot open file " + fontCodesFile.fileName();
@@ -271,4 +266,15 @@ QString Util::findFontCode(const QString &branch,const QString &code) {
 QString Util::forecastDate(const QString &string) {
     QDate date = QDate::fromString(string, "dd/MMM/yyyy");
     return firstLetterUp(date.toString("dddd"));
+}
+
+QString Util::assetsPath() {
+    if (QSysInfo::productType() == "android")
+        return "assets:/";
+    else {
+        QString prefix = "file:" + QApplication::applicationDirPath() + "/assets/";
+        if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE"))
+            prefix = "file:" + QApplication::applicationDirPath().replace("/usr/bin", "/usr/share/assets/");
+        return prefix;
+    }
 }

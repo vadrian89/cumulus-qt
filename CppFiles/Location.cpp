@@ -126,7 +126,7 @@ void Location::setGpsLocation(const QString &gpsLocation) {
 }
 
 void Location::getGpsLocation() {
-    QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(0);
+    QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(nullptr);
     if (posInfoSource) {
         QThread *thread = new QThread();
         posInfoSource->setUpdateInterval(2000);
@@ -146,7 +146,7 @@ void Location::getGpsLocation() {
 }
 
 void Location::locationPositionInfo(const QGeoPositionInfo &posInfo) {
-    LocationController *controller = new LocationController(0);
+    LocationController *controller = new LocationController(nullptr);
     QThread *thread = new QThread();
     controller->m_lat = posInfo.coordinate().latitude();
     controller->m_lon = posInfo.coordinate().longitude();

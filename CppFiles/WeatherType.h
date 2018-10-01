@@ -66,7 +66,8 @@ class WeatherType : public QObject {
     void clearForecastList();
     QPointer<AbstractWeatherController> weatherController;
 public:    
-    explicit WeatherType(QObject *parent = 0);
+    explicit WeatherType(QObject *parent = nullptr);
+    ~WeatherType();
     void setWeather(const QString &weather);
     QString weather() const;
     void setWeatherCode(const int &weatherCode);

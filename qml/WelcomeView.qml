@@ -9,12 +9,15 @@ Rectangle {
     signal finished()
     SwipeView {
         id: welcomeView
-        anchors.fill: parent
+        anchors.top: window.top
+        anchors.left: window.left
+        width: window.width
+        height: (window.height - nextScreenButton.height - nextScreenButton.anchors.topMargin - pageIndicator.height - pageIndicator.anchors.topMargin)
         currentIndex: 0
 
         Image {
             id: welcomeScreen
-            source: applicationPath + "other/screens/toggle-screens.png"
+            source: util.assetsPath() + "screens/toggle-screens.png"
             width: window.width
             height: (window.height - 100)
             horizontalAlignment: Image.AlignHCenter
@@ -24,7 +27,7 @@ Rectangle {
 
         Image {
             id: forecastScreen
-            source: applicationPath + "other/screens/main-screen-forecast.png"
+            source: util.assetsPath() + "screens/main-screen-forecast.png"
             width: window.width
             height: (window.height - 100)
             horizontalAlignment: Image.AlignHCenter
@@ -34,7 +37,7 @@ Rectangle {
 
         Image {
             id: locationsScreen
-            source: applicationPath + "other/screens/locations-screen.png"
+            source: util.assetsPath() + "screens/locations-screen.png"
             width: window.width
             height: (window.height - 100)
             horizontalAlignment: Image.AlignHCenter
@@ -43,7 +46,7 @@ Rectangle {
         }
         Image {
             id: locationsSearchScreen
-            source: applicationPath + "other/screens/location-search.png"
+            source: util.assetsPath() + "screens/location-search.png"
             width: window.width
             height: (window.height - 100)
             horizontalAlignment: Image.AlignHCenter
@@ -52,24 +55,14 @@ Rectangle {
         }
     }
 
-    PageIndicator {
-        id: pageIndicator
-        count: welcomeView.count
-        currentIndex: welcomeView.currentIndex
-        anchors.bottom: nextScreenButton.top
-        anchors.bottomMargin: 10
-        anchors.horizontalCenter: welcomeView.horizontalCenter
-        interactive: true
-        onCurrentIndexChanged: welcomeView.currentIndex = pageIndicator.currentIndex
-    }
-
     CoreControls.Button {
         id: nextScreenButton
-        anchors.right: welcomeView.right
-        anchors.rightMargin: ((parent.width / 2) - (nextScreenButton.width / 2))
-        anchors.bottom: welcomeView.bottom
-        anchors.bottomMargin: 20
+        anchors.top: welcomeView.bottom
+        anchors.topMargin: 20
+        anchors.left: window.left
+        anchors.leftMargin: ((parent.width / 2) - (nextScreenButton.width / 2))
         width: (window.width * 0.7)
+        height: 50
         backgroundColor: "#3d8fb5"
         text.text: (welcomeView.currentIndex < 3 ? ("Next ") : ("Done ")) + (" >")
         text.color: "#ffffff"
@@ -85,5 +78,16 @@ Rectangle {
                 window.finished()
             }
         }
+    }
+
+    PageIndicator {
+        id: pageIndicator
+        count: welcomeView.count
+        currentIndex: welcomeView.currentIndex
+        anchors.top: nextScreenButton.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: window.horizontalCenter
+        interactive: true
+        onCurrentIndexChanged: welcomeView.currentIndex = pageIndicator.currentIndex
     }
 }

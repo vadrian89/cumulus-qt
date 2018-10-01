@@ -30,6 +30,13 @@ WeatherType::WeatherType(QObject *parent) : QObject(parent) {
     thread = nullptr;
 }
 
+WeatherType::~WeatherType() {
+    if(thread != nullptr) {
+        thread->quit();
+        thread->wait();
+    }
+}
+
 void WeatherType::getWeatherData() {
     //TODO; add last update condition correctly
     if (!weatherController) {

@@ -50,6 +50,9 @@ void registerQmlType();
 #endif
 
 int main(int argc, char *argv[]) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 2))
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
     QApplication app(argc, argv);
     QCoreApplication::addLibraryPath(QLibraryInfo::location(QLibraryInfo::LibrariesPath));
     QString applicationName = "Cumulus";
@@ -58,9 +61,6 @@ int main(int argc, char *argv[]) {
     }
     QApplication::setOrganizationName("Visoft");
     QApplication::setApplicationName(applicationName);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 2))
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
     qRegisterMetaType<QList<location_struct>>("QList<location_struct>");
     qRegisterMetaType<weather_struct>("weather_struct");
     DatabaseHelper *dbHelper = new DatabaseHelper;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     context->setContextProperty("settingsController", &settingsController);
     context->setContextProperty("applicationPath", "file://" + qApp->applicationDirPath() + "/");
     registerQmlType();
-    engine.load(QUrl(QLatin1String("qrc:/main-android.qml")));
+    engine.load(QUrl(QLatin1String("qrc:/qml/main-android.qml")));
 #else
     MainWindow w;
     w.launchApp();

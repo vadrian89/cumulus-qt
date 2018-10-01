@@ -16,11 +16,11 @@
         <file>qml/SettingsWindow.qml</file>
         <file>qml/WeatherInfoItem.qml</file>
         <file>qml/WeatherWindow.qml</file>
-        <file>fonts/fontawesome.ttf</file>
-        <file>fonts/Ubuntu-C.ttf</file>
-        <file>fonts/weathericons-regular-webfont.ttf</file>
+        <file>assets/fonts/fontawesome.ttf</file>
+        <file>assets/fonts/Ubuntu-C.ttf</file>
+        <file>assets/fonts/weathericons-regular-webfont.ttf</file>
         <file>qml/main-desktop.qml</file>
-        <file>other/weather_codes.json</file>
+        <file>assets/weather_codes.json</file>
         <file>qml/SimpleItem.qml</file>
         <file>qml/MainView.qml</file>
         <file>qml/LocationView.qml</file>

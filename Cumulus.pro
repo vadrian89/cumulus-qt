@@ -93,49 +93,56 @@ DISTFILES += \
     docs/assets/images/weather_green.png \
     docs/assets/images/weather_purp.png \
     docs/assets/images/weather_red.png \
-    icons/hicolor/128x128/api.png \
-    icons/hicolor/128x128/credits.png \
-    icons/hicolor/128x128/cumulus.png \
-    icons/hicolor/128x128/map.png \
-    icons/hicolor/128x128/palette.png \
-    icons/hicolor/128x128/speed_icon.png \
-    icons/hicolor/256x256/api.png \
-    icons/hicolor/256x256/credits.png \
-    icons/hicolor/256x256/cumulus.png \
-    icons/hicolor/256x256/map.png \
-    icons/hicolor/256x256/palette.png \
-    icons/hicolor/256x256/speed_icon.png \
-    icons/hicolor/256x256/temperature_icon.png \
-    icons/hicolor/512x512/api.png \
-    icons/hicolor/512x512/credits.png \
-    icons/hicolor/512x512/cumulus.png \
-    icons/hicolor/512x512/map.png \
-    icons/hicolor/512x512/palette.png \
-    icons/hicolor/512x512/speed_icon.png \
-    icons/hicolor/512x512/temperature_icon.png \
-    icons/hicolor/64x64/api.png \
-    icons/hicolor/64x64/credits.png \
-    icons/hicolor/64x64/cumulus.png \
-    icons/hicolor/64x64/map.png \
-    icons/hicolor/64x64/palette.png \
-    icons/hicolor/64x64/speed_icon.png \
-    icons/hicolor/64x64/temperature_icon.png \
-    icons/wund_logo.png \
-    icons/wund_logo_light.png \
-    icons/yw_logo.png \
+    assets/icons/hicolor/128x128/api.png \
+    assets/icons/hicolor/128x128/credits.png \
+    assets/icons/hicolor/128x128/cumulus.png \
+    assets/icons/hicolor/128x128/map.png \
+    assets/icons/hicolor/128x128/palette.png \
+    assets/icons/hicolor/128x128/speed_icon.png \
+    assets/icons/hicolor/256x256/api.png \
+    assets/icons/hicolor/256x256/credits.png \
+    assets/icons/hicolor/256x256/cumulus.png \
+    assets/icons/hicolor/256x256/map.png \
+    assets/icons/hicolor/256x256/palette.png \
+    assets/icons/hicolor/256x256/speed_icon.png \
+    assets/icons/hicolor/256x256/temperature_icon.png \
+    assets/icons/hicolor/512x512/api.png \
+    assets/icons/hicolor/512x512/credits.png \
+    assets/icons/hicolor/512x512/cumulus.png \
+    assets/icons/hicolor/512x512/map.png \
+    assets/icons/hicolor/512x512/palette.png \
+    assets/icons/hicolor/512x512/speed_icon.png \
+    assets/icons/hicolor/512x512/temperature_icon.png \
+    assets/icons/hicolor/64x64/api.png \
+    assets/icons/hicolor/64x64/credits.png \
+    assets/icons/hicolor/64x64/cumulus.png \
+    assets/icons/hicolor/64x64/map.png \
+    assets/icons/hicolor/64x64/palette.png \
+    assets/icons/hicolor/64x64/speed_icon.png \
+    assets/icons/hicolor/64x64/temperature_icon.png \
+    assets/icons/wund_logo.png \
+    assets/icons/wund_logo_light.png \
+    assets/icons/yw_logo.png \
     docs/index.md \
     docs/multiple_inst.md \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/build.gradle \
     android/gradlew.bat \
-    android/gradle.properties \
-    icons/hicolor/128x128/temperature_icon.png \
-    icons/hicolor/scalable/cumulus.svg \
-    other/weather_codes.json \
-    other/screens/location-search.png \
-    other/screens/locations-screen.png \
-    other/screens/main-screen-forecast.png \
-    other/screens/toggle-screens.png
+    assets/icons/hicolor/128x128/temperature_icon.png \
+    assets/icons/hicolor/scalable/cumulus.svg \
+    assets/weather_codes.json \
+    assets/screens/location-search.png \
+    assets/screens/locations-screen.png \
+    assets/screens/main-screen-forecast.png \
+    assets/screens/toggle-screens.png \
+    assets/screens/location-search.png \
+    assets/screens/locations-screen.png \
+    assets/screens/main-screen-forecast.png \
+    assets/screens/toggle-screens.png \
+    android/assets/screens/location-search.png \
+    android/assets/screens/locations-screen.png \
+    android/assets/screens/main-screen-forecast.png \
+    android/assets/screens/toggle-screens.png
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj

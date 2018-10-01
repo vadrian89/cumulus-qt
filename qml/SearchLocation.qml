@@ -22,9 +22,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
 
-Dialog {
+Item {
     id: root    
     property string backgroundColor
     property string textColor
@@ -38,7 +37,7 @@ Dialog {
 
     onVisibleChanged: locationVisibilityChanged(visible)
 
-    contentItem: Rectangle {
+    Rectangle {
         id: body
         anchors.fill: parent
         color: root.backgroundColor.length > 7 ? ("#" + root.backgroundColor.substring(3)) : root.backgroundColor

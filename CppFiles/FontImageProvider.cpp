@@ -23,7 +23,7 @@ QImage FontImageProvider::requestImage(const QString &id, QSize *size, const QSi
 }
 
 QImage FontImageProvider::getImageFromText(const QString &text, const QString &color, const int &width, const int &height) {
-    int id = QFontDatabase::addApplicationFont(":/fonts/fontawesome.ttf");
+    int id = QFontDatabase::addApplicationFont(":/assets/fonts/fontawesome.ttf");
     if (id < 0)
         qDebug() << "Font not loaded";
     QString family = QFontDatabase::applicationFontFamilies(id).at(0);

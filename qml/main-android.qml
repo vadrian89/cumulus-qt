@@ -33,11 +33,11 @@ ApplicationWindow {
 
     FontLoader {
         id: ubuntuCondensed
-        source: "fonts/Ubuntu-C.ttf"
+        source: "qrc:/assets/fonts/Ubuntu-C.ttf"
     }
     FontLoader {
         id: weatherIcons
-        source: "fonts/weathericons-regular-webfont.ttf"
+        source: "qrc:/assets/fonts/weathericons-regular-webfont.ttf"
     }
 
     SettingsController {
@@ -51,6 +51,7 @@ ApplicationWindow {
         color: applicationSettingsController.applicationBackground
         focus: true
         Keys.onBackPressed: mainWindow.close()
+        visible: !welcomeView.visible
 
         ApplicationBar {
             id: applicationBar
@@ -160,7 +161,21 @@ ApplicationWindow {
         interval: 3600000
         running: true
         repeat: true
-        onTriggered: weatherView.updateWeather()
+        onTriggered: {
+            if (!applicationSettingsController.firstUse)
+                weatherView.updateWeather()
+        }
     }
-    Component.onCompleted: weatherView.updateWeather()
+
+    WelcomeView {
+        id: welcomeView
+        anchors.fill: parent
+        color: applicationSettingsController.applicationBackground
+        visible: applicationSettingsController.firstUse
+        onFinished: applicationSettingsController.firstUse = false
+    }
+    Component.onCompleted: {
+        if (!applicationSettingsController.firstUse)
+            weatherView.updateWeather()
+    }
 }

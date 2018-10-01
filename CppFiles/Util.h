@@ -66,6 +66,7 @@ public:
     Q_INVOKABLE static QList<QObject*> creditsList();
     Q_INVOKABLE static QString iconPathPrefix();
     Q_INVOKABLE static QString forecastDate(const QString &string);
+    Q_INVOKABLE static QString assetsPath();
 public slots:
     QString getLogoImage() const;
 
