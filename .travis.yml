@@ -12,17 +12,18 @@ install:
     - source /opt/qt*/bin/qt*-env.sh
 
 script:
-  - sed -i -e 's|<file>qt/etc/qt.conf</file>||g' qml.qrc # according to README
   - qmake PREFIX=/usr
   - make -j$(nproc)
-  - mkdir -p appdir/usr/bin
-  - mkdir -p appdir/usr/share/applications
-  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps
+  - mkdir -p appdir/usr/bin"
+  - mkdir -p appdir/usr/share/applications"
+  - mkdir -p appdir/usr/share/icons/hicolor/512x512/apps"
+  - mkdir -p appdir/usr/share/assets/screens"
   - cp Cumulus appdir/usr/bin/
-  - cp icons/*.png appdir/usr/share/icons/
-  - cp icons/hicolor/256x256/* appdir/usr/share/icons/
-  - cp icons/hicolor/256x256/cumulus.* appdir/
-  - cp icons/hicolor/256x256/cumulus.* appdir/usr/share/icons/hicolor/256x256/apps/
+  - cp assets/icons/*.png appdir/usr/share/icons/
+  - cp assets/icons/hicolor/512x512/* appdir/usr/share/icons/
+  - cp assets/icons/hicolor/512x512/cumulus.* appdir/
+  - cp assets/icons/hicolor/512x512/cumulus.* appdir/usr/share/icons/hicolor/512x512/apps/
+  - cp assets/screens/* appdir/usr/share/assets/screens/
   - echo "[Desktop Entry]" > appdir/cumulus.desktop
   - echo "Name=Cumulus" >> appdir/cumulus.desktop
   - echo "Icon=cumulus" >> appdir/cumulus.desktop
@@ -35,8 +36,7 @@ after_success:
   - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" 
   - chmod a+x linuxdeployqt*.AppImage
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*desktop -bundle-non-qt-libs -qmldir=../
-  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*desktop -appimage -qmldir=../
+  - ./linuxdeployqt*.AppImage appdir/usr/share/applications/*desktop -bundle-non-qt-libs -appimage -no-translations -qmldir=qml
   - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - curl --upload-file ./Cumulus*.AppImage https://transfer.sh/Cumulus-git.$(git rev-parse --short HEAD)-x86_64.AppImage
 
