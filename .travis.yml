@@ -14,10 +14,10 @@ install:
 script:
   - qmake PREFIX=/usr
   - make -j$(nproc)
-  - mkdir -p appdir/usr/bin"
-  - mkdir -p appdir/usr/share/applications"
-  - mkdir -p appdir/usr/share/icons/hicolor/512x512/apps"
-  - mkdir -p appdir/usr/share/assets/screens"
+  - mkdir -p appdir/usr/bin
+  - mkdir -p appdir/usr/share/applications
+  - mkdir -p appdir/usr/share/icons/hicolor/512x512/apps
+  - mkdir -p appdir/usr/share/assets/screens
   - cp Cumulus appdir/usr/bin/
   - cp assets/icons/*.png appdir/usr/share/icons/
   - cp assets/icons/hicolor/512x512/* appdir/usr/share/icons/
