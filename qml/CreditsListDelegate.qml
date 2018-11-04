@@ -61,7 +61,7 @@ Item {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignBottom
-                    text: "Author: " + root.author
+                    text: qsTr("Author: ") + root.author
                     color: root.textColor
                 }
                 Text {
@@ -70,7 +70,7 @@ Item {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
-                    text: "License: " + root.license
+                    text: qsTr("License: ") + root.license
                     color: root.textColor
                 }
             }

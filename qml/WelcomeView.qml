@@ -64,7 +64,7 @@ Rectangle {
         width: (window.width * 0.7)
         height: 50
         backgroundColor: "#3d8fb5"
-        text.text: (welcomeView.currentIndex < 3 ? ("Next ") : ("Done ")) + (" >")
+        text.text: (welcomeView.currentIndex < 3 ? (qsTr("Next ")) : (qsTr("Done "))) + (" >")
         text.color: "#ffffff"
         text.wrapMode: Text.Wrap
         dropShadow.verticalOffset: 3

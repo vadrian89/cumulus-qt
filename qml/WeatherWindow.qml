@@ -59,7 +59,7 @@ Item {
         anchors.left: parent.left
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        text: weatherController.weatherDescription
+        text: qsTr(weatherController.weatherDescription)
         font.family: textFontFamily
         font.pixelSize: 20
         wrapMode: Text.WordWrap

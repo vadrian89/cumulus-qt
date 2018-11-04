@@ -2,25 +2,26 @@ QT += qml quick sql widgets quickwidgets concurrent positioning
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    CppFiles/Util.cpp \
-    CppFiles/DataController.cpp \
-    CppFiles/YWeatherController.cpp \
-    CppFiles/Forecast.cpp \
-    CppFiles/SettingsController.cpp \
-    CppFiles/OwmWeatherController.cpp \
-    CppFiles/ThreadWorker.cpp \
-    CppFiles/WeatherType.cpp \
+SOURCES += \
     CppFiles/AbstractWeatherController.cpp \
-    CppFiles/TrayController.cpp \
     CppFiles/CreditsAuthor.cpp \
     CppFiles/CustomImageProvider.cpp \
-    CppFiles/FontImageProvider.cpp \
-    CppFiles/WundWeatherController.cpp \
-    CppFiles/MainWindow.cpp \
     CppFiles/DatabaseHelper.cpp \
+    CppFiles/DataController.cpp \
+    CppFiles/FontImageProvider.cpp \
+    CppFiles/Forecast.cpp \
     CppFiles/Location.cpp \
-    CppFiles/LocationController.cpp
+    CppFiles/LocationController.cpp \
+    CppFiles/MainWindow.cpp \
+    CppFiles/OwmWeatherController.cpp \
+    CppFiles/SettingsController.cpp \
+    CppFiles/ThreadWorker.cpp \
+    CppFiles/TrayController.cpp \
+    CppFiles/Util.cpp \
+    CppFiles/WeatherType.cpp \
+    CppFiles/WundWeatherController.cpp \
+    CppFiles/YWeatherController.cpp \
+    main.cpp
 
 RESOURCES += qml.qrc
 
@@ -31,24 +32,24 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    CppFiles/Util.h \
-    CppFiles/DataController.h \
-    CppFiles/YWeatherController.h \
-    CppFiles/Forecast.h \
-    CppFiles/SettingsController.h \
-    CppFiles/OwmWeatherController.h \
-    CppFiles/ThreadWorker.h \
-    CppFiles/WeatherType.h \
     CppFiles/AbstractWeatherController.h \
-    CppFiles/TrayController.h \
     CppFiles/CreditsAuthor.h \
     CppFiles/CustomImageProvider.h \
-    CppFiles/FontImageProvider.h \
-    CppFiles/WundWeatherController.h \
-    CppFiles/MainWindow.h \
     CppFiles/DatabaseHelper.h \
+    CppFiles/DataController.h \
+    CppFiles/FontImageProvider.h \
+    CppFiles/Forecast.h \
     CppFiles/Location.h \
-    CppFiles/LocationController.h
+    CppFiles/LocationController.h \
+    CppFiles/MainWindow.h \
+    CppFiles/OwmWeatherController.h \
+    CppFiles/SettingsController.h \
+    CppFiles/ThreadWorker.h \
+    CppFiles/TrayController.h \
+    CppFiles/Util.h \
+    CppFiles/WeatherType.h \
+    CppFiles/WundWeatherController.h \
+    CppFiles/YWeatherController.h
 
 #QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
 
@@ -142,9 +143,13 @@ DISTFILES += \
     android/assets/screens/location-search.png \
     android/assets/screens/locations-screen.png \
     android/assets/screens/main-screen-forecast.png \
-    android/assets/screens/toggle-screens.png
+    android/assets/screens/toggle-screens.png \
+    translations/tempestas_ro.qm \
+    translations/tempestas_ro.po
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+TRANSLATIONS = translations/tempestas_ro.po

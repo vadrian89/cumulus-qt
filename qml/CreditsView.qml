@@ -69,7 +69,7 @@ Item {
                     font.pixelSize: 14
                     color: rootItem.textColor
                     wrapMode: Text.Wrap
-                    text: "Thanks to Erik Flowers for his weather icons fonts!"
+                    text: qsTr("Thanks to Erik Flowers for his weather icons fonts!")
                     url: "https://erikflowers.github.io/weather-icons/"
                 }
                 LinkedText {
@@ -81,7 +81,7 @@ Item {
                     font.pixelSize: 14
                     color: rootItem.textColor
                     wrapMode: Text.Wrap
-                    text: "Thanks to Dave Gandy for Font Awesome!"
+                    text: qsTr("Thanks to Dave Gandy for Font Awesome!")
                     url: "http://fontawesome.io/"
                 }
                 Text {
@@ -93,18 +93,18 @@ Item {
                     font.pixelSize: 14
                     color: rootItem.textColor
                     wrapMode: Text.Wrap
-                    text: "Cumulus is a simple weather application based on Qt framework.<br> "
-                          + "It is and always be free.<br>"
-                          + "Source code released under GPL-3.<br>"
-                          + "Forked from Typhoon, which was based of Stormcloud.<br>"
-                          + "Active developers: <ul><li>Adrian Verban verbanady@gmail.com</li></ul>"
-                          + "Special thanks to: <ul><li>Daryl Bennett</li><li>Archisman Panigrahi</li></ul>"
-                          + "Weather data provided by: "
+                    text: qsTr("Cumulus is a simple weather application based on Qt framework.<br> ")
+                          + qsTr("It is and always be free.<br>")
+                          + qsTr("Source code released under GPL-3.<br>")
+                          + qsTr("Forked from Typhoon, which was based of Stormcloud.<br>")
+                          + qsTr("Active developers: <ul><li>Adrian Verban verbanady@gmail.com</li></ul>")
+                          + qsTr("Special thanks to: <ul><li>Daryl Bennett</li><li>Archisman Panigrahi</li></ul>")
+                          + qsTr("Weather data provided by: ")
                           + "<ul><li>Open Weather Map</li>"
                           + "<li>Yahoo! Weather</li>"
                           + "<li>Weather Underground</li>"
                           + "</ul>"
-                          + "Icons credits:"
+                          + qsTr("Icons credits:")
                 }
                 ListView {
                     id: iconCreditsList

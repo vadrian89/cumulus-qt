@@ -66,7 +66,7 @@ Item {
 
                 SettingsOptionItem {
                     id: tempUnitItem
-                    optionText: "Temperature Unit"
+                    optionText: qsTr("Temperature Unit")
                     backgroundColor: "#ffffff"
                     anchors.top: settingsBody.top
                     height: root.settingsItemHeight
@@ -123,7 +123,7 @@ Item {
 
                 SettingsOptionItem {
                     id: speedUnitItem
-                    optionText: "Speed Unit"
+                    optionText: qsTr("Speed Unit")
                     backgroundColor: "#ffffff"
                     anchors.top: tempUnitItem.bottom
                     height: root.settingsItemHeight
@@ -180,7 +180,7 @@ Item {
 
                 SettingsOptionItem {
                     id: colorPalettesItem
-                    optionText: "Colors"
+                    optionText: qsTr("Colors")
                     backgroundColor: "#ffffff"
                     anchors.top: speedUnitItem.bottom
                     height: root.settingsItemHeight
@@ -211,7 +211,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                        text: "Background"
+                        text: qsTr("Background")
                         textColor: root.textColor
                         backgroundColor: root.backgroundColor
                         onClicked: {
@@ -227,7 +227,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 70
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                        text: "Text"
+                        text: qsTr("Text")
                         textColor: root.textColor
                         backgroundColor: root.textColor
                         onClicked: {
@@ -252,7 +252,7 @@ Item {
 
                 SettingsOptionItem {
                     id: apiSelectItem
-                    optionText: "Provider"
+                    optionText: qsTr("Provider")
                     backgroundColor: "#ffffff"
                     anchors.top: colorPalettesItem.bottom
                     height: root.settingsItemHeight
@@ -319,7 +319,7 @@ Item {
 
                 SettingsOptionItem {
                     id: creditsItem
-                    optionText: "Credits"
+                    optionText: qsTr("Credits")
                     backgroundColor: "#ffffff"
                     anchors.top: apiSelectItem.bottom
                     height: root.settingsItemHeight
