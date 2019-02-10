@@ -276,20 +276,14 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: (parent.width - apiSelect.width) / 2
                     visible: false
-                    model: ["Open Weather Map", "Yahoo! Weather", "Weather Underground"]
+//                    model: ["Open Weather Map", "Yahoo! Weather", "Weather Underground"]
+                    model: ["Open Weather Map", "Weather Underground"]
                     onCurrentIndexChanged: {
                         if (visible == true) {
-                            switch (currentIndex) {
-                            case 1:
-                                root.api = "y"
-                                break;
-                            case 2:
+                            if (currentIndex == 1)
                                 root.api = "wund"
-                                break;
-                            default:
+                            else
                                 root.api = "owm"
-                                break;
-                            }
                         }
                     }
                     onVisibleChanged: {
@@ -305,17 +299,7 @@ Item {
                         }
                     }
                 }
-                Component.onCompleted: {
-                    if (settingsController.getWeatherApi() == "y") {
-                        apiSelect.currentIndex = 1
-                    }
-                    else if (settingsController.getWeatherApi() == "wund") {
-                        apiSelect.currentIndex = 2
-                    }
-                    else {
-                        apiSelect.currentIndex = 0
-                    }
-                }
+                Component.onCompleted: (settingsController.getWeatherApi() === "wund")  ? apiSelect.currentIndex = 1 : apiSelect.currentIndex = 0
 
                 SettingsOptionItem {
                     id: creditsItem
@@ -385,13 +369,13 @@ Item {
                     id: winControlSwitch
                     width: settingsBody.width
                     height: 50
-                    anchors.top: trayColorSwitch.bottom
+                    anchors.top: util.osType() === "android" ? gpsSwitch.bottom : trayColorSwitch.bottom
                     anchors.left: parent.left
                     labelColor: root.textColor
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Window controls position")
-                    visible: util.osType() === "android" ? false : true
+                    visible: true
                     leftText: "\uf04d"
                     rightText: "\uf048"
                     checkedColor: "gray"
@@ -409,7 +393,7 @@ Item {
                     switchRailWidth: root.switchWidth
                     switchRailHeight: root.switchHeight
                     switchLabel: qsTr("Start on login")
-                    state: settingsController.loginStartCheck() == true ? "right" : "left"
+                    state: settingsController.loginStartCheck() === true ? "right" : "left"
                     visible: util.osType() === "android" ? false : true
                 }
             }

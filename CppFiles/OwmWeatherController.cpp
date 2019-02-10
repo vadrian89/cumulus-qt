@@ -121,8 +121,8 @@ void OwmWeatherController::getForecastFromJson(const QJsonObject &jsonObject) {
         forecastList.append(forecast);
     }
     if (!forecastList.isEmpty()) {
-        m_weather.m_tempMax = forecastList.at(1)->tempHigh();
-        m_weather.m_tempMin = forecastList.at(1)->tempLow();
+        m_weather.m_tempMax = forecastList.at(0)->tempHigh();
+        m_weather.m_tempMin = forecastList.at(0)->tempLow();
         saveForecast(forecastList);
     }
 }

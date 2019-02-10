@@ -28,23 +28,26 @@ Item {
     signal closeButtonClicked()
     signal minimizeButtonClicked()
     signal refreshButtonClicked()
+    signal locationButtonClicked()
     property string textColor: "#ffffff"
     property string iconsFont
     property alias animationAlias: refreshRotateAnim
     property alias moveControlAlias: moveControlBar
     property alias menuButtonAlias: menuButton
     property alias refreshButtonAlias: refreshButton
+    property alias locationButtonAlias: locationButton
     property int controlButtonsSize: 18
-    property string windowControlsPos
+    property string windowControlsPos: ""
     property string locationName: ""
     property string textFontFamily: "Arial"
+    property point mousePosition: Qt.point(0,0)
 
     MenuButton {
         id: closeButton
         anchors.top: parent.top
         anchors.left: (windowControlsPos == "left") ? parent.left : minimizeButton.right
         height: parent.height
-        width: height
+        width: visible ? height : 0
         visible: false
         imageSource: ("image://customimage/x" + root.textColor)
         onClicked: root.closeButtonClicked()
@@ -52,29 +55,51 @@ Item {
     MenuButton {
         id: minimizeButton
         anchors.top: parent.top
-        anchors.left: (windowControlsPos == "left") ? closeButton.right : moveControlBar.right
+        anchors.left: (windowControlsPos == "left") ? closeButton.right : locationButton.right
         height: parent.height
-        width: height
+        width: visible ? height : 0
         visible: false
         imageSource: ("image://customimage/-" + root.textColor)
         onClicked: root.minimizeButtonClicked()
+    }
+    MenuButton {
+        id: locationButton
+        anchors.top: parent.top
+        anchors.left: (windowControlsPos == "left") ? minimizeButton.right : moveControlBar.right
+        anchors.leftMargin: (closeButton.visible && minimizeButton.visible) ? 0 : (windowControlsPos == "left") ? 0 : locationButtonAlias.width
+        height: parent.height
+        width: height
+        visible: true
+        imageSource: ("image://fontimage/\uf041" + root.textColor)
+        onClicked: root.locationButtonClicked()
     }
     Text {
         id: moveControlBar
         text: locationName
         color: root.textColor
         anchors.top: parent.top
-        anchors.left: windowControlsPos == "left" ? minimizeButton.right : refreshButton.right
+        anchors.left: (windowControlsPos == "left") ? locationButton.right : refreshButton.right
+        anchors.leftMargin: (closeButton.visible && minimizeButton.visible) ? 0 : (windowControlsPos == "left") ? locationButtonAlias.width : 0
         height: parent.height
-        width: parent.width - (parent.height * 4)
+        width: (closeButton.visible && minimizeButton.visible) ? (parent.width - (parent.height * 5)) : (parent.width - (parent.height * 4))
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.family: root.textFontFamily
         font.pixelSize: 18
         MouseArea {
+            id: moveMouseArea
             anchors.fill: parent
+            cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+            property point pressPosition: Qt.point(0,0)
+            onPressed: moveMouseArea.pressPosition = Qt.point(mouseX, mouseY)
+            onPositionChanged: {
+                if (pressed && closeButton.visible && minimizeButton.visible) {
+                    root.mousePosition = Qt.point(mouseX - pressPosition.x, mouseY - pressPosition.y)
+                }
+            }
         }
     }
+
     MenuButton {
         id: refreshButton
         anchors.top: parent.top

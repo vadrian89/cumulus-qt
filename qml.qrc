@@ -33,5 +33,7 @@
         <file>qml/uMatControls/Button.qml</file>
         <file>main.cpp</file>
         <file>qml/WelcomeView.qml</file>
+        <file>translations/tempestas_ro.po</file>
+        <file>translations/tempestas_ro.qm</file>
     </qresource>
 </RCC>

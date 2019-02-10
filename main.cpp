@@ -20,6 +20,7 @@
 * along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QApplication>
+#include <QTranslator>
 #include "CppFiles/DatabaseHelper.h"
 #if defined(Q_OS_ANDROID)
 #include <QGuiApplication>
@@ -44,12 +45,17 @@ void registerQmlType();
 #include <QThread>
 #include <QCoreApplication>
 #include <QLibraryInfo>
+#include <QLibrary>
 
 #include "CppFiles/MainWindow.h"
 #include "CppFiles/ThreadWorker.h"
 #endif
 
+#define SHLIB_VERSION_NUMBER "1.0.0"
 int main(int argc, char *argv[]) {
+    QLibrary libcrypto, libssl;
+    libcrypto.setFileNameAndVersion(QLatin1String("crypto"), QLatin1String(SHLIB_VERSION_NUMBER));
+    libssl.setFileNameAndVersion(QLatin1String("ssl"), QLatin1String(SHLIB_VERSION_NUMBER));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 2))
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -66,6 +72,13 @@ int main(int argc, char *argv[]) {
     DatabaseHelper *dbHelper = new DatabaseHelper;
     dbHelper->databaseInit();
     delete(dbHelper);
+    QTranslator translator;
+    QString defaultLocale = QLocale::system().name();
+    defaultLocale.truncate(defaultLocale.lastIndexOf("_"));
+    QString langPath = ":/translations/";
+    if (translator.load(langPath.append("tempestas_").append(defaultLocale).append(".qm"))) {
+        app.installTranslator(&translator);
+    }
 #if defined(Q_OS_ANDROID)
     Util util;
     SettingsController settingsController;

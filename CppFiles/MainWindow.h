@@ -39,6 +39,8 @@ public:
 public slots:
     void loadSettings();
     void closeApp();
+    void moveWindow(const QPoint &mousePosition);
+    void minimizeWindow();
 };
 
 #endif // MAINWINDOW_H

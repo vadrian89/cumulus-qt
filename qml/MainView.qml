@@ -19,10 +19,23 @@ Item {
     signal updateWeather()
     signal networkError()
     signal loadLogoImage()
+    signal goToLocationsList()
 
     onTextColorChanged: weatherView.loadLogoImage()
     onLoadLogoImage: weatherView.loadLogoImage()
     onUpdateWeather: weatherView.updateWeather()
+    onGoToLocationsList: {
+        if (flickable.contentX > 0) {
+            scrollToLocation.from = root.startPoint
+            scrollToLocation.to = 0
+            scrollToLocation.start()
+        }
+        else {
+            scrollToLocation.from = 0
+            scrollToLocation.to = root.startPoint
+            scrollToLocation.start()
+        }
+    }
 
     Flickable {
         id: flickable
@@ -69,6 +82,12 @@ Item {
                 flickable.contentX = root.startPoint
             else
                 flickable.contentX = 0
+        }
+        PropertyAnimation on contentX {
+            id: scrollToLocation
+            from: flickable.contentX
+            to: 0
+            running: false
         }
     }
     onWidthChanged: {

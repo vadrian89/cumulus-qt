@@ -112,3 +112,11 @@ void MainWindow::closeApp() {
     m_closeApp = true;
     this->close();
 }
+
+void MainWindow::moveWindow(const QPoint &mousePosition) {
+    move(this->x() + mousePosition.x(), (this->y() + mousePosition.y()));
+}
+
+void MainWindow::minimizeWindow() {
+    this->setWindowState(Qt::WindowMinimized);
+}

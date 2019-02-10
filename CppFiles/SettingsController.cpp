@@ -351,6 +351,7 @@ QString SettingsController::apiKey() const {
         }
         QJsonObject jsonObject = QJsonDocument::fromJson(baJsonData).object();
         api = jsonObject.find(getWeatherApi()).value().toString();
+        qDebug() << "Using local file fore api: " << fileLocation;
     }
     else {
         api = loadString(("apiKey" + this->weatherApi()), WEATHER_SETTINGS_GROUP);

@@ -129,11 +129,12 @@ void Location::getGpsLocation() {
     QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(nullptr);
     if (posInfoSource) {
         QThread *thread = new QThread();
-        posInfoSource->setUpdateInterval(2000);
+        posInfoSource->setUpdateInterval(1000);
         posInfoSource->moveToThread(thread);
         connect(thread, SIGNAL(started()), posInfoSource, SLOT(startUpdates()));
         connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));
         connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), thread, SLOT(quit()));
+        connect(posInfoSource, SIGNAL(error(QGeoPositionInfoSource::Error)), this, SLOT(geoPositionSourceError(QGeoPositionInfoSource::Error)));
         connect(posInfoSource, SIGNAL(error(QGeoPositionInfoSource::Error)), thread, SLOT(quit()));
         connect(thread, SIGNAL(finished()), posInfoSource, SLOT(stopUpdates()));
         connect(thread, SIGNAL(finished()), posInfoSource, SLOT(deleteLater()));
@@ -159,4 +160,23 @@ void Location::locationPositionInfo(const QGeoPositionInfo &posInfo) {
     connect(this, SIGNAL(networkError(QString)), thread, SLOT(quit()));
     connect(this, SIGNAL(gpsLocationChanged()), thread, SLOT(quit()));
     thread->start();
+}
+
+void Location::geoPositionSourceError(QGeoPositionInfoSource::Error positioningError) {
+    switch (positioningError) {
+    case QGeoPositionInfoSource::AccessError:
+        qDebug() << "QGeoPositionInfoSource::AccessError";
+        qDebug() << "The connection setup to the remote positioning backend failed because the application lacked the required privileges.";
+        break;
+    case QGeoPositionInfoSource::ClosedError:
+        qDebug() << "QGeoPositionInfoSource::ClosedError";
+        qDebug() << "The remote positioning backend closed the connection, which happens for example in case the user is switching location services to off. As soon as the location service is re-enabled regular updates will resume.";
+        break;
+    case QGeoPositionInfoSource::UnknownSourceError:
+        qDebug() << "QGeoPositionInfoSource::UnknownSourceError";
+        qDebug() << "An unidentified error occurred.";
+        break;
+    default:
+        break;
+    }
 }

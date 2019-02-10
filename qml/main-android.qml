@@ -63,8 +63,15 @@ ApplicationWindow {
             textFontFamily: ubuntuCondensed.name
             onRefreshButtonClicked: weatherView.updateWeather()
             windowControlsPos: applicationSettingsController.windowControlsPos
+            onLocationButtonClicked: {
+                weatherView.goToLocationsList()
+                if (settingsView.visible) {
+                    appView.pop(null)
+                    appBody.forceActiveFocus()
+                }
+            }
             onMenuButtonClicked: {
-                if (bodyView.visible == true) {
+                if (bodyView.visible) {
                     appView.push(settingsView)
                     settingsView.forceActiveFocus()
                 }
@@ -120,6 +127,8 @@ ApplicationWindow {
             backgroundColor: applicationSettingsController.applicationBackground
             onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
             textColor: applicationSettingsController.textColor
+            iconsFont: weatherIcons.name
+            windowControls: applicationSettingsController.windowControlsPos
             onTextColorChanged: applicationSettingsController.textColor = textColor
             onWindowControlsChanged: applicationSettingsController.windowControlsPos = windowControls
             onShowCredits: {

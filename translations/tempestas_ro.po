@@ -1,0 +1,149 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);\n"
+"X-Language: ro_RO\n"
+"X-Qt-Contexts: true\n"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SearchLocation.qml:47
+msgctxt "SearchLocation|"
+msgid "Search"
+msgstr "Caută"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:69
+msgctxt "SettingsWindow|"
+msgid "Temperature Unit"
+msgstr "Unitate temperatură"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:126
+msgctxt "SettingsWindow|"
+msgid "Speed Unit"
+msgstr "Unitate viteză"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:183
+msgctxt "SettingsWindow|"
+msgid "Colors"
+msgstr "Culori"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:214
+msgctxt "SettingsWindow|"
+msgid "Background"
+msgstr "Fundal"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:230
+msgctxt "SettingsWindow|"
+msgid "Text"
+msgstr "Text"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:255
+msgctxt "SettingsWindow|"
+msgid "Provider"
+msgstr "Furnizor"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:322
+msgctxt "SettingsWindow|"
+msgid "Credits"
+msgstr "Credite"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:341
+msgctxt "SettingsWindow|"
+msgid "Use GPS"
+msgstr "Foloseşte GPS"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:356
+msgctxt "SettingsWindow|"
+msgid "Close To Tray"
+msgstr "Închide în tavă"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:371
+msgctxt "SettingsWindow|"
+msgid "Tray theme"
+msgstr "Temă tavă"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:393
+msgctxt "SettingsWindow|"
+msgid "Window controls position"
+msgstr "Poziţia controalelor ferestrei"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/SettingsWindow.qml:411
+msgctxt "SettingsWindow|"
+msgid "Start on login"
+msgstr "Porneşte la conectare"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsListDelegate.qml:64
+msgctxt "CreditsListDelegate|"
+msgid "Author: "
+msgstr "Autor: "
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsListDelegate.qml:73
+msgctxt "CreditsListDelegate|"
+msgid "License: "
+msgstr "Licenţă: "
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:72
+msgctxt "CreditsView|"
+msgid "Thanks to Erik Flowers for his weather icons fonts!"
+msgstr "Mulţumesc lui Erik Flowers pentru font-urile pictograme de vreme!"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:84
+msgctxt "CreditsView|"
+msgid "Thanks to Dave Gandy for Font Awesome!"
+msgstr "Mulţumesc lui Dave Gandy pentru Font Awesome!"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:96
+msgctxt "CreditsView|"
+msgid "Cumulus is a simple weather application based on Qt framework.<br> "
+msgstr ""
+"Cumulus este o aplicaţie simplă de urmărit vremea, bazată pe cadrul Qt.<br> "
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:97
+msgctxt "CreditsView|"
+msgid "It is and always be free.<br>"
+msgstr "Este şi întotdeauna va fi liberă şi gratuită.<br>"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:98
+msgctxt "CreditsView|"
+msgid "Source code released under GPL-3.<br>"
+msgstr "Codul sursă eliberat sub GPL-3.<br>"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:99
+msgctxt "CreditsView|"
+msgid "Forked from Typhoon, which was based of Stormcloud.<br>"
+msgstr "Ramificat din Typhoon, care a fost făcut din Stormcloud.<br>"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:100
+msgctxt "CreditsView|"
+msgid "Active developers: <ul><li>Adrian Verban verbanady@gmail.com</li></ul>"
+msgstr ""
+"Dezvoltatori activi: <ul><li>Adrian Verban verbanady@gmail.com</li></ul>"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:101
+msgctxt "CreditsView|"
+msgid ""
+"Special thanks to: <ul><li>Daryl Bennett</li><li>Archisman "
+"Panigrahi</li></ul>"
+msgstr ""
+"Mulţumiri speciale: <ul><li>Daryl Bennett</li><li>Archisman "
+"Panigrahi</li></ul>"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:102
+msgctxt "CreditsView|"
+msgid "Weather data provided by: "
+msgstr "Vremea asigurată de: "
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/CreditsView.qml:107
+msgctxt "CreditsView|"
+msgid "Icons credits:"
+msgstr "Acreditări pictograme:"
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/WelcomeView.qml:67
+msgctxt "WelcomeView|"
+msgid "Next "
+msgstr "Înainte "
+
+#: /home/adi/Qt-workspace/cumulus-qt/qml/WelcomeView.qml:67
+msgctxt "WelcomeView|"
+msgid "Done "
+msgstr "Finalizat "

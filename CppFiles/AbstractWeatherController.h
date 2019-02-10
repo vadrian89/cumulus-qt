@@ -65,7 +65,7 @@ protected slots:
     virtual void getLocationFromJson(const QJsonObject &jsonObject) = 0;
     virtual void getWeatherFromJson(const QJsonObject &jsonObject) = 0;
     virtual void getForecastFromJson(const QJsonObject &jsonObject) = 0;
-    void manageError(const QString &error);
+    void manageError(const QString error);
 public slots:
     void getWeather();
 signals:

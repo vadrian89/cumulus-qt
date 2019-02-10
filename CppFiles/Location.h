@@ -52,6 +52,7 @@ public:
 private slots:
     void readLocationList(const QList<location_struct> &locationList);    
     void locationPositionInfo(const QGeoPositionInfo &posInfo);
+    void geoPositionSourceError(QGeoPositionInfoSource::Error positioningError);
 public slots:
     void getLocationList();
     void searchLocation(const QString &query);

@@ -28,7 +28,8 @@ QJsonObject AbstractWeatherController::nextBranch(const QJsonObject &jsonObject,
     return jsonObject.find(current).value().toObject();
 }
 
-void AbstractWeatherController::manageError(const QString &error) {
+void AbstractWeatherController::manageError(const QString error) {
+    qDebug() << "AbstractWeatherController::manageError" << error;
     emit networkError(error);
 }
 
@@ -127,8 +128,10 @@ void AbstractWeatherController::locationPositionError(const QGeoPositionInfoSour
     case QGeoPositionInfoSource::ClosedError:
         manageError("Location services are off!");
         break;
+    case QGeoPositionInfoSource::UnknownSourceError:
+        manageError("An unidentified error occurred when requesting loation!");
+        break;
     default:
-        manageError("An unidentified error occurred when requesting loation.");
         break;
     }
 }

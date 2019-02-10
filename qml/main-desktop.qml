@@ -73,7 +73,11 @@ Rectangle {
         textFontFamily: ubuntuCondensed.name
         windowControlsPos: applicationSettingsController.windowControlsPos
         onRefreshButtonClicked: bodyView.item.updateWeather()
-        onMenuButtonClicked: settingsViewDialog.visible = true
+        onMenuButtonClicked: settingsViewDialog.visible = true        
+        onCloseButtonClicked: applicationWindow.close()
+        onMinimizeButtonClicked: applicationWindow.minimizeWindow()
+        onLocationButtonClicked: bodyView.item.goToLocationsList()
+        onMousePositionChanged: applicationWindow.moveWindow(mousePosition)
     }
 
     Loader {
@@ -164,6 +168,7 @@ Rectangle {
             backgroundColor: applicationSettingsController.applicationBackground
             onBackgroundColorChanged: applicationSettingsController.applicationBackground = backgroundColor
             textColor: applicationSettingsController.textColor
+            windowControls: applicationSettingsController.windowControlsPos
             onTextColorChanged: applicationSettingsController.textColor = textColor
             trayVisible: applicationSettingsController.trayVisibility
             onTrayVisibleChanged: applicationSettingsController.trayVisibility = trayVisible
