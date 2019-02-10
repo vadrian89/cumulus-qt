@@ -1,7 +1,6 @@
 # News
 Hello everybody,  
-I have managed to work a bit on Cumulus and here are some small updates.
-So here what's new:
+I have managed to work a bit on Cumulus and here are some small updates:
 - Added support for translations, it is only for UI language and current only translated to romanian language; Will implement a way to translate weather conditions soon;
 - Added a button to toggle between locations list and weather view;
 - Made the toggle for window controls positioning available for Android users as well;
