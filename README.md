@@ -1,3 +1,8 @@
+# Important announcement
+Weather underground have [terminated](https://apicommunity.wunderground.com/weatherapi/topics/end-of-service-for-the-weather-underground-api) it's API so I will need to replace it.
+The application's ability to search for locations and get GPS feature might also break because they are dependent of Weather underground and Yahoo! Weather.
+Will do my best to fix this issue in a fast time frame.
+
 # News
 Hello everybody,  
 I have managed to work a bit on Cumulus and here are some small updates:
@@ -5,7 +10,7 @@ I have managed to work a bit on Cumulus and here are some small updates:
 - Added a button to toggle between locations list and weather view;
 - Made the toggle for window controls positioning available for Android users as well;
 - Started reimplementing the option to remove window decorations from window manager; In the future you will be able to select if you want to use window manager decorations or application's;
-- Removed Yahoo! Weather provider from UI, because they changed how their provide their API( yet again);
+- Removed Yahoo! Weather provider from UI, because they changed how their provide their API(yet again);
 - Fixed an issue where the high and low temperatures for the current weather were taken from tomorrow's forecast;
 - Fixed an issue where the application won't keep the windows controls locations;
 
