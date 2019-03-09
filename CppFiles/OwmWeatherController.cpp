@@ -31,15 +31,15 @@ OwmWeatherController::OwmWeatherController(QObject *parent) : AbstractWeatherCon
 
 void OwmWeatherController::searchByGps(const double &lat, const double &lon) {
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
-    systemLang.resize(2);
+    QString systemLang = QLocale::system().name();
+    systemLang.truncate(systemLang.lastIndexOf("_"));
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?lat=" + QString::number(lat) + "&lon=" + QString::number(lon) + "&appid=" + apiKey + "&lang=" + systemLang);
 }
 
 void OwmWeatherController::searchByLocation(QString &location) {
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getLocationFromJson(QJsonObject)));
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
-    systemLang.resize(2);
+    QString systemLang = QLocale::system().name();
+    systemLang.truncate(systemLang.lastIndexOf("_"));
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apiKey + "&lang=" + systemLang);
 }
 
@@ -52,15 +52,15 @@ void OwmWeatherController::getLocationFromJson(const QJsonObject &jsonObject) {
 void OwmWeatherController::searchBycode(QString &code) {
     locationCode = code;
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getWeatherFromJson(QJsonObject)));
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
-    systemLang.resize(2);
+    QString systemLang = QLocale::system().name();
+    systemLang.truncate(systemLang.lastIndexOf("_"));
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?id=" + code + "&appid=" + apiKey + "&lang=" + systemLang);
 }
 
 void OwmWeatherController::getForecast(const QString &code) {
     connect(dataController, SIGNAL(jsonObjectReady(QJsonObject)), this, SLOT(getForecastFromJson(QJsonObject)));
-    QString systemLang = QLocale::languageToString(QLocale::system().language()).toLower();
-    systemLang.resize(2);
+    QString systemLang = QLocale::system().name();
+    systemLang.truncate(systemLang.lastIndexOf("_"));
     dataController->getDataFromUrl("http://api.openweathermap.org/data/2.5/forecast/daily?id=" + code + "&appid=" + apiKey + "&lang=" + systemLang);
 }
 

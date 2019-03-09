@@ -34,7 +34,7 @@ void AbstractWeatherController::manageError(const QString error) {
 }
 
 void AbstractWeatherController::getWeather() {
-    SettingsController settings;    
+    SettingsController settings;
     dataController = new DataController(this);
     connect(dataController, SIGNAL(networkError(QString)), this, SLOT(manageError(QString)));
     if (settings.useGps()) {

@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-import "../uMatComponents" as CoreItems
+import "../CustomComponents" as CoreItems
 
 CoreItems.ClickableItem {
     id: root

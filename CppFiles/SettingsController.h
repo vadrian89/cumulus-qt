@@ -37,7 +37,6 @@
 using namespace std;
 
 struct api_keys {
-    const QString wund = "30be6723cf95f92c";
     const QString owm = "15c2836a71c126524d35af1d29d563c5";
 };
 

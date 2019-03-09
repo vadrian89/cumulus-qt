@@ -26,7 +26,7 @@ import QtQuick.Layouts 1.0
 Item {
     id: rootItem
     visible: false
-    property string appVersion: "4.1.2"
+    property string appVersion: "4.2.0"
     property string textColor
     property string backgroundColor
     property int contentWidth: rootItem.width * 90 / 100
@@ -84,9 +84,21 @@ Item {
                     text: qsTr("Thanks to Dave Gandy for Font Awesome!")
                     url: "http://fontawesome.io/"
                 }
+                LinkedText {
+                    id: locationIqCreditsText
+                    anchors.top: fontAwesomeCreditsText.bottom
+                    anchors.left: parent.left
+                    anchors.leftMargin: (rootItem.width - locationIqCreditsText.width) / 2
+                    width: rootItem.contentWidth
+                    font.pixelSize: 14
+                    color: rootItem.textColor
+                    wrapMode: Text.Wrap
+                    text: qsTr("Search by ") + "LocationIQ.com"
+                    url: "https://locationiq.com"
+                }
                 Text {
                     id: creditsText
-                    anchors.top: fontAwesomeCreditsText.bottom
+                    anchors.top: locationIqCreditsText.bottom
                     anchors.left: parent.left
                     anchors.leftMargin: (rootItem.width - creditsText.width) / 2
                     width: rootItem.contentWidth
@@ -101,8 +113,6 @@ Item {
                           + qsTr("Special thanks to: <ul><li>Daryl Bennett</li><li>Archisman Panigrahi</li></ul>")
                           + qsTr("Weather data provided by: ")
                           + "<ul><li>Open Weather Map</li>"
-                          + "<li>Yahoo! Weather</li>"
-                          + "<li>Weather Underground</li>"
                           + "</ul>"
                           + qsTr("Icons credits:")
                 }

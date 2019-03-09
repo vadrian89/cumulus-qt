@@ -39,29 +39,34 @@ WeatherType::~WeatherType() {
 
 void WeatherType::getWeatherData() {
     //TODO; add last update condition correctly
-    if (!weatherController) {
-        SettingsController settings;
-        DatabaseHelper dbHelper;
-        if ((settings.currentLocationId() > 0 && dbHelper.lastLocationId() > 0) || settings.useGps()) {
-            if (settings.weatherApi() == "y") {
-                weatherController = new YWeatherController;
-            }
-            else if (settings.weatherApi() == "wund") {
-                weatherController = new WundWeatherController;
-            }
-            else {
-                weatherController = new OwmWeatherController;
-            }
-            if (thread == nullptr) {
-                thread = new QThread();
-            }
-            weatherController->moveToThread(thread);
-            connect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
-            connect(weatherController, SIGNAL(weatherSet(weather_struct)), this, SLOT(setWeatherData(weather_struct)));
-            connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
-            connect(thread, SIGNAL(finished()), weatherController, SLOT(deleteLater()));
-            thread->start();
+    if (!weatherController)
+        weatherController.clear();
+    SettingsController settings;
+    DatabaseHelper dbHelper;
+    if ((settings.currentLocationId() > 0 && dbHelper.lastLocationId() > 0) || settings.useGps()) {
+        if (settings.weatherApi() == "y") {
+            weatherController = new YWeatherController;
         }
+        else {
+            weatherController = new OwmWeatherController;
+        }
+        if (thread == nullptr) {
+            thread = new QThread();
+        }
+        else {
+            thread->quit();
+            thread->wait();
+            disconnect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
+            disconnect(weatherController, SIGNAL(weatherSet(weather_struct)), this, SLOT(setWeatherData(weather_struct)));
+            disconnect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+            disconnect(thread, SIGNAL(finished()), weatherController, SLOT(deleteLater()));
+        }
+        weatherController->moveToThread(thread);
+        connect(thread, SIGNAL(started()), weatherController, SLOT(getWeather()));
+        connect(weatherController, SIGNAL(weatherSet(weather_struct)), this, SLOT(setWeatherData(weather_struct)));
+        connect(weatherController, SIGNAL(networkError(QString)), this, SIGNAL(networkError(QString)));
+        connect(thread, SIGNAL(finished()), weatherController, SLOT(deleteLater()));
+        thread->start();
     }
 }
 

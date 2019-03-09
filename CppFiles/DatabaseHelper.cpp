@@ -504,7 +504,7 @@ QList<QObject*> DatabaseHelper::getForecast(const int &locationId) {
                 forecast->setForecastDesc(q.value("description").toString());
                 forecast->setTempLow(q.value("temp_min").toInt());
                 forecast->setTempHigh(q.value("temp_max").toInt());
-                forecast->setForecastDate(q.value("date").toString());
+                forecast->setForecastDate(q.value("date").toDate().toString("dd/MMM/yyyy"));
                 list.append(forecast);
             }
             emit querySuccessful();

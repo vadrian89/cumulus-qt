@@ -16,8 +16,8 @@ public:
     explicit LocationController(QObject *parent = nullptr);
     void setLocationQuery(const QString &locationQuery);
 private slots:
-    void getLocationFromJson(const QJsonObject &jsonObject);
-    void getLocationFromYahoo(const QJsonObject &jsonObject);
+    void getLocationFromJson(const QJsonArray &jsonArray);
+    void getGeoLocation(const QJsonObject &jsonObject);
 public slots:
     void getLocationList();
     void searchByLocation();

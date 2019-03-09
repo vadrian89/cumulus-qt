@@ -44,7 +44,8 @@ SettingsController::SettingsController(QObject *parent) : QObject(parent) {
     settings.endGroup();
     settings.beginGroup(WEATHER_SETTINGS_GROUP);
     m_currentLocationId = settings.value("currentLocationId", -1).toInt();
-    m_weatherApi = settings.value("api", "owm").toString();
+//    m_weatherApi = settings.value("api", "owm").toString();
+    m_weatherApi = "owm";
     m_windSpeedUnit = settings.value("windSpeedUnit", "m/s").toString();
     m_tempUnit = settings.value("temperatureUnit", "c").toString();
     m_pressureUnit = settings.value("pressureUnit", "mbar").toString();
@@ -311,11 +312,11 @@ QString SettingsController::pressureUnit() const {
 }
 
 QString SettingsController::getWeatherApi() {
-    QSettings settings;
-    settings.beginGroup(WEATHER_SETTINGS_GROUP);
-    QString api = settings.value("api", "owm").toString();
-    settings.endGroup();
-    return api;
+//    QSettings settings;
+//    settings.beginGroup(WEATHER_SETTINGS_GROUP);
+//    QString api = settings.value("api", "owm").toString();
+//    settings.endGroup();
+    return "owm";
 }
 
 bool SettingsController::useGps() const {
@@ -335,6 +336,7 @@ void SettingsController::setUseGps(const bool &useGps) {
 
 void SettingsController::setApiKey(const QString &apiKey) {
     if (apiKey != this->apiKey()) {
+        qDebug() << "SettingsController::setApiKey";
         saveString(("apiKey" + this->weatherApi()), apiKey, WEATHER_SETTINGS_GROUP);
         emit apiKeyChanged();
     }
@@ -356,10 +358,7 @@ QString SettingsController::apiKey() const {
     else {
         api = loadString(("apiKey" + this->weatherApi()), WEATHER_SETTINGS_GROUP);
         if (api.trimmed().size() == 0) {
-            if (this->weatherApi() == "wund") {
-                api = API_KEYS.wund;
-            }
-            else if (this->weatherApi() == "owm") {
+            if (this->weatherApi() == "owm") {
                 api = API_KEYS.owm;
             }
         }

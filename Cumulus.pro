@@ -145,7 +145,11 @@ DISTFILES += \
     android/assets/screens/main-screen-forecast.png \
     android/assets/screens/toggle-screens.png \
     translations/tempestas_ro.qm \
-    translations/tempestas_ro.po
+    translations/tempestas_ro.po \
+    assets/icons/hicolor/512x512/key.png \
+    assets/icons/hicolor/128x128/key.png \
+    assets/icons/hicolor/64x64/key.png \
+    android/assets/key.png
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj

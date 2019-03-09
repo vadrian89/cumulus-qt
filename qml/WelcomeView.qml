@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 
-import "uMatControls" as CoreControls
+import "CustomControls" as CoreControls
 
 Rectangle {
     id: window

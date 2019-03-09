@@ -23,7 +23,9 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs 1.2
+
+import "CustomControls" as CoreControls
 
 Item {
     id: root
@@ -35,9 +37,10 @@ Item {
     property alias loginStart: startUpSwitch.checked
     property string backgroundColor: backgroundColor ? backgroundColor : "#ffffff"
     property string textColor: textColor ? textColor : "#ffffff"
-    property string speedUnit
-    property string temperatureUnit
-    property string api
+    property string speedUnit: ""
+    property string temperatureUnit: ""
+    property string api: ""
+    property string apiKey: "Insert key"
     property int settingsItemHeight: 64
     property int textFontSize: 14
     property string iconsFont: "Arial"
@@ -46,6 +49,7 @@ Item {
     property bool useGps: false
     signal locationChanged()
     signal showCredits()
+    signal closeSettingsView()
 
     Rectangle {
         id: settingsOptionsView
@@ -64,14 +68,18 @@ Item {
                 height: settingsFlick.height
                 color: "transparent"
 
-                SettingsOptionItem {
+                CoreControls.SettingsItem {
                     id: tempUnitItem
-                    optionText: qsTr("Temperature Unit")
+                    text.text: qsTr("Temperature Unit")
+                    text.font.pixelSize: root.textFontSize
                     backgroundColor: "#ffffff"
                     anchors.top: settingsBody.top
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "temperature_icon.png"
+                    icon.source: util.iconPathPrefix() + "temperature_icon.png"
+                    icon.visible: true
+                    ripple: true
+                    summaryText.text: util.tempUnitSymbol(root.temperatureUnit).trim()
                     onClicked: {
                         if (tempUnitSelect.visible == false) {
                             tempUnitSelect.currentIndex = tempUnitSelect.find(util.tempUnitSymbol(root.temperatureUnit).trim())
@@ -96,12 +104,10 @@ Item {
                         if(tempUnitSelect.visible == false) {
                             speedUnitItem.anchors.top = tempUnitItem.bottom
                             speedUnitItem.anchors.topMargin = 0
-                            tempUnitItem.bottomBorderVisibility = true
                         }
                         else {
                             speedUnitItem.anchors.top = tempUnitSelect.bottom
                             speedUnitItem.anchors.topMargin = 5
-                            tempUnitItem.bottomBorderVisibility = false
                         }
                     }
                     onCurrentIndexChanged: {
@@ -121,14 +127,18 @@ Item {
                     }
                 }
 
-                SettingsOptionItem {
+                CoreControls.SettingsItem {
                     id: speedUnitItem
-                    optionText: qsTr("Speed Unit")
+                    text.text: qsTr("Speed Unit")
+                    text.font.pixelSize: root.textFontSize
                     backgroundColor: "#ffffff"
                     anchors.top: tempUnitItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "speed_icon.png"
+                    icon.source: util.iconPathPrefix() + "speed_icon.png"
+                    icon.visible: true
+                    ripple: true
+                    summaryText.text: util.speedUnitSymbol(root.speedUnit).trim()
                     onClicked: {
                         if (speedUnitSelect.visible == false) {
                             speedUnitSelect.currentIndex = speedUnitSelect.find(util.speedUnitSymbol(root.speedUnit).trim())
@@ -153,12 +163,10 @@ Item {
                         if(speedUnitSelect.visible == false) {
                             colorPalettesItem.anchors.top = speedUnitItem.bottom
                             colorPalettesItem.anchors.topMargin = 0
-                            speedUnitItem.bottomBorderVisibility = true
                         }
                         else {
                             colorPalettesItem.anchors.top = speedUnitSelect.bottom
                             colorPalettesItem.anchors.topMargin = 5
-                            speedUnitItem.bottomBorderVisibility = false
                         }
                     }
                     onCurrentIndexChanged: {
@@ -178,14 +186,18 @@ Item {
                     }
                 }
 
-                SettingsOptionItem {
+                CoreControls.SettingsItem {
                     id: colorPalettesItem
-                    optionText: qsTr("Colors")
+                    text.text: qsTr("Colors")
+                    text.font.pixelSize: root.textFontSize
                     backgroundColor: "#ffffff"
                     anchors.top: speedUnitItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "palette.png"
+                    icon.source: util.iconPathPrefix() + "palette.png"
+                    icon.visible: true
+                    ripple: true
+                    summaryText.visible: false
                     onClicked: {
                         if (colorButtonsLayout.visible == false) {
                             colorButtonsLayout.visible = true
@@ -194,7 +206,6 @@ Item {
                             colorButtonsLayout.visible = false
                         }
                     }
-                    bottomBorderVisibility: true
                 }
 
                 GridLayout {
@@ -239,77 +250,86 @@ Item {
                     onVisibleChanged: {
                         if(colorButtonsLayout.visible == false) {
                             apiSelectItem.anchors.top = colorPalettesItem.bottom
-                            apiSelectItem.anchors.topMargin = 0
-                            colorPalettesItem.bottomBorderVisibility = true
+                            apiSelectItem.anchors.topMargin = 0                            
                         }
                         else {
                             apiSelectItem.anchors.top = colorButtonsLayout.bottom
                             apiSelectItem.anchors.topMargin = 5
-                            colorPalettesItem.bottomBorderVisibility = false
                         }
                     }
                 }
 
-                SettingsOptionItem {
+                CoreControls.SettingsItem {
                     id: apiSelectItem
-                    optionText: qsTr("Provider")
+                    text.text: qsTr("Provider")
+                    text.font.pixelSize: root.textFontSize
                     backgroundColor: "#ffffff"
                     anchors.top: colorPalettesItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "api.png"
-                    onClicked: {
-                        if (apiSelect.visible == false) {
-                            apiSelect.visible = true
-                        }
-                        else {
-                            apiSelect.visible = false
-                        }
-                    }
+                    icon.source: util.iconPathPrefix() + "api.png"
+                    icon.visible: true
+                    summaryText.text: "Open Weather Map"
+                    ripple: true
                 }
 
-                ComboBox {
-                    id: apiSelect
-                    anchors.top: apiSelectItem.bottom
-                    anchors.topMargin: 5
-                    width: Math.round(apiSelectItem.width * 60 / 100)
-                    anchors.left: parent.left
-                    anchors.leftMargin: (parent.width - apiSelect.width) / 2
-                    visible: false
-//                    model: ["Open Weather Map", "Yahoo! Weather", "Weather Underground"]
-                    model: ["Open Weather Map", "Weather Underground"]
-                    onCurrentIndexChanged: {
-                        if (visible == true) {
-                            if (currentIndex == 1)
-                                root.api = "wund"
-                            else
-                                root.api = "owm"
-                        }
-                    }
-                    onVisibleChanged: {
-                        if(apiSelect.visible == false) {
-                            creditsItem.anchors.top = apiSelectItem.bottom
-                            creditsItem.anchors.topMargin = 0
-                            apiSelectItem.bottomBorderVisibility = true
-                        }
-                        else {
-                            creditsItem.anchors.top = apiSelect.bottom
-                            creditsItem.anchors.topMargin = 5
-                            apiSelectItem.bottomBorderVisibility = false
-                        }
-                    }
-                }
-                Component.onCompleted: (settingsController.getWeatherApi() === "wund")  ? apiSelect.currentIndex = 1 : apiSelect.currentIndex = 0
-
-                SettingsOptionItem {
-                    id: creditsItem
-                    optionText: qsTr("Credits")
+                CoreControls.SettingsItem {
+                    id: apiKeyItem
+                    text.text: qsTr("Provider key")
+                    text.font.pixelSize: root.textFontSize
                     backgroundColor: "#ffffff"
                     anchors.top: apiSelectItem.bottom
                     height: root.settingsItemHeight
                     width: settingsBody.width
-                    iconUrl: util.iconPathPrefix() + "credits.png"
-                    bottomBorderVisibility: false
+                    icon.source: util.iconPathPrefix() + "key.png"
+                    icon.visible: true
+                    summaryText.text: root.apiKey
+                    ripple: true
+                    onClicked: apiKeyDialog.visible = true
+                }
+
+//                ComboBox {
+//                    id: apiSelect
+//                    anchors.top: apiSelectItem.bottom
+//                    anchors.topMargin: 5
+//                    width: Math.round(apiSelectItem.width * 60 / 100)
+//                    anchors.left: parent.left
+//                    anchors.leftMargin: (parent.width - apiSelect.width) / 2
+//                    visible: false
+//                    model: ["Open Weather Map", "Yahoo! Weather", "Weather Underground"]
+//                    onCurrentIndexChanged: {
+//                        if (visible == true) {
+//                            if (currentIndex == 1)
+//                                root.api = "wund"
+//                            else
+//                                root.api = "owm"
+//                        }
+//                    }
+//                    onVisibleChanged: {
+//                        if(apiSelect.visible == false) {
+//                            creditsItem.anchors.top = apiSelectItem.bottom
+//                            creditsItem.anchors.topMargin = 0
+//                        }
+//                        else {
+//                            creditsItem.anchors.top = apiSelect.bottom
+//                            creditsItem.anchors.topMargin = 5
+//                        }
+//                    }
+//                }
+//                Component.onCompleted: (settingsController.getWeatherApi() === "wund")  ? apiSelect.currentIndex = 1 : apiSelect.currentIndex = 0
+
+                CoreControls.SettingsItem {
+                    id: creditsItem
+                    text.text: qsTr("Credits")
+                    text.font.pixelSize: root.textFontSize
+                    backgroundColor: "#ffffff"
+                    anchors.top: apiKeyItem.bottom
+                    height: root.settingsItemHeight
+                    width: settingsBody.width
+                    icon.source: util.iconPathPrefix() + "credits.png"
+                    icon.visible: true
+                    ripple: true
+                    summaryText.visible: false
                     onClicked: root.showCredits()
                 }
 
@@ -400,6 +420,119 @@ Item {
         }
     }
 
+    Rectangle {
+        id: settingsDialogWrapper
+        anchors.fill: parent
+        color: "#000000"
+        opacity: 0.3
+        visible: false
+        MouseArea {
+            anchors.fill: parent
+        }
+    }
+
+    Rectangle {
+        id: apiKeyDialog
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.topMargin: (parent.height / 2) - (apiKeyDialog.height / 2)
+        width: parent.width
+        height: 100
+        visible: false
+        Text {
+            id: apiKeyDialogTitle
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.top: parent.top
+            width: parent.width
+            height: 30
+            font.pixelSize: 16
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            text: qsTr("Enter API key")
+            color: root.backgroundColor
+        }
+        TextInput {
+            id: apiKeyDialogInput
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.top: apiKeyDialogTitle.bottom
+            width: parent.width - 20
+            font.pixelSize: 16
+            text: root.apiKey
+            autoScroll: false
+            clip: true
+            color: apiKeyDialogOkButton.textColor
+            selectedTextColor: root.textColor
+            selectionColor: root.backgroundColor
+            selectByMouse: true
+            Rectangle {
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                width: parent.width
+                height: 1
+                color: apiKeyDialogOkButton.textColor
+            }
+            onAccepted: {
+                if (text.trim().length == 0) {
+                    messageDialog.title = qsTr("Error when saving API key!")
+                    messageDialog.text = qsTr("Key cannot be empty!")
+                    messageDialog.visible = true
+                }
+                else {
+                    root.apiKey = apiKeyDialogInput.text
+                    apiKeyDialog.visible = false
+                }
+            }
+        }
+        CoreControls.CustomButton {
+            id: apiKeyDialogOkButton
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.top: apiKeyDialogInput.bottom
+            anchors.topMargin: 10
+            text.text: qsTr("Ok")
+            text.font.pixelSize: 16
+            textColor: root.backgroundColor
+            backgroundColor: root.textColor
+            width: 100
+            height: 30
+            dropShadow.visible: false
+            ripple: true
+            onClicked: apiKeyDialogInput.accepted()
+        }
+        CoreControls.CustomButton {
+            id: apiKeyDialogCancelButton
+            anchors.right: apiKeyDialogOkButton.left
+            anchors.rightMargin: apiKeyDialogOkButton.anchors.rightMargin
+            anchors.top: apiKeyDialogInput.bottom
+            anchors.topMargin: apiKeyDialogOkButton.anchors.topMargin
+            text.text: qsTr("Cancel")
+            text.font.pixelSize: apiKeyDialogOkButton.text.font.pixelSize
+            textColor: apiKeyDialogOkButton.textColor
+            backgroundColor: apiKeyDialogOkButton.backgroundColor
+            width: apiKeyDialogOkButton.width
+            height: apiKeyDialogOkButton.height
+            dropShadow.visible: false
+            ripple: true
+            onClicked: apiKeyDialog.visible = false
+        }
+        onVisibleChanged: {
+            if(!visible) {
+                settingsDialogWrapper.visible = false
+                apiKeyDialogInput.focus = false
+                root.focus = true
+                root.forceActiveFocus()
+            }
+            else {
+                settingsDialogWrapper.visible = true
+                root.focus = false
+                apiKeyDialogInput.focus = true
+                apiKeyDialogInput.forceActiveFocus()
+            }
+        }
+    }
+
     ColorDialog {
         id: colorDialog
         title: "Please choose a color"
@@ -423,6 +556,25 @@ Item {
                 root.textColor = currentColor
             }
         }
+    }
+    MessageDialog {
+        id: messageDialog
+        title: "No message Dialog"
+        text: "Nothing to see here."
+        icon: StandardIcon.Warning
+        standardButtons: StandardButton.Ok
+    }
+    Keys.onEscapePressed: {
+        if (apiKeyDialogInput.focus)
+            apiKeyDialog.visible = false
+        else
+            root.closeSettingsView()
+    }
+    Keys.onBackPressed: {
+        if (apiKeyDialogInput.focus)
+            apiKeyDialog.visible = false
+        else
+            root.closeSettingsView()
     }
 }
 

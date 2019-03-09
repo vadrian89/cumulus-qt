@@ -129,7 +129,7 @@ void Location::getGpsLocation() {
     QGeoPositionInfoSource *posInfoSource = QGeoPositionInfoSource::createDefaultSource(nullptr);
     if (posInfoSource) {
         QThread *thread = new QThread();
-        posInfoSource->setUpdateInterval(1000);
+        posInfoSource->setUpdateInterval(2000);
         posInfoSource->moveToThread(thread);
         connect(thread, SIGNAL(started()), posInfoSource, SLOT(startUpdates()));
         connect(posInfoSource, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(locationPositionInfo(QGeoPositionInfo)));

@@ -179,6 +179,8 @@ Rectangle {
             onShowCredits: creditsViewDialog.visible = true
             api: applicationSettingsController.weatherApi
             onApiChanged: applicationSettingsController.weatherApi = api
+            apiKey: applicationSettingsController.apiKey
+            onApiKeyChanged: applicationSettingsController.apiKey = apiKey
             temperatureUnit: applicationSettingsController.tempUnit
             onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
             speedUnit: applicationSettingsController.windSpeedUnit
@@ -189,7 +191,7 @@ Rectangle {
             }
             useGps: applicationSettingsController.useGps
             onUseGpsChanged: applicationSettingsController.useGps = useGps
-            Keys.onEscapePressed: settingsViewDialog.visible = false
+            onCloseSettingsView: settingsViewDialog.visible = false
         }
         onVisibilityChanged: {
             if (visible == true)

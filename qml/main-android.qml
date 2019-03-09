@@ -137,6 +137,8 @@ ApplicationWindow {
             }
             api: applicationSettingsController.weatherApi
             onApiChanged: applicationSettingsController.weatherApi = api
+            apiKey: applicationSettingsController.apiKey
+            onApiKeyChanged: applicationSettingsController.apiKey = apiKey
             temperatureUnit: applicationSettingsController.tempUnit
             onTemperatureUnitChanged: applicationSettingsController.tempUnit = settingsView.temperatureUnit
             speedUnit: applicationSettingsController.windSpeedUnit
@@ -148,7 +150,7 @@ ApplicationWindow {
             }
             useGps: applicationSettingsController.useGps
             onUseGpsChanged: applicationSettingsController.useGps = useGps
-            Keys.onBackPressed: {
+            onCloseSettingsView: {
                 appView.pop()
                 bodyView.forceActiveFocus()
             }

@@ -48,3 +48,29 @@ void DataController::readFinished(QNetworkReply *reply) {
         emit networkError(reply->errorString());
     }
 }
+
+void DataController::getJsonArrayDataFromUrl(QString urlString) {
+    networkManager = new QNetworkAccessManager(this);
+    if (networkManager->networkAccessible() == QNetworkAccessManager::Accessible) {
+        connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(readJsonArrayFinished(QNetworkReply*)));
+        QNetworkRequest networkRequest;
+        networkRequest.setUrl(QUrl(urlString));
+        networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        networkManager->get(networkRequest);
+    }
+    else {
+        emit networkError("Network not accessible!");
+    }
+}
+
+void DataController::readJsonArrayFinished(QNetworkReply *reply) {
+    if (reply->error() == QNetworkReply::NoError) {
+        QString dataRead = (QString)reply->readAll();
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(dataRead.toUtf8());
+        QJsonArray jsonArray = jsonResponse.array();
+        emit jsonArrayReady(jsonArray);
+    }
+    else {
+        emit networkError(reply->errorString());
+    }
+}

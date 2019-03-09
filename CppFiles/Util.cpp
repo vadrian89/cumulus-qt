@@ -214,8 +214,6 @@ QString Util::getLogoImage() const {
         prefix = assetsPath();
     if (settings.weatherApi().toLower() == "y")
         return prefix + "yw_logo.png";
-    else if (settings.weatherApi().toLower() == "wund")
-        return prefix + "wund_logo_light.png";
     else
         return "image://customimage/Powered by:#OpenWeatherMap" + settings.textColor();
 }
@@ -229,6 +227,7 @@ QList<QObject*> Util::creditsList() {
     CreditsAuthor *popcornsArts = new CreditsAuthor(nullptr, "Popcorns Arts", "http://www.flaticon.com/authors/popcorns-arts", "api.png", "CC 3.0 BY");
     CreditsAuthor *vectorsMarket2 = new CreditsAuthor(nullptr, "Vectors Market", "https://www.flaticon.com/authors/vectors-market", "credits.png", "CC 3.0 BY");
     CreditsAuthor *freepikLogo = new CreditsAuthor(nullptr, "Freepik", "http://www.freepik.com", "cumulus.png", "CC 3.0 BY");
+    CreditsAuthor *pixelBuddha2 = new CreditsAuthor(nullptr, "Pixel Buddha", "http://www.flaticon.com/authors/pixel-buddha", "key.png", "CC 3.0 BY");
     list.append(vectorsMarket);
     list.append(madebyoliver2);
     list.append(pixelBuddha);
@@ -236,6 +235,7 @@ QList<QObject*> Util::creditsList() {
     list.append(popcornsArts);
     list.append(vectorsMarket2);
     list.append(freepikLogo);
+    list.append(pixelBuddha2);
     return list;
 }
 

@@ -28,12 +28,13 @@
         <file>qml/ClickableItem.qml</file>
         <file>qml/GpsLocationItem.qml</file>
         <file>qml/ForecastItemDelegate.qml</file>
-        <file>qml/uMatComponents/ClickableItem.qml</file>
-        <file>qml/uMatComponents/Item.qml</file>
-        <file>qml/uMatControls/Button.qml</file>
-        <file>main.cpp</file>
+        <file>qml/CustomComponents/ClickableItem.qml</file>
+        <file>qml/CustomComponents/Item.qml</file>
+        <file>qml/CustomControls/Button.qml</file>
         <file>qml/WelcomeView.qml</file>
         <file>translations/tempestas_ro.po</file>
         <file>translations/tempestas_ro.qm</file>
+        <file>qml/CustomControls/CustomButton.qml</file>
+        <file>qml/CustomControls/SettingsItem.qml</file>
     </qresource>
 </RCC>

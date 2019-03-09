@@ -27,6 +27,7 @@
 #include <QNetworkReply>
 #include <QByteArray>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QNetworkRequest>
 #include <QJsonDocument>
 #include <QUrl>
@@ -38,11 +39,14 @@ class DataController : public QObject {
 public:
     explicit DataController(QObject *parent = 0);
     void getDataFromUrl(QString urlString);
+    void getJsonArrayDataFromUrl(QString urlString);
     QString managerError() const;
 private slots:
     void readFinished(QNetworkReply *reply);
+    void readJsonArrayFinished(QNetworkReply *reply);
 signals:
     void jsonObjectReady(QJsonObject);
+    void jsonArrayReady(QJsonArray);
     void networkError(const QString &error);
 };
 

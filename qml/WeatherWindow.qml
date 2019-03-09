@@ -21,6 +21,7 @@
 */
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
+import QtQuick.Dialogs 1.2
 
 import ownTypes.weather 1.9
 
@@ -261,7 +262,7 @@ Item {
         id: weatherController
         onNetworkError: {
             root.networkError()
-            setWeatherData()
+            setWeatherData()            
         }
         tempUnit: root.tempUnit
         speedUnit: root.speedUnit

@@ -1,18 +1,11 @@
-# Important announcement
-Weather underground have [terminated](https://apicommunity.wunderground.com/weatherapi/topics/end-of-service-for-the-weather-underground-api) it's API so I will need to replace it.
-The application's ability to search for locations and get GPS feature might also break because they are dependent of Weather underground and Yahoo! Weather.
-Will do my best to fix this issue in a fast time frame.
-
 # News
 Hello everybody,  
-I have managed to work a bit on Cumulus and here are some small updates:
-- Added support for translations, it is only for UI language and current only translated to romanian language; Will implement a way to translate weather conditions soon;
-- Added a button to toggle between locations list and weather view;
-- Made the toggle for window controls positioning available for Android users as well;
-- Started reimplementing the option to remove window decorations from window manager; In the future you will be able to select if you want to use window manager decorations or application's;
-- Removed Yahoo! Weather provider from UI, because they changed how their provide their API(yet again);
-- Fixed an issue where the high and low temperatures for the current weather were taken from tomorrow's forecast;
-- Fixed an issue where the application won't keep the windows controls locations;
+Weather underground have [terminated](https://apicommunity.wunderground.com/weatherapi/topics/end-of-service-for-the-weather-underground-api) it's API so I will need to replace it.
+Yahoo! Weather also isn't available since they have added OAuth1 authentification for their ever changing API.
+In the wake of this I put on my programming pants and do the following:
+- location search and geolocation are done through [LocationIQ](https://locationiq.com);
+- removed Yahoo! Weather and Weather Underground from the UI, but the code is still there because I want to add Yahoo! Weather back and want to replace Weather Underground with another provider;
+- added the option to insert your own Open Weather Map API key to not be hindered in case the application has a high usage, my key will still be there by default;
 
 If you want to add translations of your language to your UI, do the following:
 - clone the repository;
@@ -38,7 +31,7 @@ Features:
 - qt installer, without root installation to allow future updates fast without breaking on upgrade;
 - AppImage for those who want the application in a portable fashion;
 - possbility for multiple instances with different settings and locations;
-- multiple weather providers: [Open Weather Map](http://openweathermap.org/) & [Weather Underground](https://www.wunderground.com/?apiref=697599e3b1e7adec);
+- weather provided by [Open Weather Map](http://openweathermap.org/);
 - locations list;
 
 # For multiple instances:
@@ -64,7 +57,7 @@ which sadly has discontinued support for them
 # Known Issues
 - [Yahoo is currently not working](https://github.com/vadrian89/cumulus-qt/issues/40);
 - AppImage seems highly unstable on Deepin Linux, might also be the case for other distros;
-- Geo location is not working correctly;
+- Geo location is not working correctly on some distributions;
 
 # TODO
 - Fix connection to [Yahoo! Weather](http://weather.yahoo.com);
