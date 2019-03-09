@@ -1,8 +1,8 @@
 # News
 Hello everybody,  
-Weather underground have [terminated](https://apicommunity.wunderground.com/weatherapi/topics/end-of-service-for-the-weather-underground-api) it's API so I will need to replace it.
-Yahoo! Weather also isn't available since they have added OAuth1 authentification for their ever changing API.
-In the wake of this I put on my programming pants and do the following:
+Weather underground have [terminated](https://apicommunity.wunderground.com/weatherapi/topics/end-of-service-for-the-weather-underground-api) it's API so I will need to replace it.  
+Yahoo! Weather also isn't available since they have added OAuth1 authentification for their ever changing API.  
+In the wake of this I put on my programming pants and done the following:  
 - location search and geolocation are done through [LocationIQ](https://locationiq.com);
 - removed Yahoo! Weather and Weather Underground from the UI, but the code is still there because I want to add Yahoo! Weather back and want to replace Weather Underground with another provider;
 - added the option to insert your own Open Weather Map API key to not be hindered in case the application has a high usage, my key will still be there by default;
