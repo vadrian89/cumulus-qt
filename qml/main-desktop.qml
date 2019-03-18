@@ -196,6 +196,8 @@ Rectangle {
         onVisibilityChanged: {
             if (visible == true)
                 settingsView.forceActiveFocus()
+            else
+                bodyView.item.forceActiveFocus()
         }
     }
 
@@ -229,6 +231,7 @@ Rectangle {
             bodyView.source = "MainView.qml"
             bodyView.visible = true
             bodyView.item.updateWeather()
+            bodyView.item.forceActiveFocus()
         }
     }        
 }

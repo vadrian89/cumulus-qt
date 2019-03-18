@@ -49,8 +49,7 @@ ApplicationWindow {
         id: appBody
         anchors.fill: parent
         color: applicationSettingsController.applicationBackground
-        focus: true
-        Keys.onBackPressed: mainWindow.close()
+        focus: true        
         visible: !welcomeView.visible
 
         ApplicationBar {
@@ -119,6 +118,7 @@ ApplicationWindow {
                 }
                 onNetworkError: timer.interval = 60000
                 onLocationNameChanged: applicationBar.locationName = name
+                onCloseApp: mainWindow.close()
             }            
         }
 
@@ -146,13 +146,13 @@ ApplicationWindow {
             onLocationChanged: {
                 weatherView.updateWeather()
                 appView.pop()
-                bodyView.forceActiveFocus()
+                weatherView.forceActiveFocus()
             }
             useGps: applicationSettingsController.useGps
             onUseGpsChanged: applicationSettingsController.useGps = useGps
             onCloseSettingsView: {
                 appView.pop()
-                bodyView.forceActiveFocus()
+                weatherView.forceActiveFocus()
             }
         }
 

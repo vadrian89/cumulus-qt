@@ -20,6 +20,7 @@ Item {
     signal networkError()
     signal loadLogoImage()
     signal goToLocationsList()
+    signal closeApp();
 
     onTextColorChanged: weatherView.loadLogoImage()
     onLoadLogoImage: weatherView.loadLogoImage()
@@ -59,6 +60,12 @@ Item {
                 weatherView.visible = false
                 flickable.contentX = 0
             }
+            onViewWeather: {
+                root.forceActiveFocus()
+                scrollToLocation.from = 0
+                scrollToLocation.to = root.startPoint
+                scrollToLocation.start()
+            }
         }
         WeatherWindow {
             id: weatherView
@@ -80,8 +87,11 @@ Item {
         onMovementEnded: {
             if (contentX > (root.viewWidth / 2))
                 flickable.contentX = root.startPoint
-            else
+            else {
                 flickable.contentX = 0
+                locationView.forceActiveFocus()
+            }
+
         }
         PropertyAnimation on contentX {
             id: scrollToLocation
@@ -100,4 +110,5 @@ Item {
         else
             flickable.contentX = 0
     }
+    Keys.onBackPressed: root.closeApp()
 }

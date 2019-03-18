@@ -32,10 +32,7 @@ Item {
     property string gpsLocation: "-"
     property alias searchListModel: searchList.model
     signal locationSelected(string locationSelected)
-    signal locationVisibilityChanged(bool locationVisibility)
     visible: true
-
-    onVisibleChanged: locationVisibilityChanged(visible)
 
     Rectangle {
         id: body
@@ -66,6 +63,8 @@ Item {
                     searchTimer.restart()
                 }
             }
+            Keys.onEscapePressed: root.visible = false
+            Keys.onBackPressed: root.visible = false
         }
 
         Image {
@@ -155,6 +154,12 @@ Item {
         onTriggered: {
             loadingIcon.visible = true
             root.locationQuery = searchField.text.trim()
+        }
+    }
+    onVisibleChanged: {
+        if (root.visible) {
+            searchField.focus = true
+            searchField.forceActiveFocus()
         }
     }
 }

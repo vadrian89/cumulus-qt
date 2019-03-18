@@ -9,6 +9,7 @@ SimpleItem {
     property string textFontFamily: "Arial"
     property alias locationController: locationController
     signal noLocation()
+    signal viewWeather()
     ListView {
         id: locationList
         anchors.top: parent.top
@@ -123,8 +124,9 @@ SimpleItem {
             onLocationQueryChanged: locationController.searchLocation(locationSearchLoader.item.locationQuery)
             onLocationSelected: {
                 locationController.insertLocation(locationSelected)
-                locationSearchLoader.visible = false                
+                locationSearchLoader.visible = false
             }
+            onVisibleChanged: if (!locationSearchLoader.item.visible) root.forceActiveFocus()
         }
     }
     LocationController {
@@ -135,4 +137,6 @@ SimpleItem {
         }
     }
     Component.onCompleted: locationController.getLocationList()
+    Keys.onEscapePressed: root.viewWeather()
+    Keys.onBackPressed: root.viewWeather()
 }
