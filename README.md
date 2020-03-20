@@ -1,10 +1,10 @@
 # News
 Hello everybody,  
-Sadly due to my attention being in the direction of my own development company, which is pretty new on the local market and struggling especially now with the pandemic of Covid-19, I cannot afford to spend time on other projects.
-I am really sorry since this is a close-to-heart project, I really wanted it to thrive.
-If I will be able to have more time in the future, I will pursue further development of Cumulus. At the moment I cannot.
-If anyone wants to take over development of it, feel free, I don't mind.
-Keep your fingers crossed, if the company becomes stable and fruitful my vision also includes investing in developing UX-oriented open-source software, on Linux. 
+Sadly due to my attention being in the direction of my own development company, which is pretty new on the local market and struggling especially now with the pandemic of Covid-19, I cannot afford to spend time on other projects.  
+I am really sorry since this is a close-to-heart project, I really wanted it to thrive.  
+If I will be able to have more time in the future, I will pursue further development of Cumulus. At the moment I cannot.  
+If anyone wants to take over development of it, feel free, I don't mind.  
+Keep your fingers crossed, if the company becomes stable and fruitful my vision also includes investing in developing UX-oriented open-source software, on Linux.   
 
 If you want to add translations of your language to your UI, do the following:
 - clone the repository;
